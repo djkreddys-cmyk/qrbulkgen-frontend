@@ -4,124 +4,134 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Login — QRBulkGen</title>
+<title>Account — QRBulkGen</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
-<!-- Navbar -->
-
 <header class="bg-white shadow p-4 flex justify-between items-center">
   <a href="index.html" class="text-xl font-bold text-indigo-600">QRBulkGen</a>
-
-  <nav class="space-x-6 font-medium">
-    <a href="qr-single.html">Generate QR</a>
-    <a href="qr-bulk.html">Bulk Upload</a>
-    <a id="navLogin" class="text-red-500 cursor-pointer">Login</a>
-  </nav>
 </header>
-
-<!-- CENTERED AUTH BOX -->
 
 <div class="flex-grow flex items-center justify-center px-4">
   <div class="bg-white w-full max-w-md rounded-2xl shadow-xl p-8">
 
-<h2 class="text-2xl font-bold text-center mb-6">QRBulkGen Account</h2>
+```
+<h2 id="title" class="text-2xl font-bold text-center mb-6">Create Account</h2>
 <p id="msg" class="text-center text-sm mb-4"></p>
 
-<!-- NAME (REGISTER ONLY) -->
-<input id="name" type="text" placeholder="Enter Your Name"
-  class="w-full border rounded-lg px-4 py-3 mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+<!-- NAME -->
+<input id="name" type="text" placeholder="Your Name"
+  class="w-full border rounded-lg px-4 py-3 mb-3" />
 
 <!-- EMAIL -->
-<input id="email" type="email" placeholder="Enter Email"
-  class="w-full border rounded-lg px-4 py-3 mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+<input id="email" type="email" placeholder="Email"
+  class="w-full border rounded-lg px-4 py-3 mb-3" />
 
 <!-- PASSWORD -->
-<input id="password" type="password" placeholder="Enter Password"
-  class="w-full border rounded-lg px-4 py-3 mb-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+<input id="password" type="password" placeholder="Password"
+  class="w-full border rounded-lg px-4 py-3 mb-3" />
 
-<div class="text-right mb-4">
+<!-- FORGOT PASSWORD (LOGIN ONLY) -->
+<div id="forgotBox" class="text-right mb-3 hidden">
   <button onclick="forgotPassword()" class="text-sm text-indigo-600 hover:underline">
     Forgot Password?
   </button>
 </div>
 
-<button onclick="register()"
-  class="w-full bg-indigo-600 text-white py-3 rounded-lg mb-3 hover:bg-indigo-700">
+<!-- MAIN BUTTON -->
+<button id="mainBtn"
+  class="w-full bg-indigo-600 text-white py-3 rounded-lg mb-4 hover:bg-indigo-700">
   Register
 </button>
 
-<button onclick="login()"
-  class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700">
-  Login
-</button>
+<!-- SWITCH MODE -->
+<p class="text-center text-sm">
+  <span id="switchText">Already registered?</span>
+  <button onclick="toggleMode()" class="text-indigo-600 font-semibold">Login</button>
+</p>
+```
 
   </div>
 </div>
 
 <script>
-const API = "https://qrbulkgen-backend-production.up.railway.app/api";
+const API="https://qrbulkgen-backend-production.up.railway.app/api";
 
-function show(msg,color="red"){
-  const m=document.getElementById("msg");
-  m.innerText=msg;
-  m.className="text-center text-sm mb-4 text-"+color+"-600";
-}
+let isLogin=false;
 
 const nameEl=document.getElementById("name");
 const emailEl=document.getElementById("email");
 const passwordEl=document.getElementById("password");
+const title=document.getElementById("title");
+const mainBtn=document.getElementById("mainBtn");
+const switchText=document.getElementById("switchText");
+const forgotBox=document.getElementById("forgotBox");
+const msg=document.getElementById("msg");
 
-// REGISTER (name + email + password)
-async function register(){
-  const name=nameEl.value.trim();
-  const email=emailEl.value.trim();
-  const password=passwordEl.value.trim();
-
-  if(!name || !email || !password){
-    show("Please fill all fields");
-    return;
-  }
-
-  const r=await fetch(API+"/register",{
-    method:"POST",
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({name,email,password})
-  });
-
-  const txt=await r.text();
-  show(txt, r.ok ? "green":"red");
+function show(t,color="red"){
+ msg.innerText=t;
+ msg.className="text-center text-sm mb-4 text-"+color+"-600";
 }
 
-// LOGIN (email + password only)
-async function login(){
-  const email=emailEl.value.trim();
-  const password=passwordEl.value.trim();
+// SWITCH BETWEEN LOGIN & REGISTER
+function toggleMode(){
+ isLogin=!isLogin;
 
-  const r=await fetch(API+"/login",{
-    method:"POST",
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({email,password})
-  });
-
-  if(r.status!=200){
-    show("Invalid login");
-    return;
-  }
-
-  const data=await r.json();
-  localStorage.setItem("token",data.token);
-
-  window.location="qr-dashboard.html";
+ if(isLogin){
+   title.innerText="Login";
+   mainBtn.innerText="Login";
+   nameEl.style.display="none";
+   forgotBox.classList.remove("hidden");
+   switchText.innerText="New here?";
+ }else{
+   title.innerText="Create Account";
+   mainBtn.innerText="Register";
+   nameEl.style.display="block";
+   forgotBox.classList.add("hidden");
+   switchText.innerText="Already registered?";
+ }
 }
+
+// MAIN ACTION
+mainBtn.onclick=async()=>{
+
+ const email=emailEl.value.trim();
+ const password=passwordEl.value.trim();
+
+ if(isLogin){
+   const r=await fetch(API+"/login",{
+     method:"POST",
+     headers:{'Content-Type':'application/json'},
+     body:JSON.stringify({email,password})
+   });
+
+   if(r.status!==200){ show("Invalid login"); return; }
+
+   const data=await r.json();
+   localStorage.setItem("token",data.token);
+   window.location="qr-dashboard.html";
+
+ }else{
+
+   const name=nameEl.value.trim();
+   if(!name||!email||!password){ show("Fill all fields"); return; }
+
+   const r=await fetch(API+"/register",{
+     method:"POST",
+     headers:{'Content-Type':'application/json'},
+     body:JSON.stringify({name,email,password})
+   });
+
+   show(await r.text(),"green");
+ }
+};
 
 function forgotPassword(){
-  alert("Password reset system will be added later");
+ alert("Password reset email system will be added later");
 }
 </script>
 
 </body>
 </html>
-
