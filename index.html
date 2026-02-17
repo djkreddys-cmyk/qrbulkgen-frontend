@@ -1,155 +1,150 @@
 <!DOCTYPE html>
-<header class="bg-white shadow p-4 flex justify-between items-center">
-    <a href="/index.html" class="text-xl font-bold text-blue-600">QRBulkGen</a>
 
-    <nav class="space-x-6">
-        <a href="/qr-single.html" class="hover:text-blue-600">Generate QR</a>
-        <a href="/qr-bulk.html" class="hover:text-blue-600">Bulk Upload</a>
-        <a href="/qr-dashboard.html" class="hover:text-blue-600">Dashboard</a>
-        <a href="/qr-auth.html" class="text-red-500">Login</a>
-    </nav>
-</header>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QRBatch — Bulk QR Code Generator</title>
+
+  <title>QRBulkGen — Bulk QR Code Generator | Free UPI, WhatsApp, vCard QR</title>
+  <meta name="description" content="Generate single or bulk QR codes instantly. Upload Excel and download printable QR labels. Free daily plan available." />
+  <meta name="keywords" content="bulk qr generator, upi qr generator, whatsapp qr code, vcard qr, excel to qr code, qr labels" />
+
   <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
+
 <body class="bg-white text-gray-800">
 
-  <!-- Navbar -->
-  <header class="border-b">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-      <div class="text-2xl font-bold text-indigo-600">QRBatch</div>
-      <nav class="hidden md:flex gap-8 text-sm font-medium">
-        <a href="#features">Features</a>
-        <a href="#solutions">Solutions</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#api">API</a>
-        <a href="#blog">Blog</a>
-      </nav>
-      <div class="flex gap-4 items-center">
-        <a href="#" class="text-sm">Login</a>
-        <a href="#" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm">Sign Up Free</a>
-      </div>
-    </div>
-  </header>
+<!-- NAVBAR -->
 
-  <!-- Hero -->
-  <section class="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-10 items-center">
-    <div>
-      <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">Generate 1000+ QR Codes in Seconds</h1>
-      <p class="text-lg text-gray-600 mb-6">Upload Excel and instantly download QR ZIP or printable PDF labels.</p>
-      <div class="flex gap-4">
-        <button class="bg-indigo-600 text-white px-6 py-3 rounded-xl">Generate QR Now</button>
-        <button class="border px-6 py-3 rounded-xl">Upload Excel</button>
-      </div>
-      <p class="text-sm text-gray-500 mt-4">No signup required • Free plan available</p>
-    </div>
-    <div class="bg-gray-100 rounded-2xl h-72 flex items-center justify-center">
-      <span class="text-gray-400">Animation Preview</span>
-    </div>
-  </section>
+<header class="bg-white shadow p-4 flex justify-between items-center sticky top-0 z-50">
+  <a href="/index.html" class="text-xl font-bold text-indigo-600">QRBulkGen</a>
 
-  <!-- Use Cases -->
-  <section id="solutions" class="bg-gray-50 py-20">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-3xl font-bold text-center mb-12">Create QR Codes for Anything</h2>
-      <div class="grid md:grid-cols-3 gap-6">
-        <div class="p-6 bg-white rounded-2xl shadow">UPI Payment QR</div>
-        <div class="p-6 bg-white rounded-2xl shadow">Attendance QR</div>
-        <div class="p-6 bg-white rounded-2xl shadow">Menu QR</div>
-        <div class="p-6 bg-white rounded-2xl shadow">Student ID QR</div>
-        <div class="p-6 bg-white rounded-2xl shadow">Product Label QR</div>
-        <div class="p-6 bg-white rounded-2xl shadow">Event Ticket QR</div>
-      </div>
-    </div>
-  </section>
+  <nav class="space-x-6 font-medium hidden md:block">
+    <a href="/qr-single.html" class="hover:text-indigo-600">Generate QR</a>
+    <a href="/qr-bulk.html" class="hover:text-indigo-600">Bulk Upload</a>
+    <a href="/qr-dashboard.html" class="hover:text-indigo-600">Dashboard</a>
+    <a href="/qr-auth.html" class="text-red-500">Login</a>
+  </nav>
+</header>
 
-  <!-- How It Works -->
-  <section class="py-20">
-    <div class="max-w-6xl mx-auto px-6 text-center">
-      <h2 class="text-3xl font-bold mb-12">How It Works</h2>
-      <div class="grid md:grid-cols-3 gap-8">
-        <div>Upload Excel</div>
-        <div>Customize Design</div>
-        <div>Download ZIP or PDF</div>
-      </div>
-    </div>
-  </section>
+<!-- HERO -->
 
-  <!-- Features -->
-  <section id="features" class="bg-gray-50 py-20">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-3xl font-bold text-center mb-12">Features</h2>
-      <div class="grid md:grid-cols-3 gap-8">
-        <div>Bulk Generation</div>
-        <div>Logo Support</div>
-        <div>High Resolution</div>
-        <div>PDF Labels</div>
-        <div>No Watermark</div>
-        <div>API Access</div>
-      </div>
-    </div>
-  </section>
+<section class="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-10 items-center">
+  <div>
+    <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">
+      Generate 1000+ QR Codes in Seconds
+    </h1>
 
-  <!-- Pricing Preview -->
-  <section id="pricing" class="py-20">
-    <div class="max-w-5xl mx-auto px-6 text-center">
-      <h2 class="text-3xl font-bold mb-12">Simple Pricing</h2>
-      <div class="grid md:grid-cols-2 gap-8">
-        <div class="border rounded-2xl p-8">
-          <h3 class="text-xl font-bold mb-4">Free</h3>
-          <p>50 QR/day • Watermark</p>
-        </div>
-        <div class="border-2 border-indigo-600 rounded-2xl p-8">
-          <h3 class="text-xl font-bold mb-4">Pro</h3>
-          <p>Unlimited • No watermark • PDF labels</p>
-        </div>
-      </div>
-    </div>
-  </section>
+```
+<p class="text-lg text-gray-600 mb-6">
+  Upload Excel and instantly download QR ZIP or printable PDF labels.
+  Supports UPI, WhatsApp, URLs, Contacts & more.
+</p>
 
-  <!-- CTA -->
-  <section class="bg-indigo-600 text-white py-20 text-center">
-    <h2 class="text-3xl font-bold mb-6">Start generating QR codes for free</h2>
-    <button class="bg-white text-indigo-600 px-8 py-3 rounded-xl">Generate Now</button>
-  </section>
+<div class="flex gap-4">
+  <a href="/qr-single.html"
+     class="bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700 transition">
+    Generate QR Now
+  </a>
 
-  <!-- Footer -->
-  <footer class="bg-gray-900 text-gray-300 py-12">
-    <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-8 text-sm">
-      <div>
-        <h4 class="font-bold text-white mb-4">Product</h4>
-        <p>QR Generator</p>
-        <p>Bulk Generator</p>
-        <p>Templates</p>
-        <p>API</p>
-      </div>
-      <div>
-        <h4 class="font-bold text-white mb-4">Solutions</h4>
-        <p>Schools</p>
-        <p>Restaurants</p>
-        <p>Retail</p>
-        <p>Events</p>
-      </div>
-      <div>
-        <h4 class="font-bold text-white mb-4">Resources</h4>
-        <p>Blog</p>
-        <p>Help</p>
-        <p>Contact</p>
-      </div>
-      <div>
-        <h4 class="font-bold text-white mb-4">Legal</h4>
-        <p>Privacy</p>
-        <p>Terms</p>
-        <p>Refund</p>
-      </div>
-    </div>
-    <div class="text-center text-xs text-gray-500 mt-10">© 2026 QRBatch — Made in India</div>
-  </footer>
+  <a href="/qr-bulk.html"
+     class="border px-6 py-3 rounded-xl hover:bg-gray-100 transition">
+    Upload Excel
+  </a>
+</div>
+
+<p class="text-sm text-gray-500 mt-4">
+  No signup required • Free 50 QR/day
+</p>
+```
+
+  </div>
+
+  <div class="bg-gray-100 rounded-2xl h-72 flex items-center justify-center">
+    <span class="text-gray-400">QR Preview Area</span>
+  </div>
+</section>
+
+<!-- USE CASES -->
+
+<section class="bg-gray-50 py-20">
+  <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-3xl font-bold text-center mb-12">Create QR Codes For Anything</h2>
+
+```
+<div class="grid md:grid-cols-3 gap-6">
+  <a href="/upi-qr-code-generator" class="p-6 bg-white rounded-2xl shadow hover:shadow-lg">UPI Payment QR</a>
+  <a href="/student-id-card-qr-code" class="p-6 bg-white rounded-2xl shadow hover:shadow-lg">Student ID QR</a>
+  <a href="/restaurant-menu-qr-code" class="p-6 bg-white rounded-2xl shadow hover:shadow-lg">Menu QR</a>
+  <a href="/event-ticket-qr-code" class="p-6 bg-white rounded-2xl shadow hover:shadow-lg">Event Ticket QR</a>
+  <a href="/product-label-qr-code" class="p-6 bg-white rounded-2xl shadow hover:shadow-lg">Product Label QR</a>
+  <a href="/whatsapp-qr-code-generator" class="p-6 bg-white rounded-2xl shadow hover:shadow-lg">WhatsApp QR</a>
+</div>
+```
+
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+
+<section class="py-20">
+  <div class="max-w-6xl mx-auto px-6 text-center">
+    <h2 class="text-3xl font-bold mb-12">How It Works</h2>
+
+```
+<div class="grid md:grid-cols-3 gap-8 text-lg">
+  <div>1️⃣ Upload Excel</div>
+  <div>2️⃣ Customize Design</div>
+  <div>3️⃣ Download ZIP or PDF</div>
+</div>
+```
+
+  </div>
+</section>
+
+<!-- PRICING -->
+
+<section class="bg-gray-50 py-20">
+  <div class="max-w-5xl mx-auto px-6 text-center">
+    <h2 class="text-3xl font-bold mb-12">Simple Pricing</h2>
+
+```
+<div class="grid md:grid-cols-2 gap-8">
+  <div class="border rounded-2xl p-8">
+    <h3 class="text-xl font-bold mb-4">Free</h3>
+    <p>50 QR/day</p>
+    <p>Basic designs</p>
+  </div>
+
+  <div class="border-2 border-indigo-600 rounded-2xl p-8">
+    <h3 class="text-xl font-bold mb-4">Pro</h3>
+    <p>Unlimited QR</p>
+    <p>PDF labels</p>
+    <p>No watermark</p>
+  </div>
+</div>
+```
+
+  </div>
+</section>
+
+<!-- CTA -->
+
+<section class="bg-indigo-600 text-white py-20 text-center">
+  <h2 class="text-3xl font-bold mb-6">Start generating QR codes for free</h2>
+
+<a href="/qr-single.html"
+  class="bg-white text-indigo-600 px-8 py-3 rounded-xl font-semibold">
+Generate Now </a>
+
+</section>
+
+<!-- FOOTER -->
+
+<footer class="bg-gray-900 text-gray-300 py-12 text-center text-sm">
+  © 2026 QRBulkGen — Made in India
+</footer>
 
 </body>
 </html>
-
