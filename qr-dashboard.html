@@ -9,11 +9,10 @@
 
 <!-- Protect page -->
 
+<script src="/js/auth.js"></script>
+
 <script>
-const token = localStorage.getItem("token");
-if(!token){
-    window.location.href="qr-auth.html";
-}
+requireLogin();
 </script>
 
 </head>
@@ -25,11 +24,11 @@ if(!token){
 <header class="bg-white shadow p-4 flex justify-between items-center">
   <a href="index.html" class="text-xl font-bold text-indigo-600">QRBulkGen</a>
 
-  <nav class="space-x-6 font-medium">
+  <nav class="space-x-6 font-medium flex items-center">
     <a href="qr-single.html">Generate QR</a>
     <a href="qr-bulk.html">Bulk Upload</a>
     <span class="font-bold text-indigo-600">Dashboard</span>
-    <button onclick="logout()" class="text-red-500">Logout</button>
+    <div id="navUser"></div>
   </nav>
 </header>
 
@@ -39,11 +38,7 @@ if(!token){
 
   <h1 class="text-2xl font-bold mb-6">My Saved QR Projects</h1>
 
-  <!-- Projects list -->
-
   <div id="list" class="grid md:grid-cols-2 gap-6"></div>
-
-  <!-- Empty state -->
 
   <div id="empty" class="text-gray-500 text-center mt-20 hidden">
     No projects yet.<br>
@@ -57,20 +52,10 @@ const API="https://qrbulkgen-backend-production.up.railway.app/api";
 const list=document.getElementById("list");
 const empty=document.getElementById("empty");
 
-// Logout
-function logout(){
-  localStorage.removeItem("token");
-  window.location.href="index.html";
-}
-
-// Load saved projects
 async function loadProjects(){
-
   try{
     const r=await fetch(API+"/projects",{
-      headers:{
-        Authorization:localStorage.getItem("token")
-      }
+      headers:{ Authorization:localStorage.getItem("token") }
     });
 
     if(r.status!==200){
@@ -91,19 +76,16 @@ async function loadProjects(){
 
       card.innerHTML=`
         <h3 class="font-bold text-lg mb-2">${p.name}</h3>
-
         <p class="text-sm text-gray-500 mb-4">
           Created: ${new Date(p.created).toLocaleString()}
         </p>
-
         <div class="flex gap-4">
           <button class="text-indigo-600 hover:underline"
             onclick='openProject(${JSON.stringify(p.data)})'>
             Reopen
           </button>
-
           <button class="text-red-500 hover:underline"
-            onclick="deleteLater()">
+            onclick="alert('Delete coming next update')">
             Delete
           </button>
         </div>
@@ -112,31 +94,18 @@ async function loadProjects(){
       list.appendChild(card);
     });
 
-  }catch(e){
+  }catch{
     empty.classList.remove("hidden");
   }
 }
 
-// reopen QR in generator
 function openProject(data){
   localStorage.setItem("lastQR",data);
   window.location.href="qr-single.html";
 }
 
-// delete placeholder (future feature)
-function deleteLater(){
-  alert("Delete feature coming next step");
-}
-
-// run
 loadProjects();
+</script>
 
-</script>
-<script>
-requireLogin();
-</script>
-<script src="/js/auth.js"></script>
-<script src="/js/auth.js"></script>
 </body>
 </html>
-
