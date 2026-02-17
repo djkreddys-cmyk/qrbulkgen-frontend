@@ -1,11 +1,15 @@
+// ================= QRBulkGen Auth Controller =================
+
+// Decode JWT
 function parseJwt(token){
   try{
     return JSON.parse(atob(token.split('.')[1]));
-  }catch(e){
+  }catch{
     return null;
   }
 }
 
+// ---------------- NAVBAR PROFILE ----------------
 function setupNavbar(){
   const navUser=document.getElementById("navUser");
   if(!navUser) return;
@@ -14,16 +18,16 @@ function setupNavbar(){
 
   // Not logged in
   if(!token){
-    navUser.innerHTML=`<a href="qr-auth.html" class="text-red-500">Login / Register</a>`;
+    navUser.innerHTML=`<a href="/qr-auth.html" class="text-red-500">Login / Register</a>`;
     return;
   }
 
   const user=parseJwt(token);
 
-  // Invalid token
+  // Invalid or expired token
   if(!user || !user.name){
     localStorage.removeItem("token");
-    navUser.innerHTML=`<a href="qr-auth.html" class="text-red-500">Login / Register</a>`;
+    navUser.innerHTML=`<a href="/qr-auth.html" class="text-red-500">Login / Register</a>`;
     return;
   }
 
@@ -34,9 +38,26 @@ function setupNavbar(){
   `;
 }
 
+// ---------------- LOGOUT ----------------
 function logout(){
   localStorage.removeItem("token");
-  window.location.href="index.html";
+  window.location.href="/index.html";
 }
 
+// ---------------- PAGE PROTECTION ----------------
+function requireLogin(){
+  const token=localStorage.getItem("token");
+  if(!token){
+    window.location.href="/qr-auth.html";
+    return;
+  }
+
+  const user=parseJwt(token);
+  if(!user){
+    localStorage.removeItem("token");
+    window.location.href="/qr-auth.html";
+  }
+}
+
+// ---------------- AUTO RUN ----------------
 document.addEventListener("DOMContentLoaded",setupNavbar);
