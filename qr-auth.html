@@ -17,48 +17,50 @@
 <div class="flex-grow flex items-center justify-center px-4">
   <div class="bg-white w-full max-w-md rounded-2xl shadow-xl p-8">
 
-
 <h2 id="title" class="text-2xl font-bold text-center mb-6">Create Account</h2>
 <p id="msg" class="text-center text-sm mb-4"></p>
 
-<!-- NAME -->
-<input id="name" type="text" placeholder="Your Name"
-  class="w-full border rounded-lg px-4 py-3 mb-3" />
+<input id="name" type="text" placeholder="Your Name" class="w-full border rounded-lg px-4 py-3 mb-3" />
+<input id="email" type="email" placeholder="Email" class="w-full border rounded-lg px-4 py-3 mb-3" />
+<input id="password" type="password" placeholder="Password" class="w-full border rounded-lg px-4 py-3 mb-3" />
 
-<!-- EMAIL -->
-<input id="email" type="email" placeholder="Email"
-  class="w-full border rounded-lg px-4 py-3 mb-3" />
-
-<!-- PASSWORD -->
-<input id="password" type="password" placeholder="Password"
-  class="w-full border rounded-lg px-4 py-3 mb-3" />
-
-<!-- FORGOT PASSWORD (LOGIN ONLY) -->
 <div id="forgotBox" class="text-right mb-3 hidden">
-  <button onclick="forgotPassword()" class="text-sm text-indigo-600 hover:underline">
-    Forgot Password?
-  </button>
+  <button onclick="forgotPassword()" class="text-sm text-indigo-600 hover:underline">Forgot Password?</button>
 </div>
 
-<!-- MAIN BUTTON -->
-<button id="mainBtn"
-  class="w-full bg-indigo-600 text-white py-3 rounded-lg mb-4 hover:bg-indigo-700">
-  Register
-</button>
+<button id="mainBtn" class="w-full bg-indigo-600 text-white py-3 rounded-lg mb-4 hover:bg-indigo-700">Register</button>
 
-<!-- SWITCH MODE -->
 <p class="text-center text-sm">
   <span id="switchText">Already registered?</span>
   <button onclick="toggleMode()" class="text-indigo-600 font-semibold">Login</button>
 </p>
 
+  </div>
+</div>
+
+<div id="resetModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+  <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-xl">
+    <h3 class="text-xl font-bold mb-4 text-center">Reset Password</h3>
+
+```
+<div class="relative mb-3">
+  <input id="resetEmail" type="email" placeholder="Registered Email" class="w-full border rounded-lg px-4 py-3 pr-10" oninput="checkEmail()" />
+  <span id="emailStatus" class="absolute right-3 top-3 text-xl"></span>
+</div>
+
+<input id="resetPassword" type="password" placeholder="New Password" class="w-full border rounded-lg px-4 py-3 mb-4 opacity-50" disabled />
+
+<button onclick="resetPassword()" class="w-full bg-indigo-600 text-white py-3 rounded-lg mb-2">Update Password</button>
+<button onclick="closeResetModal()" class="w-full text-gray-500">Cancel</button>
+```
 
   </div>
 </div>
+
 <script>
 const API="https://qrbulkgen-backend-production.up.railway.app/api";
-
 let isLogin=false;
+let emailValid=false;
 
 const nameEl=document.getElementById("name");
 const emailEl=document.getElementById("email");
@@ -74,30 +76,26 @@ function show(t,color="red"){
  msg.className="text-center text-sm mb-4 text-"+color+"-600";
 }
 
-// SWITCH BETWEEN LOGIN & REGISTER
 function toggleMode(){
-isLogin=!isLogin;
-
-if(isLogin){
-title.innerText="Login";
-mainBtn.innerText="Login";
-nameEl.style.display="none";
-forgotBox.classList.remove("hidden");
-switchText.innerText="New here?";
-document.querySelector("#switchText + button").innerText="Register";
-}else{
-title.innerText="Create Account";
-mainBtn.innerText="Register";
-nameEl.style.display="block";
-forgotBox.classList.add("hidden");
-switchText.innerText="Already registered?";
-document.querySelector("#switchText + button").innerText="Login";
+ isLogin=!isLogin;
+ if(isLogin){
+  title.innerText="Login";
+  mainBtn.innerText="Login";
+  nameEl.style.display="none";
+  forgotBox.classList.remove("hidden");
+  switchText.innerText="New here?";
+  document.querySelector("#switchText + button").innerText="Register";
+ }else{
+  title.innerText="Create Account";
+  mainBtn.innerText="Register";
+  nameEl.style.display="block";
+  forgotBox.classList.add("hidden");
+  switchText.innerText="Already registered?";
+  document.querySelector("#switchText + button").innerText="Login";
+ }
 }
-}
 
-// MAIN ACTION
 mainBtn.onclick=async()=>{
-
  const email=emailEl.value.trim();
  const password=passwordEl.value.trim();
 
@@ -107,92 +105,65 @@ mainBtn.onclick=async()=>{
      headers:{'Content-Type':'application/json'},
      body:JSON.stringify({email,password})
    });
-
    if(r.status!==200){ show("Invalid login"); return; }
-
    const data=await r.json();
    localStorage.setItem("token",data.token);
    window.location="qr-dashboard.html";
-
  }else{
-
    const name=nameEl.value.trim();
    if(!name||!email||!password){ show("Fill all fields"); return; }
-
    const r=await fetch(API+"/register",{
      method:"POST",
      headers:{'Content-Type':'application/json'},
      body:JSON.stringify({name,email,password})
    });
-
    show(await r.text(),"green");
  }
 };
 
-// RESET PASSWORD POPUP OPEN
 function forgotPassword(){
-  document.getElementById("resetModal").classList.remove("hidden");
-  document.getElementById("resetModal").classList.add("flex");
-
-  // autofill typed email
-  document.getElementById("resetEmail").value = emailEl.value;
+ document.getElementById("resetModal").classList.remove("hidden");
+ document.getElementById("resetModal").classList.add("flex");
+ document.getElementById("resetEmail").value=emailEl.value;
 }
 
-// CLOSE POPUP
 function closeResetModal(){
-  document.getElementById("resetModal").classList.add("hidden");
-  document.getElementById("resetModal").classList.remove("flex");
+ document.getElementById("resetModal").classList.add("hidden");
+ document.getElementById("resetModal").classList.remove("flex");
 }
 
-// RESET PASSWORD API
+async function checkEmail(){
+ const email=document.getElementById("resetEmail").value.trim();
+ const status=document.getElementById("emailStatus");
+ const pass=document.getElementById("resetPassword");
+ if(email.length<5){ status.innerHTML=""; pass.disabled=true; pass.classList.add("opacity-50"); return; }
+ const r=await fetch(API+"/check-email",{method:"POST",headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+ const data=await r.json();
+ if(data.exists){
+   status.innerHTML="✔";
+   status.className="absolute right-3 top-3 text-xl text-green-500";
+   pass.disabled=false;
+   pass.classList.remove("opacity-50");
+   emailValid=true;
+ }else{
+   status.innerHTML="✖";
+   status.className="absolute right-3 top-3 text-xl text-red-500";
+   pass.disabled=true;
+   pass.classList.add("opacity-50");
+   emailValid=false;
+ }
+}
+
 async function resetPassword(){
-  const email=document.getElementById("resetEmail").value.trim();
-  const newPassword=document.getElementById("resetPassword").value.trim();
-
-  if(!email||!newPassword){
-    alert("Enter email and new password");
-    return;
-  }
-
-  const r=await fetch(API+"/reset-password",{
-    method:"POST",
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({email,newPassword})
-  });
-
-  const txt=await r.text();
-  alert(txt);
-
-  if(r.ok) closeResetModal();
+ if(!emailValid){ alert("Please enter registered email"); return; }
+ const email=document.getElementById("resetEmail").value.trim();
+ const newPassword=document.getElementById("resetPassword").value.trim();
+ if(!newPassword){ alert("Enter new password"); return; }
+ const r=await fetch(API+"/reset-password",{method:"POST",headers:{'Content-Type':'application/json'},body:JSON.stringify({email,newPassword})});
+ alert(await r.text());
+ if(r.ok) closeResetModal();
 }
 </script>
-<!-- RESET PASSWORD MODAL -->
-<div id="resetModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
-  <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-xl">
 
-    <h3 class="text-xl font-bold mb-4 text-center">Reset Password</h3>
-
-    <input id="resetEmail" type="email" placeholder="Registered Email"
-      class="w-full border rounded-lg px-4 py-3 mb-3" />
-
-    <input id="resetPassword" type="password" placeholder="New Password"
-      class="w-full border rounded-lg px-4 py-3 mb-4" />
-
-    <button onclick="resetPassword()"
-      class="w-full bg-indigo-600 text-white py-3 rounded-lg mb-2">
-      Update Password
-    </button>
-
-    <button onclick="closeResetModal()"
-      class="w-full text-gray-500">
-      Cancel
-    </button>
-
-  </div>
-</div>
 </body>
 </html>
-
-
-
-
