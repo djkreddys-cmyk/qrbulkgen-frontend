@@ -55,7 +55,6 @@
 
   </div>
 </div>
-
 <script>
 const API="https://qrbulkgen-backend-production.up.railway.app/api";
 
@@ -95,6 +94,7 @@ switchText.innerText="Already registered?";
 document.querySelector("#switchText + button").innerText="Login";
 }
 }
+
 // MAIN ACTION
 mainBtn.onclick=async()=>{
 
@@ -128,7 +128,24 @@ mainBtn.onclick=async()=>{
    show(await r.text(),"green");
  }
 };
-  async function resetPassword(){
+
+// RESET PASSWORD POPUP OPEN
+function forgotPassword(){
+  document.getElementById("resetModal").classList.remove("hidden");
+  document.getElementById("resetModal").classList.add("flex");
+
+  // autofill typed email
+  document.getElementById("resetEmail").value = emailEl.value;
+}
+
+// CLOSE POPUP
+function closeResetModal(){
+  document.getElementById("resetModal").classList.add("hidden");
+  document.getElementById("resetModal").classList.remove("flex");
+}
+
+// RESET PASSWORD API
+async function resetPassword(){
   const email=document.getElementById("resetEmail").value.trim();
   const newPassword=document.getElementById("resetPassword").value.trim();
 
@@ -146,11 +163,8 @@ mainBtn.onclick=async()=>{
   const txt=await r.text();
   alert(txt);
 
-  if(r.ok){
-    closeResetModal();
-  }
+  if(r.ok) closeResetModal();
 }
-
 </script>
 <!-- RESET PASSWORD MODAL -->
 <div id="resetModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
@@ -178,6 +192,7 @@ mainBtn.onclick=async()=>{
 </div>
 </body>
 </html>
+
 
 
 
