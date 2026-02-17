@@ -22,20 +22,24 @@
   </nav>
 </header>
 
-<!-- CENTERED LOGIN BOX -->
+<!-- CENTERED AUTH BOX -->
 
 <div class="flex-grow flex items-center justify-center px-4">
-
   <div class="bg-white w-full max-w-md rounded-2xl shadow-xl p-8">
 
-
+```
 <h2 class="text-2xl font-bold text-center mb-6">QRBulkGen Account</h2>
-
 <p id="msg" class="text-center text-sm mb-4"></p>
 
+<!-- NAME (REGISTER ONLY) -->
+<input id="name" type="text" placeholder="Enter Your Name"
+  class="w-full border rounded-lg px-4 py-3 mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+
+<!-- EMAIL -->
 <input id="email" type="email" placeholder="Enter Email"
   class="w-full border rounded-lg px-4 py-3 mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
 
+<!-- PASSWORD -->
 <input id="password" type="password" placeholder="Enter Password"
   class="w-full border rounded-lg px-4 py-3 mb-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
 
@@ -54,7 +58,7 @@
   class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700">
   Login
 </button>
-
+```
 
   </div>
 </div>
@@ -68,22 +72,35 @@ function show(msg,color="red"){
   m.className="text-center text-sm mb-4 text-"+color+"-600";
 }
 
+const nameEl=document.getElementById("name");
+const emailEl=document.getElementById("email");
+const passwordEl=document.getElementById("password");
+
+// REGISTER (name + email + password)
 async function register(){
-  const email=emailEl.value;
-  const password=passwordEl.value;
+  const name=nameEl.value.trim();
+  const email=emailEl.value.trim();
+  const password=passwordEl.value.trim();
+
+  if(!name || !email || !password){
+    show("Please fill all fields");
+    return;
+  }
 
   const r=await fetch(API+"/register",{
     method:"POST",
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({email,password})
+    body:JSON.stringify({name,email,password})
   });
 
-  show(await r.text(),"green");
+  const txt=await r.text();
+  show(txt, r.ok ? "green":"red");
 }
 
+// LOGIN (email + password only)
 async function login(){
-  const email=emailEl.value;
-  const password=passwordEl.value;
+  const email=emailEl.value.trim();
+  const password=passwordEl.value.trim();
 
   const r=await fetch(API+"/login",{
     method:"POST",
@@ -98,17 +115,14 @@ async function login(){
 
   const data=await r.json();
   localStorage.setItem("token",data.token);
+
   window.location="qr-dashboard.html";
 }
 
 function forgotPassword(){
-  alert("Password reset will be added later (SMTP email system)");
+  alert("Password reset system will be added later");
 }
-
-const emailEl=document.getElementById("email");
-const passwordEl=document.getElementById("password");
 </script>
 
 </body>
 </html>
-
