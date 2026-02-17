@@ -77,23 +77,24 @@ function show(t,color="red"){
 
 // SWITCH BETWEEN LOGIN & REGISTER
 function toggleMode(){
- isLogin=!isLogin;
+isLogin=!isLogin;
 
- if(isLogin){
-   title.innerText="Login";
-   mainBtn.innerText="Login";
-   nameEl.style.display="none";
-   forgotBox.classList.remove("hidden");
-   switchText.innerText="New here?";
- }else{
-   title.innerText="Create Account";
-   mainBtn.innerText="Register";
-   nameEl.style.display="block";
-   forgotBox.classList.add("hidden");
-   switchText.innerText="Already registered?";
- }
+if(isLogin){
+title.innerText="Login";
+mainBtn.innerText="Login";
+nameEl.style.display="none";
+forgotBox.classList.remove("hidden");
+switchText.innerText="New here?";
+document.querySelector("#switchText + button").innerText="Register";
+}else{
+title.innerText="Create Account";
+mainBtn.innerText="Register";
+nameEl.style.display="block";
+forgotBox.classList.add("hidden");
+switchText.innerText="Already registered?";
+document.querySelector("#switchText + button").innerText="Login";
 }
-
+}
 // MAIN ACTION
 mainBtn.onclick=async()=>{
 
@@ -135,4 +136,5 @@ function forgotPassword(){
 
 </body>
 </html>
+
 
