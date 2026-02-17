@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Single QR Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body class="bg-gray-100">
+
+<div class="max-w-7xl mx-auto p-6 grid md:grid-cols-2 gap-8">
+
+  <!-- LEFT INPUT PANEL -->
+  <div class="bg-white rounded-2xl shadow p-6">
+    <h2 class="text-2xl font-bold mb-6">Create QR Code</h2>
+
+    <!-- Type Tabs -->
+    <div class="flex gap-2 mb-6">
+      <button class="tab px-4 py-2 bg-indigo-600 text-white rounded-xl" data-type="url">URL</button>
+      <button class="tab px-4 py-2 bg-gray-200 rounded-xl" data-type="text">Text</button>
+      <button class="tab px-4 py-2 bg-gray-200 rounded-xl" data-type="wifi">WiFi</button>
+    </div>
+
+    <!-- Dynamic Fields -->
+    <div id="fields" class="space-y-4">
+      <input id="qrInput" type="text" placeholder="Enter URL" class="w-full border rounded-xl p-3" />
+    </div>
+
+    <!-- Color -->
+    <div class="mt-6">
+      <label class="block mb-2 font-medium">QR Color</label>
+      <input id="color" type="color" value="#000000" />
+    </div>
+
+    <!-- Size -->
+    <div class="mt-6">
+      <label class="block mb-2 font-medium">Size</label>
+      <input id="size" type="range" min="150" max="400" value="250" />
+    </div>
+
+    <button onclick="generateQR()" class="mt-8 w-full bg-indigo-600 text-white py-3 rounded-xl">Generate QR</button>
+  </div>
+
+  <!-- RIGHT PREVIEW PANEL -->
+  <div class="bg-white rounded-2xl shadow p-6 flex flex-col items-center justify-center">
+    <h2 class="text-xl font-semibold mb-6">Live Preview</h2>
+    <div id="qrcode" class="p-6 bg-white"></div>
+    <button onclick="downloadQR()" class="mt-6 bg-green-600 text-white px-6 py-3 rounded-xl">Download PNG</button>
+  </div>
+
+</div>
+
+<script>
+let qr;
+function generateQR(){
+  const text=document.getElementById('qrInput').value || 'https://example.com';
+  const color=document.getElementById('color').value;
+  const size=document.getElementById('size').value;
+  document.getElementById('qrcode').innerHTML='';
+  qr=new QRCode(document.getElementById('qrcode'),{
+    text:text,
+    width:Number(size),
+    height:Number(size),
+    colorDark:color,
+    colorLight:'#ffffff'
+  });
+}
+function downloadQR(){
+  const img=document.querySelector('#qrcode img');
+  if(!img)return;
+  const link=document.createElement('a');
+  link.href=img.src;
+  link.download='qr-code.png';
+  link.click();
+}
+</script>
+
+</body>
+</html>

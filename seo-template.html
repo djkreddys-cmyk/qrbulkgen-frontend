@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="metaTitle">QR Tool</title>
+  <meta name="description" id="metaDesc" content="Generate QR codes online" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white text-gray-800">
+
+<!-- HERO -->
+<section class="max-w-5xl mx-auto px-6 py-12">
+  <h1 id="pageTitle" class="text-4xl font-bold mb-4">QR Generator</h1>
+  <p id="subtitle" class="text-gray-600 mb-8">Create QR instantly</p>
+
+  <!-- Embedded Generator -->
+  <div class="border rounded-2xl p-6 bg-gray-50">
+    <input id="qrInput" type="text" placeholder="Enter value" class="w-full border rounded-xl p-3 mb-4" />
+    <button onclick="generate()" class="bg-indigo-600 text-white px-6 py-3 rounded-xl">Generate</button>
+    <div id="qr" class="mt-6"></div>
+  </div>
+</section>
+
+<!-- ARTICLE -->
+<section class="max-w-4xl mx-auto px-6 py-12">
+  <div id="article"></div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+// keyword from URL: /?k=upi-qr-code-generator
+const params=new URLSearchParams(location.search);
+const keyword=(params.get('k')||'QR Code Generator').replace(/-/g,' ');
+
+// Dynamic SEO content
+document.getElementById('metaTitle').innerText=keyword+' | Free Online Tool';
+document.getElementById('metaDesc').content='Create '+keyword+' instantly online for free.';
+document.getElementById('pageTitle').innerText=keyword;
+document.getElementById('subtitle').innerText='Free '+keyword+' online tool with instant download.';
+
+// Article auto content
+const article=`
+<h2 class='text-2xl font-bold mb-4'>What is ${keyword}?</h2>
+<p class='mb-4'>${keyword} helps you quickly create scannable codes that users can access using any smartphone camera.</p>
+
+<h2 class='text-2xl font-bold mb-4'>How to create ${keyword}</h2>
+<ol class='list-decimal ml-6 mb-4'>
+<li>Enter your details</li>
+<li>Click generate</li>
+<li>Download and share</li>
+</ol>
+
+<h2 class='text-2xl font-bold mb-4'>Who uses ${keyword}?</h2>
+<p class='mb-4'>Businesses, schools, events, and individuals use this tool daily.</p>
+
+<h2 class='text-2xl font-bold mb-4'>FAQs</h2>
+<p><strong>Is it free?</strong> Yes.</p>
+<p><strong>Works on phone?</strong> Yes.</p>
+<p><strong>Need signup?</strong> No.</p>
+`;
+
+document.getElementById('article').innerHTML=article;
+
+// Generator
+function generate(){
+  document.getElementById('qr').innerHTML='';
+  new QRCode(document.getElementById('qr'),{text:document.getElementById('qrInput').value,width:220,height:220});
+}
+</script>
+
+</body>
+</html>
