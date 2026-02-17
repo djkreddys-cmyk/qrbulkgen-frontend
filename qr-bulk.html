@@ -8,6 +8,18 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="bg-gray-100">
+ <!-- NAVBAR -->
+  <header class="bg-white shadow p-4 flex justify-between items-center sticky top-0 z-50">
+  <a href="/index.html" class="text-xl font-bold text-indigo-600">QRBulkGen</a>
+
+  <nav class="space-x-6 font-medium hidden md:flex items-center">
+    <a href="/qr-single.html" class="hover:text-indigo-600">Generate QR</a>
+    <a href="/qr-bulk.html" class="hover:text-indigo-600">Bulk Upload</a>
+    <a href="/qr-dashboard.html" class="hover:text-indigo-600">Dashboard</a>
+    <div id="navUser"></div>
+  </nav>
+</header>
+  
 
 <div class="max-w-7xl mx-auto p-6 grid md:grid-cols-2 gap-8">
 
@@ -92,3 +104,4 @@ function downloadQR(){
 
 </body>
 </html>
+
