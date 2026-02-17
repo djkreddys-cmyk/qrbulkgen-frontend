@@ -42,12 +42,12 @@
 </p>
 
 <div class="flex gap-4">
-  <a href="/qr-single.html"
+  <a href="qr-single.html"
      class="bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700 transition">
     Generate QR Now
   </a>
 
-  <a href="/qr-bulk.html"
+  <a href="qr-bulk.html"
      class="border px-6 py-3 rounded-xl hover:bg-gray-100 transition">
     Upload Excel
   </a>
@@ -144,9 +144,37 @@ Generate Now </a>
 <footer class="bg-gray-900 text-gray-300 py-12 text-center text-sm">
   © 2026 QRBulkGen — Made in India
 </footer>
+<script>
+document.addEventListener("DOMContentLoaded", function(){
 
+function parseJwt(token){
+  try{
+    return JSON.parse(atob(token.split('.')[1]));
+  }catch(e){
+    return null;
+  }
+}
+
+const token = localStorage.getItem("token");
+const navUser = document.getElementById("navUser");
+
+if(token && navUser){
+  const user = parseJwt(token);
+
+  navUser.innerHTML =
+    '<span class="text-gray-700 mr-3">👤 '+user.name+'</span>' +
+    '<button onclick="logout()" class="text-red-500">Logout</button>';
+
+}else if(navUser){
+  navUser.innerHTML = '<a href="qr-auth.html" class="text-red-500">Login</a>';
+}
+
+});
+
+function logout(){
+  localStorage.removeItem("token");
+  window.location="index.html";
+}
+</script>
 </body>
 </html>
-
-
-
