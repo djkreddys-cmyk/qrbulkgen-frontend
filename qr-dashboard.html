@@ -1,71 +1,137 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Dashboard - My QR Projects</title>
+<title>Dashboard — QRBulkGen</title>
 <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
 
-<header class="bg-white border-b">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold text-indigo-600">QRBatch Dashboard</h1>
-    <button onclick="logout()" class="text-sm text-red-600">Logout</button>
-  </div>
-</header>
-
-<main class="max-w-6xl mx-auto p-6">
-  <h2 class="text-2xl font-bold mb-6">My Saved QR Projects</h2>
-
-  <div id="projects" class="grid md:grid-cols-3 gap-6"></div>
-</main>
+<!-- Protect page -->
 
 <script>
-const API='https://qrbulkgen-backend-production.up.railway.app/api/projects';
-const token=localStorage.getItem('token');
-
-if(!token) location.href='login.html';
-
-async function loadProjects(){
- const res=await fetch(API,{headers:{Authorization:token}});
- const data=await res.json();
- const container=document.getElementById('projects');
- container.innerHTML='';
- data.forEach(p=>{
-   const d=JSON.parse(p.data);
-   container.innerHTML+=`
-   <div class="bg-white p-4 rounded-2xl shadow">
-     <div class="text-sm text-gray-500 mb-2">${new Date(p.created).toLocaleString()}</div>
-     <div class="font-semibold mb-2">${p.name}</div>
-     <div class="text-xs break-all text-gray-600 mb-4">${JSON.stringify(d).slice(0,80)}...</div>
-     <div class="flex gap-2">
-       <button onclick='reopen(${JSON.stringify(d)})' class="flex-1 bg-indigo-600 text-white px-3 py-2 rounded-lg">Open</button>
-       <button onclick='del(${p.id})' class="flex-1 bg-red-500 text-white px-3 py-2 rounded-lg">Delete</button>
-     </div>
-   </div>`;
- });
+const token = localStorage.getItem("token");
+if(!token){
+    window.location.href="qr-auth.html";
 }
+</script>
 
-function reopen(data){
- localStorage.setItem('reopenQR',JSON.stringify(data));
- window.location='qr-single.html';
-}
+</head>
 
-async function del(id){
- await fetch(API+'/'+id,{method:'DELETE',headers:{Authorization:token}});
- loadProjects();
-}
+<body class="bg-gray-100 min-h-screen">
 
+<!-- Navbar -->
+
+<header class="bg-white shadow p-4 flex justify-between items-center">
+  <a href="index.html" class="text-xl font-bold text-indigo-600">QRBulkGen</a>
+
+  <nav class="space-x-6 font-medium">
+    <a href="qr-single.html">Generate QR</a>
+    <a href="qr-bulk.html">Bulk Upload</a>
+    <span class="font-bold text-indigo-600">Dashboard</span>
+    <button onclick="logout()" class="text-red-500">Logout</button>
+  </nav>
+</header>
+
+<!-- Page -->
+
+<div class="max-w-5xl mx-auto mt-10 px-4">
+
+  <h1 class="text-2xl font-bold mb-6">My Saved QR Projects</h1>
+
+  <!-- Projects list -->
+
+  <div id="list" class="grid md:grid-cols-2 gap-6"></div>
+
+  <!-- Empty state -->
+
+  <div id="empty" class="text-gray-500 text-center mt-20 hidden">
+    No projects yet.<br>
+    Go generate a QR code and save it — it will appear here.
+  </div>
+
+</div>
+
+<script>
+const API="https://qrbulkgen-backend-production.up.railway.app/api";
+const list=document.getElementById("list");
+const empty=document.getElementById("empty");
+
+// Logout
 function logout(){
- localStorage.removeItem('token');
- location.href='login.html';
+  localStorage.removeItem("token");
+  window.location.href="index.html";
 }
 
+// Load saved projects
+async function loadProjects(){
+
+  try{
+    const r=await fetch(API+"/projects",{
+      headers:{
+        Authorization:localStorage.getItem("token")
+      }
+    });
+
+    if(r.status!==200){
+      logout();
+      return;
+    }
+
+    const data=await r.json();
+
+    if(!data || data.length===0){
+      empty.classList.remove("hidden");
+      return;
+    }
+
+    data.forEach(p=>{
+      const card=document.createElement("div");
+      card.className="bg-white rounded-xl shadow p-5";
+
+      card.innerHTML=`
+        <h3 class="font-bold text-lg mb-2">${p.name}</h3>
+
+        <p class="text-sm text-gray-500 mb-4">
+          Created: ${new Date(p.created).toLocaleString()}
+        </p>
+
+        <div class="flex gap-4">
+          <button class="text-indigo-600 hover:underline"
+            onclick='openProject(${JSON.stringify(p.data)})'>
+            Reopen
+          </button>
+
+          <button class="text-red-500 hover:underline"
+            onclick="deleteLater()">
+            Delete
+          </button>
+        </div>
+      `;
+
+      list.appendChild(card);
+    });
+
+  }catch(e){
+    empty.classList.remove("hidden");
+  }
+}
+
+// reopen QR in generator
+function openProject(data){
+  localStorage.setItem("lastQR",data);
+  window.location.href="qr-single.html";
+}
+
+// delete placeholder (future feature)
+function deleteLater(){
+  alert("Delete feature coming next step");
+}
+
+// run
 loadProjects();
+
 </script>
 
 </body>
 </html>
-
-
