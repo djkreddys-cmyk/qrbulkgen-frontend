@@ -14,16 +14,15 @@
 
 <body class="bg-gray-100">
 
-<!-- Navbar -->
+ <!-- NAVBAR -->
+  <header class="bg-white shadow p-4 flex justify-between items-center sticky top-0 z-50">
+  <a href="/index.html" class="text-xl font-bold text-indigo-600">QRBulkGen</a>
 
-<header class="bg-white shadow p-4 flex justify-between items-center">
-  <a href="index.html" class="text-xl font-bold text-indigo-600">QRBulkGen</a>
-
-  <nav class="space-x-6 font-medium">
-    <a href="qr-single.html" class="font-bold text-indigo-600">Generate QR</a>
-    <a href="qr-bulk.html">Bulk Upload</a>
-    <a href="qr-dashboard.html">Dashboard</a>
-    <a href="qr-auth.html" class="text-red-500">Login</a>
+  <nav class="space-x-6 font-medium hidden md:flex items-center">
+    <a href="/qr-single.html" class="hover:text-indigo-600">Generate QR</a>
+    <a href="/qr-bulk.html" class="hover:text-indigo-600">Bulk Upload</a>
+    <a href="/qr-dashboard.html" class="hover:text-indigo-600">Dashboard</a>
+    <div id="navUser"></div>
   </nav>
 </header>
 
@@ -170,4 +169,5 @@ window.onload=()=>{
 
 </body>
 </html>
+
 
