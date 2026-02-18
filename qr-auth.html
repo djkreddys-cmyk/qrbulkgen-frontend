@@ -122,101 +122,32 @@ mainBtn.onclick=async()=>{
 };
 </script>
 <!-- RESET PASSWORD MODAL -->
-<script>
+<div id="resetModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+  <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-xl">
 
-const resetModal = document.getElementById("resetModal");
-const resetEmail = document.getElementById("resetEmail");
-const resetPasswordInput = document.getElementById("resetPassword");
-const emailStatus = document.getElementById("emailStatus");
-const updateBtn = document.getElementById("updatePasswordBtn");
-const cancelBtn = document.getElementById("cancelReset");
+    <h3 class="text-xl font-bold mb-4 text-center">Reset Password</h3>
 
-let emailValid = false;
+    <div class="relative mb-3">
+      <input id="resetEmail" type="email" placeholder="Registered Email"
+        class="w-full border rounded-lg px-4 py-3 pr-10" />
+      <span id="emailStatus" class="absolute right-3 top-3 text-xl"></span>
+    </div>
 
-// OPEN MODAL
-function forgotPassword(){
-  resetModal.classList.remove("hidden");
-  resetModal.classList.add("flex");
-  resetEmail.value="";
-  resetPasswordInput.value="";
-  resetPasswordInput.disabled=true;
-  resetPasswordInput.classList.add("opacity-50");
-  emailStatus.innerHTML="";
-}
+    <input id="resetPassword" type="password" placeholder="New Password"
+      class="w-full border rounded-lg px-4 py-3 mb-4 opacity-50" disabled />
 
-// CLOSE MODAL
-cancelBtn.onclick = () => {
-  resetModal.classList.add("hidden");
-  resetModal.classList.remove("flex");
-};
+    <button id="updatePasswordBtn"
+      class="w-full bg-indigo-600 text-white py-3 rounded-lg mb-2">
+      Update Password
+    </button>
 
-// CHECK EMAIL LIVE
-resetEmail.addEventListener("input", async () => {
+    <button id="cancelReset" class="w-full text-gray-500">
+      Cancel
+    </button>
 
-  const email = resetEmail.value.trim();
-
-  if(email.length < 5){
-    emailStatus.innerHTML="";
-    resetPasswordInput.disabled=true;
-    resetPasswordInput.classList.add("opacity-50");
-    return;
-  }
-
-  const r = await fetch(API+"/check-email",{
-    method:"POST",
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({email})
-  });
-
-  const data = await r.json();
-
-  if(data.exists){
-    emailStatus.innerHTML="✔";
-    emailStatus.className="absolute right-3 top-3 text-xl text-green-500";
-    resetPasswordInput.disabled=false;
-    resetPasswordInput.classList.remove("opacity-50");
-    emailValid=true;
-  }else{
-    emailStatus.innerHTML="✖";
-    emailStatus.className="absolute right-3 top-3 text-xl text-red-500";
-    resetPasswordInput.disabled=true;
-    resetPasswordInput.classList.add("opacity-50");
-    emailValid=false;
-  }
-});
-
-// UPDATE PASSWORD
-updateBtn.onclick = async () => {
-
-  if(!emailValid){
-    alert("Please enter registered email");
-    return;
-  }
-
-  const email = resetEmail.value.trim();
-  const newPassword = resetPasswordInput.value.trim();
-
-  if(newPassword.length < 4){
-    alert("Password must be at least 4 characters");
-    return;
-  }
-
-  const r = await fetch(API+"/reset-password",{
-    method:"POST",
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({email,newPassword})
-  });
-
-  const msg = await r.text();
-  alert(msg);
-
-  if(r.ok){
-    resetModal.classList.add("hidden");
-    resetModal.classList.remove("flex");
-  }
-};
-
-</script>
+  </div>
+</div>
 </body>
 </html>
+
 
