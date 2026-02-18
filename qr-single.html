@@ -379,24 +379,10 @@ const size=parseInt(document.getElementById("qrSize").value);
 
 qrCode.update({width:size,height:size});
 qrCode.download({name:"qr-code",extension:"png"});
-/* ensure first tab loads correctly after navigation */
-/* default load */
-window.addEventListener("DOMContentLoaded", () => {
-
-currentType = "text";          // default QR type
-renderForm();                  // show inputs immediately
-slideTabs(0);                  // fix arrow visibility
-document.getElementById("qrcode").innerHTML=""; // empty preview
-
-});
-
 /* restore preview size */
 qrCode.update({width:260,height:260});
-
 closeDownloadModal();
 }
-
-
 /* ---------- SAVE MODAL ---------- */
 function openSaveModal(){
 if(!qrCode) return alert("Generate QR first");
@@ -406,49 +392,42 @@ document.getElementById("saveModal").classList.add("flex");
 function closeSaveModal(){
 document.getElementById("saveModal").classList.add("hidden");
 }
-
-
 /* ---------- SAVE TO DASHBOARD ---------- */
 function saveQR(){
-
 const name=document.getElementById("qrFileName").value.trim();
 if(!name) return alert("Enter file name");
-
 /* prevent double click */
 const btn=event.target;
 btn.disabled=true;
 btn.innerText="Saving...";
-
 /* convert QR to image */
 qrCode.getRawData("png").then(blob=>{
 const reader=new FileReader();
 reader.onload=function(){
-
 let saved=JSON.parse(localStorage.getItem("savedQRs")||"[]");
-
 saved.push({
 name:name,
 date:new Date().toLocaleString(),
 data:reader.result
 });
-
 localStorage.setItem("savedQRs",JSON.stringify(saved));
-
 /* clear input + close modal */
 document.getElementById("qrFileName").value="";
 closeSaveModal();
-
 alert("QR saved to Dashboard");
-
 /* restore button */
 btn.disabled=false;
 btn.innerText="Save";
-
 };
 reader.readAsDataURL(blob);
 });
 }
-
+/* ---------- PAGE INITIAL LOAD ---------- */
+window.addEventListener("DOMContentLoaded", () => {
+currentType="text";
+renderForm();
+slideTabs(0);
+});
 </script>
 <!-- NAVBAR AUTH CONTROLLER (VERY IMPORTANT) -->
 <script src="js/auth.js"></script>
@@ -489,6 +468,7 @@ class="w-full border rounded p-2 mb-4">
 
 </body>
 </html>
+
 
 
 
