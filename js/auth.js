@@ -1,3 +1,6 @@
+// ===== QRBulkGen Global Auth Controller =====
+
+// Decode JWT
 function parseJwt(token){
   try{
     return JSON.parse(atob(token.split('.')[1]));
@@ -6,48 +9,66 @@ function parseJwt(token){
   }
 }
 
+// NAVBAR CONTROL
 function setupNavbar(){
-  const navUser=document.getElementById("navUser");
-  const navLinks=document.getElementById("navLinks");
+
+  const navUser = document.getElementById("navUser");
+  const navLinks = document.getElementById("navLinks");
+
   if(!navUser) return;
 
-  const token=localStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
-  // NOT LOGGED IN
+  // ================= NOT LOGGED IN =================
   if(!token){
-    navUser.innerHTML=`<a href="/qr-auth.html" class="text-red-500 font-semibold">Login / Register</a>`;
+
+    // hide protected links
     if(navLinks) navLinks.classList.add("hidden");
+
+    navUser.innerHTML = `
+      <a href="/qr-auth.html" class="text-red-500 font-semibold">
+        Login / Register
+      </a>
+    `;
+
     return;
   }
 
-  const user=parseJwt(token);
+  // ================= TOKEN EXISTS =================
+  const user = parseJwt(token);
 
+  // invalid token
   if(!user || !user.name){
     localStorage.removeItem("token");
-    navUser.innerHTML=`<a href="/qr-auth.html" class="text-red-500 font-semibold">Login / Register</a>`;
-    if(navLinks) navLinks.classList.add("hidden");
+    location.reload();
     return;
   }
 
-  // LOGGED IN
-  navUser.innerHTML=`
-    <span class="text-gray-700 font-semibold">👤 ${user.name}</span>
-    <button onclick="logout()" class="text-red-500 ml-3">Logout</button>
-  `;
-
+  // show protected links
   if(navLinks) navLinks.classList.remove("hidden");
+
+  // show profile
+  navUser.innerHTML = `
+    <span class="text-gray-700 font-semibold mr-3">👤 ${user.name}</span>
+    <button onclick="logout()" class="text-red-500 hover:underline">
+      Logout
+    </button>
+  `;
 }
 
+// LOGOUT
 function logout(){
   localStorage.removeItem("token");
-  window.location="/index.html";
+  window.location.href = "/index.html";
 }
 
+// PROTECT PAGE
 function requireLogin(){
-  const token=localStorage.getItem("token");
+  const token = localStorage.getItem("token");
   if(!token){
-    window.location="/qr-auth.html";
+    window.location.href = "/qr-auth.html";
   }
 }
 
-document.addEventListener("DOMContentLoaded",setupNavbar);
+// AUTO RUN
+document.addEventListener("DOMContentLoaded", setupNavbar);
