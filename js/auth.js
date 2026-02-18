@@ -7,38 +7,38 @@ function parseJwt(token){
 }
 
 function setupNavbar(){
-
-  const navUser = document.getElementById("navUser");
-  const navPrivate = document.getElementById("navPrivate");
-  const token = localStorage.getItem("token");
-
+  const navUser=document.getElementById("navUser");
+  const navLinks=document.getElementById("navLinks");
   if(!navUser) return;
+
+  const token=localStorage.getItem("token");
 
   // NOT LOGGED IN
   if(!token){
-    if(navPrivate) navPrivate.classList.add("hidden");
-
-    navUser.innerHTML =
-      `<a href="/qr-auth.html" class="text-red-500 font-semibold">Login / Register</a>`;
+    navUser.innerHTML=`<a href="/qr-auth.html" class="text-red-500 font-semibold">Login / Register</a>`;
+    if(navLinks) navLinks.style.display="none";
     return;
   }
 
   const user=parseJwt(token);
 
-  if(!user){
+  if(!user || !user.name){
     localStorage.removeItem("token");
-    location.reload();
+    navUser.innerHTML=`<a href="/qr-auth.html" class="text-red-500 font-semibold">Login / Register</a>`;
+    if(navLinks) navLinks.style.display="none";
     return;
   }
 
   // LOGGED IN
-  if(navPrivate) navPrivate.classList.remove("hidden");
-
-  navUser.innerHTML = `
-    <span class="text-gray-700 font-semibold mr-3">👤 ${user.name}</span>
-    <button onclick="logout()" class="text-red-500 hover:underline">Logout</button>
+  navUser.innerHTML=`
+    <span class="text-gray-700 font-semibold">👤 ${user.name}</span>
+    <button onclick="logout()" class="text-red-500 ml-3">Logout</button>
   `;
+
+  if(navLinks) navLinks.style.display="flex";
 }
+
+document.addEventListener("DOMContentLoaded",setupNavbar);
 
 function logout(){
   localStorage.removeItem("token");
