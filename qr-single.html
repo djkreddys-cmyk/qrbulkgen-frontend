@@ -156,14 +156,25 @@ return `
 
 <h3 class="font-semibold mb-3">QR Customization</h3>
 
-<label class="text-sm">QR Color</label>
-<input type="color" id="qrColor" value="${qrSettings.color}" class="w-full mb-3" oninput="updateQRSettings()">
+<div class="grid grid-cols-2 md:grid-cols-5 gap-3 items-end">
 
-<label class="text-sm">Background Color</label>
-<input type="color" id="bgColor" value="${qrSettings.bg}" class="w-full mb-3" oninput="updateQRSettings()">
+<div>
+<label class="text-xs">QR Color</label>
+<input type="color" id="qrColor" value="${qrSettings.color}"
+class="w-full h-10" oninput="updateQRSettings()">
+</div>
 
-<label class="text-sm">QR Style</label>
-<select id="qrStyle" class="w-full border rounded-lg p-2 mb-3" onchange="updateQRSettings()">
+<div>
+<label class="text-xs">Background</label>
+<input type="color" id="bgColor" value="${qrSettings.bg}"
+class="w-full h-10" oninput="updateQRSettings()">
+</div>
+
+<div>
+<label class="text-xs">Style</label>
+<select id="qrStyle"
+class="w-full border rounded-lg h-10 px-2"
+onchange="updateQRSettings()">
 <option value="square" ${qrSettings.style=="square"?"selected":""}>Square</option>
 <option value="dots" ${qrSettings.style=="dots"?"selected":""}>Dots</option>
 <option value="rounded" ${qrSettings.style=="rounded"?"selected":""}>Rounded</option>
@@ -171,17 +182,28 @@ return `
 <option value="classy-rounded" ${qrSettings.style=="classy-rounded"?"selected":""}>Classy Rounded</option>
 <option value="extra-rounded" ${qrSettings.style=="extra-rounded"?"selected":""}>Extra Rounded</option>
 </select>
+</div>
 
-<label class="text-sm">Center Logo</label>
-<input type="file" id="logoUpload" accept="image/*" class="w-full mb-2" onchange="updateQRSettings()">
+<div>
+<label class="text-xs">Logo</label>
+<input type="file" id="logoUpload"
+accept="image/*"
+class="w-full text-xs"
+onchange="updateQRSettings()">
+</div>
 
-<button type="button" onclick="removeLogo()" 
-class="text-sm text-red-500 underline mb-4">Remove Logo</button>
+<div>
+<label class="text-xs invisible">Remove</label>
+<button type="button" onclick="removeLogo()"
+class="w-full h-10 text-red-500 border rounded-lg text-xs">
+Remove
+</button>
+</div>
 
+</div>
 </div>
 `;
 }
-
 /* ---------- SAFE VALUE ---------- */
 function val(id){
 const el=document.getElementById(id);
@@ -333,6 +355,7 @@ renderForm();
 <script src="js/auth.js"></script>
 </body>
 </html>
+
 
 
 
