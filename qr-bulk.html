@@ -99,14 +99,17 @@
 </div>
 
 <script>
-let currentType='text', rows=[], logoURL=null, qr;
+let currentType='text';
+let rows=[];
+let logoURL=null;
+let qr=null;
 
 function selectType(t,el){
- currentType=t;
- document.getElementById('selectedType').innerText=t.charAt(0).toUpperCase()+t.slice(1);
- document.querySelectorAll('.qrTab').forEach(b=>b.classList.remove('active'));
- el.classList.add('active');
- updatePreview();
+  currentType=t;
+  document.getElementById('selectedType').innerText=t.charAt(0).toUpperCase()+t.slice(1);
+  document.querySelectorAll('.qrTab').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  updatePreview();
 }
 
 let tabPosition=0;
@@ -117,31 +120,30 @@ function slideTabs(d){
  tabPosition+=d*200;
  if(tabPosition<0)tabPosition=0;
  if(tabPosition>m)tabPosition=m;
- t.style.transform=`translateX(-${tabPosition}px)`;
+ t.style.transform='translateX(-'+tabPosition+'px)';
 }
 
-document.getElementById('logoFile').addEventListener('change',e=>{
+document.getElementById('logoFile').addEventListener('change',function(e){
  const f=e.target.files[0];
  if(f)logoURL=URL.createObjectURL(f);
  updatePreview();
 });
 
 function downloadSample(){
- let data=[]; let filename='qr_sample.xlsx';
- switch(currentType){
- case 'text': data=[{value:'Hello World',name:'text1'}]; filename='sample_text.xlsx'; break;
- case 'url': data=[{value:'https://google.com',name:'web1'}]; filename='sample_website.xlsx'; break;
- case 'phone': data=[{value:'9876543210',name:'call1'}]; filename='sample_phone.xlsx'; break;
- case 'email': data=[{value:'demo@gmail.com',name:'mail1'}]; filename='sample_email.xlsx'; break;
- case 'whatsapp': data=[{phone:'9876543210',msg:'Welcome',name:'wa1'}]; filename='sample_whatsapp.xlsx'; break;
- case 'wifi': data=[{ssid:'OfficeNet',password:'12345678',name:'wifi1'}]; filename='sample_wifi.xlsx'; break;
- case 'upi': data=[{upi:'shop@upi',amount:'100',name:'upi1'}]; filename='sample_upi.xlsx'; break;
- case 'location': data=[{address:'Vijayawada',name:'loc1'}]; filename='sample_location.xlsx'; break;
- case 'vcard': data=[{name:'Ramesh',org:'ABC Pvt Ltd',tel:'9999999999',file:'card1'}]; filename='sample_vcard.xlsx'; break;
- case 'menu': data=[s=[{url:'https://restaurantmenu.com',name:'menu1'}]; filename='sample_menu.xlsx'; break;
- case 'product': data=[{product:'Rice Bag',code:'SKU123',name:'prod1'}]; filename='sample_product.xlsx'; break;
- case 'ticket': data=[{event:'Music Fest',seat:'A12',date:'12-10-2026',name:'ticket1'}]; filename='sample_ticket.xlsx'; break;
- }
+ var data=[]; var filename='sample.xlsx';
+ if(currentType==='text'){data=[{value:'Hello World',name:'text1'}];filename='sample_text.xlsx';}
+ else if(currentType==='url'){data=[{value:'https://google.com',name:'web1'}];filename='sample_website.xlsx';}
+ else if(currentType==='phone'){data=[{value:'9876543210',name:'call1'}];filename='sample_phone.xlsx';}
+ else if(currentType==='email'){data=[{value:'demo@gmail.com',name:'mail1'}];filename='sample_email.xlsx';}
+ else if(currentType==='whatsapp'){data=[{phone:'9876543210',msg:'Welcome',name:'wa1'}];filename='sample_whatsapp.xlsx';}
+ else if(currentType==='wifi'){data=[{ssid:'OfficeNet',password:'12345678',name:'wifi1'}];filename='sample_wifi.xlsx';}
+ else if(currentType==='upi'){data=[{upi:'shop@upi',amount:'100',name:'upi1'}];filename='sample_upi.xlsx';}
+ else if(currentType==='location'){data=[{address:'Vijayawada',name:'loc1'}];filename='sample_location.xlsx';}
+ else if(currentType==='vcard'){data=[{name:'Ramesh',org:'ABC Pvt Ltd',tel:'9999999999'}];filename='sample_vcard.xlsx';}
+ else if(currentType==='menu'){data=[{url:'https://restaurantmenu.com',name:'menu1'}];filename='sample_menu.xlsx';}
+ else if(currentType==='product'){data=[{product:'Rice Bag',code:'SKU123',name:'prod1'}];filename='sample_product.xlsx';}
+ else if(currentType==='ticket'){data=[{event:'Music Fest',seat:'A12',date:'12-10-2026',name:'ticket1'}];filename='sample_ticket.xlsx';}
+
  const ws=XLSX.utils.json_to_sheet(data);
  const wb=XLSX.utils.book_new();
  XLSX.utils.book_append_sheet(wb,ws,'QR');
@@ -150,7 +152,7 @@ function downloadSample(){
 
 async function loadPreview(){
  const file=document.getElementById('excelFile').files[0];
- if(!file)return alert('Upload excel');
+ if(!file){alert('Upload excel');return;}
  const buf=await file.arrayBuffer();
  const wb=XLSX.read(buf);
  rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
@@ -158,51 +160,53 @@ async function loadPreview(){
 }
 
 function buildData(r){
- switch(currentType){
- case 'url': return r.value||'';
- case 'phone': return `tel:${r.value||''}`;
- case 'email': return `mailto:${r.value||''}`;
- case 'whatsapp': return `https://wa.me/${r.phone||''}?text=${encodeURIComponent(r.msg||'')}`;
- case 'wifi': return `WIFI:T:WPA;S:${r.ssid||''};P:${r.password||''};;`;
- case 'upi': return `upi://pay?pa=${r.upi||''}&am=${r.amount||''}`;
- case 'location': return `https://www.openstreetmap.org/search?query=${encodeURIComponent(r.address||'')}`;
- case 'vcard': return `BEGIN:VCARD\nVERSION:3.0\nFN:${r.name||''}\nORG:${r.org||''}\nTEL:${r.tel||''}\nEND:VCARD`;
- case 'menu': return r.url||'';
- case 'product': return `Product:${r.product||''}\nCode:${r.code||''}`;
- case 'ticket': return `Event:${r.event||''}\nSeat:${r.seat||''}\nDate:${r.date||''}`;
- default: return r.value||'';
- }
+ if(currentType==='phone')return 'tel:'+ (r.value||'');
+ if(currentType==='email')return 'mailto:'+ (r.value||'');
+ if(currentType==='whatsapp')return 'https://wa.me/'+(r.phone||'')+'?text='+(encodeURIComponent(r.msg||''));
+ if(currentType==='wifi')return 'WIFI:T:WPA;S:'+(r.ssid||'')+';P:'+(r.password||'')+';;';
+ if(currentType==='upi')return 'upi://pay?pa='+(r.upi||'')+'&am='+(r.amount||'');
+ if(currentType==='location')return 'https://www.openstreetmap.org/search?query='+(encodeURIComponent(r.address||''));
+ if(currentType==='vcard')return 'BEGIN:VCARD
+VERSION:3.0
+FN:'+(r.name||'')+'
+ORG:'+(r.org||'')+'
+TEL:'+(r.tel||'')+'
+END:VCARD';
+ if(currentType==='menu')return r.url||'';
+ if(currentType==='product')return 'Product:'+(r.product||'')+'
+Code:'+(r.code||'');
+ if(currentType==='ticket')return 'Event:'+(r.event||'')+'
+Seat:'+(r.seat||'')+'
+Date:'+(r.date||'');
+ return r.value||'';
 }
 
 function updatePreview(){
- if(!rows.length)return;
- const r=rows[0];
- const color=document.getElementById('qrColor').value;
- const bg=document.getElementById('bgColor').value;
- const style=document.getElementById('qrStyle').value;
+ if(rows.length===0)return;
+ var r=rows[0];
  document.getElementById('preview').innerHTML='';
- qr=new QRCodeStyling({width:260,height:260,data:buildData(r),image:logoURL,dotsOptions:{color:color,type:style},backgroundOptions:{color:bg}});
+ qr=new QRCodeStyling({width:260,height:260,data:buildData(r),image:logoURL,dotsOptions:{color:qrColor.value,type:qrStyle.value},backgroundOptions:{color:bgColor.value}});
  qr.append(document.getElementById('preview'));
 }
 
 async function generateZip(){
- if(!rows.length)return alert('Load excel first');
- const zip=new JSZip(); let i=0;
- for(const r of rows){
-  i++;
+ if(rows.length===0){alert('Load excel first');return;}
+ const zip=new JSZip();
+ for(let i=0;i<rows.length;i++){
+  const r=rows[i];
   const q=new QRCodeStyling({width:800,height:800,data:buildData(r),image:logoURL,dotsOptions:{color:qrColor.value,type:qrStyle.value},backgroundOptions:{color:bgColor.value}});
   const blob=await q.getRawData('png');
-  zip.file((r.name||'qr_'+i)+'.png',blob);
+  zip.file((r.name||('qr_'+(i+1)))+'.png',blob);
  }
  const content=await zip.generateAsync({type:'blob'});
  saveAs(content,'QR_CODES.zip');
 }
 
 function saveDashboard(){
- if(!qr)return alert('Load preview first');
- qr.getRawData('png').then(blob=>{
+ if(!qr){alert('Load preview first');return;}
+ qr.getRawData('png').then(function(blob){
   const r=new FileReader();
-  r.onload=()=>{
+  r.onload=function(){
    let saved=JSON.parse(localStorage.getItem('savedQRs')||'[]');
    saved.push({name:'BulkPreview',date:new Date().toLocaleString(),data:r.result});
    localStorage.setItem('savedQRs',JSON.stringify(saved));
