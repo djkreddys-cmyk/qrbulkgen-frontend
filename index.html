@@ -156,11 +156,38 @@ function goQR(type){
   goTo("qr-single.html");
 }
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const token = localStorage.getItem("token");
+
+  // Already logged in → allow normal behavior
+  if(token) return;
+
+  // LOCK EVERYTHING CLICKABLE
+  const clickable = document.querySelectorAll("a, button, .card");
+
+  clickable.forEach(el => {
+    el.addEventListener("click", function(e){
+      e.preventDefault();
+
+      // remember where user clicked
+      const target = this.getAttribute("href") || "qr-single.html";
+      localStorage.setItem("afterLogin", target);
+
+      // go login
+      window.location = "qr-auth.html";
+    });
+  });
+
+});
+</script>
 
 <script src="js/auth.js"></script>
 
 </body>
 </html>
+
 
 
 
