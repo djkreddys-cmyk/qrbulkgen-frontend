@@ -17,16 +17,20 @@
 
 <!-- NAVBAR -->
 
-<header class="bg-white shadow p-4 flex justify-between items-center sticky top-0 z-50">
-  <a href="index.html" class="text-xl font-bold text-indigo-600">QRBulkGen</a>
+<nav class="space-x-6 font-medium hidden md:flex items-center">
 
-  <nav class="space-x-6 font-medium hidden md:flex items-center">
-    <a href="qr-single.html" class="hover:text-indigo-600">Generate QR</a>
-    <a href="qr-bulk.html" class="hover:text-indigo-600">Bulk Upload</a>
-    <a href="qr-dashboard.html" class="hover:text-indigo-600">Dashboard</a>
-    <div id="navUser"></div>
-  </nav>
-</header>
+  <!-- Only visible AFTER LOGIN -->
+  <div id="navPrivate" class="hidden space-x-6">
+    <a href="/qr-single.html" class="hover:text-indigo-600">Generate QR</a>
+    <a href="/qr-bulk.html" class="hover:text-indigo-600">Bulk Upload</a>
+    <a href="/qr-dashboard.html" class="hover:text-indigo-600">Dashboard</a>
+  </div>
+
+  <!-- User/Login area -->
+  <div id="navUser"></div>
+
+</nav>
+
 
 <!-- HERO -->
 
@@ -203,6 +207,7 @@ window.location = page; }
 
 </body>
 </html>
+
 
 
 
