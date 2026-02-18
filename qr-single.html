@@ -76,9 +76,17 @@ QRBulkGen
 <h2 class="text-xl font-semibold mb-4">Live Preview</h2>
 
 <div id="qrcode" class="p-6 bg-white rounded-xl"></div>
-<button onclick="downloadQR()" class="mt-4 bg-green-600 text-white px-6 py-3 rounded-xl">
-Download PNG
+<div class="grid grid-cols-2 gap-3 mt-4 w-full">
+
+<button onclick="openDownloadModal()"
+class="bg-green-600 text-white py-3 rounded-xl w-full">
+Download
 </button>
+<button onclick="openSaveModal()"
+class="bg-indigo-600 text-white py-3 rounded-xl w-full">
+Save
+</button>
+</div>
 </div>
 </div>
 
@@ -356,17 +364,122 @@ generateQR();
 
 
 /* ---------- DOWNLOAD ---------- */
-function downloadQR(){
+/* ---------- DOWNLOAD MODAL ---------- */
+function openDownloadModal(){
 if(!qrCode) return alert("Generate QR first");
-qrCode.download({ name:"qr-code", extension:"png" });
+document.getElementById("downloadModal").classList.remove("hidden");
+document.getElementById("downloadModal").classList.add("flex");
+}
+function closeDownloadModal(){
+document.getElementById("downloadModal").classList.add("hidden");
 }
 
-renderForm();
+function downloadSelected(){
+const size=parseInt(document.getElementById("qrSize").value);
+
+qrCode.update({width:size,height:size});
+qrCode.download({name:"qr-code",extension:"png"});
+
+/* restore preview size */
+qrCode.update({width:260,height:260});
+
+closeDownloadModal();
+}
+
+
+/* ---------- SAVE MODAL ---------- */
+function openSaveModal(){
+if(!qrCode) return alert("Generate QR first");
+document.getElementById("saveModal").classList.remove("hidden");
+document.getElementById("saveModal").classList.add("flex");
+}
+function closeSaveModal(){
+document.getElementById("saveModal").classList.add("hidden");
+}
+
+
+/* ---------- SAVE TO DASHBOARD ---------- */
+function saveQR(){
+
+const name=document.getElementById("qrFileName").value.trim();
+if(!name) return alert("Enter file name");
+
+/* prevent double click */
+const btn=event.target;
+btn.disabled=true;
+btn.innerText="Saving...";
+
+/* convert QR to image */
+qrCode.getRawData("png").then(blob=>{
+const reader=new FileReader();
+reader.onload=function(){
+
+let saved=JSON.parse(localStorage.getItem("savedQRs")||"[]");
+
+saved.push({
+name:name,
+date:new Date().toLocaleString(),
+data:reader.result
+});
+
+localStorage.setItem("savedQRs",JSON.stringify(saved));
+
+/* clear input + close modal */
+document.getElementById("qrFileName").value="";
+closeSaveModal();
+
+alert("QR saved to Dashboard");
+
+/* restore button */
+btn.disabled=false;
+btn.innerText="Save";
+
+};
+reader.readAsDataURL(blob);
+});
+}
+
 </script>
 <!-- NAVBAR AUTH CONTROLLER (VERY IMPORTANT) -->
 <script src="js/auth.js"></script>
+<!-- DOWNLOAD MODAL -->
+<div id="downloadModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+<div class="bg-white p-6 rounded-xl w-80 text-center">
+<h3 class="font-semibold mb-4">Select Resolution</h3>
+
+<select id="qrSize" class="w-full border rounded p-2 mb-4">
+<option value="300">300 px (Small)</option>
+<option value="600">600 px (Medium)</option>
+<option value="1200">1200 px (HD)</option>
+<option value="2000">2000 px (Print)</option>
+</select>
+
+<div class="flex gap-3">
+<button onclick="downloadSelected()" class="bg-green-600 text-white px-4 py-2 rounded w-full">Download</button>
+<button onclick="closeDownloadModal()" class="border px-4 py-2 rounded w-full">Cancel</button>
+</div>
+</div>
+</div>
+<!-- SAVE MODAL -->
+<div id="saveModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+<div class="bg-white p-6 rounded-xl w-80 text-center">
+
+<h3 class="font-semibold mb-4">Save QR</h3>
+
+<input id="qrFileName" placeholder="Enter file name"
+class="w-full border rounded p-2 mb-4">
+
+<div class="flex gap-3">
+<button onclick="saveQR()" class="bg-indigo-600 text-white px-4 py-2 rounded w-full">Save</button>
+<button onclick="closeSaveModal()" class="border px-4 py-2 rounded w-full">Cancel</button>
+</div>
+
+</div>
+</div>
+
 </body>
 </html>
+
 
 
 
