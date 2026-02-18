@@ -130,54 +130,72 @@ a.innerHTML=forms[currentType];
 function autoQR(){ generateQR(); }
 
 function generateQR(){
+function val(id){
+const el=document.getElementById(id);
+return el?el.value:"";
+}
+
+function generateQR(){
 let d="";
 
 try{
 switch(currentType){
-case"whatsapp":d=`https://wa.me/${phone.value}?text=${encodeURIComponent(msg.value)}`;break;
-case"wifi":d=`WIFI:T:WPA;S:${ssid.value};P:${pass.value};;`;break;
-case"upi":d=`upi://pay?pa=${upi.value}&am=${amount.value}`;break;
-case"email":d=`mailto:${mail.value}?subject=${subject.value}`;break;
-case"phone":d=`tel:${call.value}`;break;
-case"location":d=`https://www.openstreetmap.org/search?query=${encodeURIComponent(address.value)}`;break;
-case"menu":d=menuUrl.value;break;
-case"product":d=`Product:${productName.value}\nCode:${productCode.value}`;break;
-case"ticket":d=`Event:${eventName.value}\nSeat:${seat.value}\nDate:${date.value}`;break;
-case"vcard":d=`BEGIN:VCARD\nVERSION:3.0\nFN:${name.value}\nORG:${org.value}\nTEL:${tel.value}\nEND:VCARD`;break;
-default:d=data?.value||"";
+
+case"whatsapp":
+d=`https://wa.me/${val('phone')}?text=${encodeURIComponent(val('msg'))}`;
+break;
+
+case"wifi":
+d=`WIFI:T:WPA;S:${val('ssid')};P:${val('pass')};;`;
+break;
+
+case"upi":
+d=`upi://pay?pa=${val('upi')}&am=${val('amount')}`;
+break;
+
+case"email":
+d=`mailto:${val('mail')}?subject=${val('subject')}`;
+break;
+
+case"phone":
+d=`tel:${val('call')}`;
+break;
+
+/* LOCATION — OpenStreetMap */
+case"location":
+d=`https://www.openstreetmap.org/search?query=${encodeURIComponent(val('address'))}`;
+break;
+
+case"menu":
+d=val('menuUrl');
+break;
+
+case"product":
+d=`Product:${val('productName')}\nCode:${val('productCode')}`;
+break;
+
+case"ticket":
+d=`Event:${val('eventName')}\nSeat:${val('seat')}\nDate:${val('date')}`;
+break;
+
+case"vcard":
+d=`BEGIN:VCARD\nVERSION:3.0\nFN:${val('name')}\nORG:${val('org')}\nTEL:${val('tel')}\nEND:VCARD`;
+break;
+
+default:
+d=val('data');
 }
 
 createQR(d);
-}catch{}
+
+}catch(e){
+console.log("QR error:",e);
+}
 }
 
-function createQR(text){
-const c=document.getElementById("qrcode");
-c.innerHTML="";
-qr=new QRCode(c,{text,width:260,height:260});
-}
-
-function downloadQR(){
-const img=document.querySelector("#qrcode img");
-if(!img)return alert("Generate QR first");
-const a=document.createElement("a");
-a.href=img.src;
-a.download="qr-code.png";
-a.click();
-}
-
-renderForm();
-/* reload autocomplete whenever tab changes */
-const originalRenderForm=renderForm;
-renderForm=function(){
-originalRenderForm();
-
-if(currentType==="location"){
-waitForGoogle();
-}
-};
 </script>
 <!-- NAVBAR AUTH CONTROLLER (VERY IMPORTANT) -->
 <script src="js/auth.js"></script>
 </body>
 </html>
+
