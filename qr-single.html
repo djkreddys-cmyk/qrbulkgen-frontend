@@ -76,33 +76,6 @@ QRBulkGen
 <h2 class="text-xl font-semibold mb-4">Live Preview</h2>
 
 <div id="qrcode" class="p-6 bg-white rounded-xl"></div>
-
-<!-- CUSTOMIZATION PANEL -->
-<div class="w-full mt-6 border-t pt-4">
-
-<h3 class="font-semibold mb-3">QR Customization</h3>
-
-<label class="text-sm">QR Color</label>
-<input type="color" id="qrColor" value="#000000" class="w-full mb-3">
-
-<label class="text-sm">Background Color</label>
-<input type="color" id="bgColor" value="#ffffff" class="w-full mb-3">
-
-<label class="text-sm">QR Style</label>
-<select id="qrStyle" class="w-full border rounded-lg p-2 mb-3">
-<option value="square">Square</option>
-<option value="dots">Dots</option>
-<option value="rounded">Rounded</option>
-<option value="classy">Classy</option>
-<option value="classy-rounded">Classy Rounded</option>
-<option value="extra-rounded">Extra Rounded</option>
-</select>
-
-<label class="text-sm">Center Logo</label>
-<input type="file" id="logoUpload" accept="image/*" class="w-full mb-4">
-
-</div>
-
 <button onclick="downloadQR()" class="mt-4 bg-green-600 text-white px-6 py-3 rounded-xl">
 Download PNG
 </button>
@@ -113,6 +86,13 @@ Download PNG
 let currentType="text";
 let qr;
 let tabPosition=0;
+/* remember customization */
+let qrSettings={
+color:"#000000",
+bg:"#ffffff",
+style:"square",
+logo:null
+};
 
 /* ---------- SLIDER ---------- */
 function slideTabs(dir){
@@ -168,7 +148,38 @@ ticket:`<h2 class="text-xl font-bold mb-4">Event Ticket</h2>${input('eventName',
 vcard:`<h2 class="text-xl font-bold mb-4">Business Card</h2>${input('name','Name')}${input('org','Company')}${input('tel','Phone')}`
 };
 
-a.innerHTML=forms[currentType];
+a.innerHTML=forms[currentType] + qrCustomizationUI();
+}
+function qrCustomizationUI(){
+return `
+<div class="border-t mt-4 pt-4">
+
+<h3 class="font-semibold mb-3">QR Customization</h3>
+
+<label class="text-sm">QR Color</label>
+<input type="color" id="qrColor" value="${qrSettings.color}" class="w-full mb-3" oninput="updateQRSettings()">
+
+<label class="text-sm">Background Color</label>
+<input type="color" id="bgColor" value="${qrSettings.bg}" class="w-full mb-3" oninput="updateQRSettings()">
+
+<label class="text-sm">QR Style</label>
+<select id="qrStyle" class="w-full border rounded-lg p-2 mb-3" onchange="updateQRSettings()">
+<option value="square" ${qrSettings.style=="square"?"selected":""}>Square</option>
+<option value="dots" ${qrSettings.style=="dots"?"selected":""}>Dots</option>
+<option value="rounded" ${qrSettings.style=="rounded"?"selected":""}>Rounded</option>
+<option value="classy" ${qrSettings.style=="classy"?"selected":""}>Classy</option>
+<option value="classy-rounded" ${qrSettings.style=="classy-rounded"?"selected":""}>Classy Rounded</option>
+<option value="extra-rounded" ${qrSettings.style=="extra-rounded"?"selected":""}>Extra Rounded</option>
+</select>
+
+<label class="text-sm">Center Logo</label>
+<input type="file" id="logoUpload" accept="image/*" class="w-full mb-2" onchange="updateQRSettings()">
+
+<button type="button" onclick="removeLogo()" 
+class="text-sm text-red-500 underline mb-4">Remove Logo</button>
+
+</div>
+`;
 }
 
 /* ---------- SAFE VALUE ---------- */
@@ -265,16 +276,10 @@ document.getElementById("qrcode").innerHTML="";
 return;
 }
 
-const color=document.getElementById("qrColor")?.value || "#000000";
-const bg=document.getElementById("bgColor")?.value || "#ffffff";
-const style=document.getElementById("qrStyle")?.value || "square";
-
-const logoInput=document.getElementById("logoUpload");
-let logoURL=null;
-
-if(logoInput && logoInput.files[0]){
-logoURL=URL.createObjectURL(logoInput.files[0]);
-}
+const color=qrSettings.color;
+const bg=qrSettings.bg;
+const style=qrSettings.style;
+const logoURL=qrSettings.logo;
 
 document.getElementById("qrcode").innerHTML="";
 
@@ -298,6 +303,22 @@ margin:5
 
 qrCode.append(document.getElementById("qrcode"));
 }
+function updateQRSettings(){
+qrSettings.color=document.getElementById("qrColor")?.value || "#000000";
+qrSettings.bg=document.getElementById("bgColor")?.value || "#ffffff";
+qrSettings.style=document.getElementById("qrStyle")?.value || "square";
+
+const file=document.getElementById("logoUpload")?.files[0];
+qrSettings.logo = file ? URL.createObjectURL(file) : null;
+
+generateQR();
+}
+function removeLogo(){
+qrSettings.logo=null;
+const input=document.getElementById("logoUpload");
+if(input) input.value="";
+generateQR();
+}
 
 
 /* ---------- DOWNLOAD ---------- */
@@ -307,16 +328,12 @@ qrCode.download({ name:"qr-code", extension:"png" });
 }
 
 renderForm();
-document.addEventListener("input",e=>{
-if(["qrColor","bgColor","qrStyle","logoUpload"].includes(e.target.id)){
-generateQR();
-}
-});
 </script>
 <!-- NAVBAR AUTH CONTROLLER (VERY IMPORTANT) -->
 <script src="js/auth.js"></script>
 </body>
 </html>
+
 
 
 
