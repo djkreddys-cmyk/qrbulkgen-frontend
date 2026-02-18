@@ -103,7 +103,27 @@ let currentType='text', rows=[], logoURL=null, qr;
 function selectType(t,el){currentType=t;document.getElementById('selectedType').innerText=t.charAt(0).toUpperCase()+t.slice(1);document.querySelectorAll('.qrTab').forEach(b=>b.classList.remove('active'));el.classList.add('active');updatePreview();}
 let tabPosition=0;function slideTabs(d){const w=tabsWrapper,t=tabs;const m=t.scrollWidth-w.clientWidth;tabPosition+=d*200;if(tabPosition<0)tabPosition=0;if(tabPosition>m)tabPosition=m;t.style.transform=`translateX(-${tabPosition}px)`;}
 document.getElementById('logoFile').addEventListener('change',e=>{const f=e.target.files[0];if(f)logoURL=URL.createObjectURL(f);updatePreview();});
-function downloadSample(){const data=[{type:'text',value:'Hello World',name:'sample1'}];const ws=XLSX.utils.json_to_sheet(data);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'QR');XLSX.writeFile(wb,'qr_bulk_sample.xlsx');}
+function downloadSample(){
+let data=[]; let filename='qr_sample.xlsx';
+switch(currentType){
+case 'text': data=[{value:'Hello World',name:'text1'}]; filename='sample_text.xlsx'; break;
+case 'url': data=[{value:'https://google.com',name:'web1'}]; filename='sample_website.xlsx'; break;
+case 'phone': data=[{value:'9876543210',name:'call1'}]; filename='sample_phone.xlsx'; break;
+case 'email': data=[{value:'demo@gmail.com',name:'mail1'}]; filename='sample_email.xlsx'; break;
+case 'whatsapp': data=[{phone:'9876543210',msg:'Welcome',name:'wa1'}]; filename='sample_whatsapp.xlsx'; break;
+case 'wifi': data=[{ssid:'OfficeNet',password:'12345678',name:'wifi1'}]; filename='sample_wifi.xlsx'; break;
+case 'upi': data=[{upi:'shop@upi',amount:'100',name:'upi1'}]; filename='sample_upi.xlsx'; break;
+case 'location': data=[{address:'Vijayawada',name:'loc1'}]; filename='sample_location.xlsx'; break;
+case 'vcard': data=[{name:'Ramesh',org:'ABC Pvt Ltd',tel:'9999999999'}]; filename='sample_vcard.xlsx'; break;
+case 'menu': data=[{url:'https://restaurantmenu.com',name:'menu1'}]; filename='sample_menu.xlsx'; break;
+case 'product': data=[{product:'Rice Bag',code:'SKU123',name:'prod1'}]; filename='sample_product.xlsx'; break;
+case 'ticket': data=[{event:'Music Fest',seat:'A12',date:'12-10-2026',name:'ticket1'}]; filename='sample_ticket.xlsx'; break;
+}
+const ws=XLSX.utils.json_to_sheet(data);
+const wb=XLSX.utils.book_new();
+XLSX.utils.book_append_sheet(wb,ws,'QR');
+XLSX.writeFile(wb,filename);
+}];const ws=XLSX.utils.json_to_sheet(data);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'QR');XLSX.writeFile(wb,'qr_bulk_sample.xlsx');}
 async function loadPreview(){const file=excelFile.files[0];if(!file)return alert('Upload excel');const buf=await file.arrayBuffer();const wb=XLSX.read(buf);rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);updatePreview();}
 function buildData(r){switch(currentType){case'url':return r.value;case'phone':return`tel:${r.value}`;case'email':return`mailto:${r.value}`;case'whatsapp':return`https://wa.me/${r.phone}?text=${encodeURIComponent(r.msg||'')}`;case'wifi':return`WIFI:T:WPA;S:${r.ssid};P:${r.password};;`;case'upi':return`upi://pay?pa=${r.upi}&am=${r.amount||''}`;case'location':return`https://www.openstreetmap.org/search?query=${encodeURIComponent(r.address||r.value)}`;case'vcard':return`BEGIN:VCARD\nVERSION:3.0\nFN:${r.name||''}\nORG:${r.org||''}\nTEL:${r.tel||''}\nEND:VCARD`;case'menu':return r.url||r.value;case'product':return`Product:${r.product}\nCode:${r.code}`;case'ticket':return`Event:${r.event}\nSeat:${r.seat}\nDate:${r.date}`;default:return r.value;}}
 function updatePreview(){if(!rows.length)return;const r=rows[0];preview.innerHTML='';qr=new QRCodeStyling({width:260,height:260,data:buildData(r),image:logoURL,dotsOptions:{color:qrColor.value,type:qrStyle.value},backgroundOptions:{color:bgColor.value}});qr.append(preview);}
