@@ -10,6 +10,10 @@
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
+<script src="https://unpkg.com/qr-code-styling@1.6.0/lib/qr-code-styling.js"></script>
+
+<script src="js/auth.js"></script>
+
 <style>
 .qrTab{padding:10px 14px;border-radius:10px;color:#374151;white-space:nowrap}
 .qrTab:hover{background:#eef2ff;color:#4f46e5}
@@ -24,25 +28,38 @@
 
 <header class="bg-white shadow sticky top-0 z-50">
 <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-<a href="qr-dashboard.html" class="text-xl font-bold text-indigo-600">QRBulkGen</a>
-<div class="flex gap-6">
+
+<a id="logoLink" href="qr-dashboard.html" class="text-xl font-bold text-indigo-600">QRBulkGen</a>
+
+<div class="flex items-center gap-6">
+<div id="navLinks" class="hidden md:flex gap-6">
 <a href="qr-single.html">Generate QR</a>
 <a href="qr-bulk.html" class="font-semibold text-indigo-600">Bulk Upload</a>
 <a href="qr-dashboard.html">Dashboard</a>
 </div>
+<div id="navUser"></div>
+</div>
+
 </div>
 </header>
 
-<!-- TYPE TABS -->
+<!-- TYPE SLIDER -->
 
-<div class="bg-white border-b">
-<div class="max-w-7xl mx-auto flex gap-4 py-3 px-4 overflow-x-auto">
-<button class="qrTab active" onclick="selectType('text',this)">Text</button>
-<button class="qrTab" onclick="selectType('wifi',this)">WiFi</button>
-<button class="qrTab" onclick="selectType('phone',this)">Phone</button>
-<button class="qrTab" onclick="selectType('email',this)">Email</button>
-<button class="qrTab" onclick="selectType('location',this)">Location</button>
-<button class="qrTab" onclick="selectType('vcard',this)">Business Card</button>
+<div class="bg-white border-b sticky top-[72px] z-40">
+<div class="max-w-7xl mx-auto flex items-center px-2">
+
+<button id="leftArrow" onclick="slideTabs(-1)" class="p-2 text-xl">◀</button>
+
+<div id="tabsWrapper" class="overflow-hidden flex-1">
+<div id="tabs" class="flex gap-4 py-3 transition-all duration-300">
+
+<button class="qrTab active" onclick="selectType('text',this)">Text</button> <button class="qrTab" onclick="selectType('wifi',this)">WiFi</button> <button class="qrTab" onclick="selectType('phone',this)">Phone</button> <button class="qrTab" onclick="selectType('email',this)">Email</button> <button class="qrTab" onclick="selectType('location',this)">Location</button> <button class="qrTab" onclick="selectType('vcard',this)">Business Card</button>
+
+</div>
+</div>
+
+<button id="rightArrow" onclick="slideTabs(1)" class="p-2 text-xl">▶</button>
+
 </div>
 </div>
 
@@ -63,9 +80,7 @@
 <button onclick="downloadSample()" class="bg-indigo-600 text-white px-5 py-2 rounded-xl">
 Download Sample Excel
 </button>
-<p class="text-sm text-gray-500 mt-2">
-Fill this file with your data before uploading.
-</p>
+<p class="text-sm text-gray-500 mt-2">Fill sample file before upload.</p>
 </div>
 
 <!-- STEP 2 -->
@@ -79,13 +94,17 @@ class="w-full border rounded-xl p-3">
 
 <!-- STEP 3 -->
 
-<div>
-<h3 class="font-semibold mb-2">Step 3 — Process Data</h3>
+<div class="mb-6">
+<h3 class="font-semibold mb-2">Step 3 — Load Data</h3>
 <button onclick="processExcel()" class="bg-green-600 text-white px-6 py-3 rounded-xl w-full">
-Load Data
+Load Excel Data
 </button>
 <p id="rowsInfo" class="text-sm text-gray-500 mt-3"></p>
 </div>
+
+<!-- CUSTOMIZATION -->
+
+<div id="customizationArea"></div>
 
 </div>
 
@@ -101,32 +120,45 @@ Load Data
 <script>
 
 let currentType="text";
+let tabPosition=0;
 let excelData=[];
 
-/* TYPE SELECT */
+/* SLIDER */
+function slideTabs(dir){
+const wrapper=document.getElementById("tabsWrapper");
+const tabs=document.getElementById("tabs");
+const maxScroll=tabs.scrollWidth-wrapper.clientWidth;
+
+tabPosition+=dir*200;
+if(tabPosition<0)tabPosition=0;
+if(tabPosition>maxScroll)tabPosition=maxScroll;
+
+tabs.style.transform=`translateX(-${tabPosition}px)`;
+}
+
+/* SELECT TYPE */
 function selectType(type,el){
 currentType=type;
 document.querySelectorAll(".qrTab").forEach(t=>t.classList.remove("active"));
 el.classList.add("active");
 }
 
-/* FILE NAME DISPLAY */
+/* FILE NAME */
 document.getElementById("excelFile").addEventListener("change", e=>{
 document.getElementById("fileName").innerText =
 e.target.files[0] ? "Selected: "+e.target.files[0].name : "";
 });
 
-/* DOWNLOAD SAMPLE */
+/* SAMPLE DOWNLOAD */
 function downloadSample(){
-
 let headers=["data"];
 
 switch(currentType){
-case"wifi": headers=["ssid","password"]; break;
-case"phone": headers=["phone"]; break;
-case"email": headers=["email","subject"]; break;
-case"location": headers=["address"]; break;
-case"vcard": headers=["name","company","phone"]; break;
+case"wifi":headers=["ssid","password"];break;
+case"phone":headers=["phone"];break;
+case"email":headers=["email","subject"];break;
+case"location":headers=["address"];break;
+case"vcard":headers=["name","company","phone"];break;
 }
 
 const ws=XLSX.utils.aoa_to_sheet([headers]);
@@ -135,11 +167,10 @@ XLSX.utils.book_append_sheet(wb,ws,"Sample");
 XLSX.writeFile(wb,"qr_sample.xlsx");
 }
 
-/* READ EXCEL */
+/* PROCESS EXCEL */
 function processExcel(){
-
 const file=document.getElementById("excelFile").files[0];
-if(!file) return alert("Please upload Excel first");
+if(!file)return alert("Upload Excel first");
 
 const reader=new FileReader();
 
@@ -161,8 +192,7 @@ reader.readAsArrayBuffer(file);
 
 /* PREVIEW TABLE */
 function renderPreview(){
-
-if(excelData.length===0) return;
+if(excelData.length===0)return;
 
 let html="<table class='w-full border'>";
 html+="<tr>";
@@ -182,7 +212,6 @@ html+="</tr>";
 });
 
 html+="</table>";
-
 document.getElementById("previewTable").innerHTML=html;
 }
 
