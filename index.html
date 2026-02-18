@@ -187,11 +187,20 @@ function goQR(type){
   window.location="qr-single.html";
 }
 </script>
-
+<script> function goTo(page){ const token = localStorage.getItem("token");
+  // Not logged in → go login and remember target
+if(!token){ localStorage.setItem("afterLogin", page);
+window.location = "qr-auth.html"; return; }
+  // Logged in → go directly
+window.location = page; }
+  // QR category buttons
+  function goQR(type){ localStorage.setItem("qrType", type); goTo("qr-single.html"); }
+</script>
 <script src="/js/auth.js"></script>
 
 </body>
 </html>
+
 
 
 
