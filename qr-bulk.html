@@ -304,7 +304,12 @@ window.addEventListener("DOMContentLoaded", ()=>{
 loadCustomizationUI();
 });
 async function generateBulkQRs(){
-if(excelData.length===0) return alert("Load Excel first");
+
+if(excelData.length===0){
+alert("Load Excel first");
+return null;
+}
+
 const color=document.getElementById("qrColor").value;
 const bg=document.getElementById("bgColor").value;
 const style=document.getElementById("qrStyle").value;
@@ -322,10 +327,15 @@ data:text,
 dotsOptions:{color:color,type:style},
 backgroundOptions:{color:bg}
 });
+
 const blob=await qr.getRawData("png");
 zip.file(`QR_${i+1}.png`,blob);
 }
-</div>
+
+/* IMPORTANT: return zip */
+return await zip.generateAsync({type:"blob"});
+}
+
 async function downloadBulkZip(){
 const blob=await generateBulkQRs();
 if(!blob) return;
@@ -364,6 +374,7 @@ reader.readAsDataURL(blob);
 </script>
 </body>
 </html>
+
 
 
 
