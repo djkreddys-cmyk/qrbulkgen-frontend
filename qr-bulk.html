@@ -156,6 +156,7 @@ Save ZIP
 let currentType="text";
 let tabPosition=0;
 let excelData=[];
+let bulkLogoURL = null;
 
 /* SLIDER */
 function slideTabs(dir){
@@ -181,6 +182,11 @@ el.classList.add("active");
 document.getElementById("excelFile").addEventListener("change", e=>{
 document.getElementById("fileName").innerText =
 e.target.files[0] ? "Selected: "+e.target.files[0].name : "";
+});
+/* detect logo upload */
+document.getElementById("bulkLogo").addEventListener("change", e=>{
+const file = e.target.files[0];
+bulkLogoURL = file ? URL.createObjectURL(file) : null;
 });
 
 /* SAMPLE DOWNLOAD */
@@ -232,20 +238,48 @@ XLSX.writeFile(wb, currentType+"_sample.xlsx");
 }
 /* PROCESS EXCEL */
 function processExcel(){
+
 const file=document.getElementById("excelFile").files[0];
-if(!file)return alert("Upload Excel first");
+if(!file){
+alert("Please upload Excel first");
+return;
+}
+
 const reader=new FileReader();
+
 reader.onload=function(e){
+
 const data=new Uint8Array(e.target.result);
 const workbook=XLSX.read(data,{type:"array"});
-const sheet=workbook.Sheets[workbook.SheetNames[0]];
-excelData=XLSX.utils.sheet_to_json(sheet);
+
+const sheetName=workbook.SheetNames[0];
+const sheet=workbook.Sheets[sheetName];
+
+/* read rows including empty cells */
+const rows=XLSX.utils.sheet_to_json(sheet,{header:1,defval:""});
+
+if(rows.length<=1){
+alert("Excel file has no data");
+return;
+}
+
+/* convert to objects */
+const headers=rows[0];
+excelData=rows.slice(1).map(r=>{
+let obj={};
+headers.forEach((h,i)=>obj[h]=r[i]||"");
+return obj;
+});
+
 document.getElementById("rowsInfo").innerText =
 excelData.length+" rows loaded successfully";
+
 renderPreview();
 };
+
 reader.readAsArrayBuffer(file);
 }
+
 function loadCustomizationUI(){
 document.getElementById("customizationArea").innerHTML = `
 <div class="border-t pt-5">
@@ -324,8 +358,16 @@ const qr=new QRCodeStyling({
 width:500,
 height:500,
 data:text,
+
+image: bulkLogoURL,   // ← THIS makes logo appear
+
 dotsOptions:{color:color,type:style},
-backgroundOptions:{color:bg}
+backgroundOptions:{color:bg},
+
+imageOptions:{
+crossOrigin:"anonymous",
+margin:6
+}
 });
 
 const blob=await qr.getRawData("png");
@@ -374,6 +416,7 @@ reader.readAsDataURL(blob);
 </script>
 </body>
 </html>
+
 
 
 
