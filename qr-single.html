@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Generate QR — QRBulkGen</title>
-<script defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=googleReady" async defer></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="js/auth.js"></script>
@@ -16,7 +16,6 @@
 .btnGen{width:100%;background:#4f46e5;color:white;padding:12px;border-radius:12px}
 </style>
 </head>
-
 <body class="bg-gray-100">
 
 <!-- NAVBAR -->
@@ -174,29 +173,37 @@ renderForm();
 let autocomplete;
 
 function initAutocomplete(){
+
 const input=document.getElementById("placeInput");
-if(!input || !window.google) return;
+if(!input) return;
 
-autocomplete=new google.maps.places.Autocomplete(input,{
-fields:["place_id","geometry","name","formatted_address"]
-});
+/* prevent multiple initialization */
+if(input.dataset.loaded) return;
+input.dataset.loaded=true;
 
+autocomplete=new google.maps.places.Autocomplete(input);
+
+/* when user selects suggestion */
 autocomplete.addListener("place_changed",()=>{
+
 const place=autocomplete.getPlace();
 
+/* user pressed enter without choosing */
 if(!place.geometry){
-alert("Please select location from dropdown");
+document.getElementById("placeLink").value="";
 return;
 }
 
 const lat=place.geometry.location.lat();
 const lng=place.geometry.location.lng();
 
+/* exact pinned google map link */
 const mapLink=`https://www.google.com/maps/search/?api=1&query=${lat},${lng}&query_place_id=${place.place_id}`;
 
 document.getElementById("placeLink").value=mapLink;
 
 generateQR();
+
 });
 }
 
@@ -204,12 +211,9 @@ generateQR();
 const originalRenderForm=renderForm;
 renderForm=function(){
 originalRenderForm();
+
 if(currentType==="location"){
-setTimeout(()=>{
-if(window.google && google.maps){
-initAutocomplete();
-}
-},400);
+waitForGoogle();
 }
 };
 </script>
@@ -217,6 +221,7 @@ initAutocomplete();
 <script src="js/auth.js"></script>
 </body>
 </html>
+
 
 
 
