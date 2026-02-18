@@ -5,9 +5,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<title>QR Bulk Gen — Bulk QR Code Generator | Free UPI, WhatsApp, vCard QR</title>
-<meta name="description" content="Generate single or bulk QR codes instantly. Upload Excel and download printable QR labels. Free daily plan available." />
-<meta name="keywords" content="bulk qr generator, upi qr generator, whatsapp qr code, vcard qr, excel to qr code, qr labels" />
+<title>QRBulkGen — Bulk QR Code Generator</title>
+<meta name="description" content="Generate single or bulk QR codes instantly. Upload Excel and download printable QR labels." />
 
 <script src="https://cdn.tailwindcss.com"></script>
 
@@ -16,33 +15,34 @@
 <body class="bg-white text-gray-800">
 
 <!-- NAVBAR -->
+
 <header class="bg-white shadow sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
-    <!-- Logo -->
-    <a href="/index.html" class="text-xl font-bold text-indigo-600">
-      QRBulkGen
-    </a>
+```
+<a href="/index.html" class="text-xl font-bold text-indigo-600">
+  QRBulkGen
+</a>
 
-    <!-- Right Side -->
-    <div class="flex items-center gap-6">
+<div class="flex items-center gap-6">
 
-      <!-- PROTECTED LINKS (hidden by default) -->
-      <div id="navLinks" class="hidden md:flex items-center gap-6">
-        <a href="/qr-single.html" class="hover:text-indigo-600">Generate QR</a>
-        <a href="/qr-bulk.html" class="hover:text-indigo-600">Bulk Upload</a>
-        <a href="/qr-dashboard.html" class="hover:text-indigo-600">Dashboard</a>
-      </div>
+  <!-- Hidden until login -->
+  <div id="navLinks" class="hidden md:flex items-center gap-6">
+    <a href="/qr-single.html" class="hover:text-indigo-600">Generate QR</a>
+    <a href="/qr-bulk.html" class="hover:text-indigo-600">Bulk Upload</a>
+    <a href="/qr-dashboard.html" class="hover:text-indigo-600">Dashboard</a>
+  </div>
 
-      <!-- LOGIN / PROFILE -->
-      <div id="navUser" class="min-w-[140px] text-right"></div>
+  <!-- Login / Profile -->
+  <div id="navUser" class="min-w-[140px] text-right"></div>
 
-    </div>
+</div>
+```
+
   </div>
 </header>
 
-
-  <!-- HERO -->
+<!-- HERO -->
 
 <section class="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-10 items-center">
   <div>
@@ -50,27 +50,25 @@
       Generate 1000+ QR Codes in Seconds
     </h1>
 
+```
 <p class="text-lg text-gray-600 mb-6">
   Upload Excel and instantly download QR ZIP or printable PDF labels.
-  Supports UPI, WhatsApp, URLs, Contacts & more.
 </p>
 
 <div class="flex gap-4">
- <a href="#" onclick="goTo('qr-single.html')"
-   class="bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700 transition">
-   Generate QR Now
-</a>
+  <a href="#" onclick="goTo('qr-single.html')" class="bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700">
+    Generate QR Now
+  </a>
 
-<a href="#" onclick="goTo('qr-bulk.html')"
-   class="border px-6 py-3 rounded-xl hover:bg-gray-100 transition">
-   Upload Excel
-</a>
-
+  <a href="#" onclick="goTo('qr-bulk.html')" class="border px-6 py-3 rounded-xl hover:bg-gray-100">
+    Upload Excel
+  </a>
 </div>
 
 <p class="text-sm text-gray-500 mt-4">
-  No signup required • Free 10 QR/day
+  Free plan available
 </p>
+```
 
   </div>
 
@@ -79,34 +77,33 @@
   </div>
 </section>
 
-<!-- USE CASES -->
+<!-- QR TYPES -->
 
 <section class="bg-gray-50 py-20">
   <div class="max-w-6xl mx-auto px-6">
     <h2 class="text-3xl font-bold text-center mb-12">Create QR Codes For Anything</h2>
 
+```
 <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 text-center">
 
-  <button onclick="goQR('Imagegallery')"class="card">Image Gallery</button>
-  <button onclick="goQR('Text')"class="card">Text QR</button>
-  <button onclick="goQR('email')" class="card">Email</button>
+  <button onclick="goQR('text')" class="card">Text QR</button>
   <button onclick="goQR('website')" class="card">Website</button>
-  <button onclick="goQR('PDF')" class="card">PDF</button>
-  <button onclick="goQR('Rating')" class="card">Rating</button>
-  <button onclick="goQR('Feedback')" class="card">Feedback</button>
-  <button onclick="goQR('Coupons')" class="card">Coupons</button>
+  <button onclick="goQR('email')" class="card">Email</button>
+  <button onclick="goQR('phone')" class="card">Phone</button>
+  <button onclick="goQR('location')" class="card">Location</button>
+  <button onclick="goQR('wifi')" class="card">WiFi</button>
   <button onclick="goQR('upi')" class="card">UPI Payment</button>
-  <button onclick="goQR('wifi')" class="card">WiFi Access</button>
-  <button onclick="goQR('whatsapp')" class="card">WhatsApp Chat</button>
+  <button onclick="goQR('whatsapp')" class="card">WhatsApp</button>
+  <button onclick="goQR('vcard')" class="card">Business Card</button>
   <button onclick="goQR('menu')" class="card">Restaurant Menu</button>
-  <button onclick="goQR('student')" class="card">Student ID</button>
   <button onclick="goQR('product')" class="card">Product Label</button>
   <button onclick="goQR('ticket')" class="card">Event Ticket</button>
-  <button onclick="goQR('phone')" class="card">Phone Call</button>
-  <button onclick="goQR('location')" class="card">Location Map</button>
-  <button onclick="goQR('vcard')" class="card">Business Card</button>
 
 </div>
+```
+
+  </div>
+</section>
 
 <style>
 .card{
@@ -114,7 +111,7 @@
   background:white;
   border-radius:16px;
   box-shadow:0 4px 12px rgba(0,0,0,0.08);
-  transition:0.2s;
+  transition:.2s;
 }
 .card:hover{
   transform:translateY(-3px);
@@ -122,61 +119,16 @@
 }
 </style>
 
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-
-<section class="py-20">
-  <div class="max-w-6xl mx-auto px-6 text-center">
-    <h2 class="text-3xl font-bold mb-12">How It Works</h2>
-
-```
-<div class="grid md:grid-cols-3 gap-8 text-lg">
-  <div>1️⃣ Select QR Type</div>
-  <div>2️⃣ Customize Design</div>
-  <div>3️⃣ Download ZIP or PDF</div>
-</div>
-```
-
-  </div>
-</section>
-
-<!-- PRICING -->
-
-<section class="bg-gray-50 py-20">
-  <div class="max-w-5xl mx-auto px-6 text-center">
-    <h2 class="text-3xl font-bold mb-12">Simple Pricing</h2>
-
-```
-<div class="grid md:grid-cols-2 gap-8">
-  <div class="border rounded-2xl p-8">
-    <h3 class="text-xl font-bold mb-4">Free</h3>
-    <p>50 QR/day</p>
-    <p>Basic designs</p>
-  </div>
-
-  <div class="border-2 border-indigo-600 rounded-2xl p-8">
-    <h3 class="text-xl font-bold mb-4">Pro</h3>
-    <p>Unlimited QR</p>
-    <p>PDF labels</p>
-    <p>No watermark</p>
-  </div>
-</div>
-```
-
-  </div>
-</section>
-
 <!-- CTA -->
 
 <section class="bg-indigo-600 text-white py-20 text-center">
   <h2 class="text-3xl font-bold mb-6">Start generating QR codes for free</h2>
 
-  <a href="#" onclick="goTo('qr-single.html')"
+<a href="#" onclick="goTo('qr-single.html')"
   class="bg-white text-indigo-600 px-8 py-3 rounded-xl font-semibold">
-Generate Now
-</a>
+Generate Now </a>
+
+</section>
 
 <!-- FOOTER -->
 
@@ -187,42 +139,25 @@ Generate Now
 <!-- LOGIN FLOW CONTROLLER -->
 
 <script>
-function goQR(type){
+function goTo(page){
+  const token = localStorage.getItem("token");
 
-  // Save selected QR type
-  localStorage.setItem("qrType",type);
-
-  const token=localStorage.getItem("token");
-
-  // If not logged in → go login
   if(!token){
-    window.location="qr-auth.html?redirect=qr-single.html";
+    localStorage.setItem("afterLogin", page);
+    window.location = "qr-auth.html";
     return;
   }
 
-  // If logged in → go generator
-  window.location="qr-single.html";
+  window.location = page;
+}
+
+function goQR(type){
+  localStorage.setItem("qrType", type);
+  goTo("qr-single.html");
 }
 </script>
-<script> function goTo(page){ const token = localStorage.getItem("token");
-  // Not logged in → go login and remember target
-if(!token){ localStorage.setItem("afterLogin", page);
-window.location = "qr-auth.html"; return; }
-  // Logged in → go directly
-window.location = page; }
-  // QR category buttons
-  function goQR(type){ localStorage.setItem("qrType", type); goTo("qr-single.html"); }
-</script>
+
 <script src="/js/auth.js"></script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
