@@ -192,6 +192,8 @@ ticket:"Ticket"
 document.getElementById("bulkTitle").innerText=
 names[type]+" QR Bulk Upload";
 
+/* refresh preview if data already loaded */
+updateBulkPreview();
 }
 
 
@@ -471,6 +473,7 @@ reader.readAsDataURL(blob);
 </script>
 </body>
 </html>
+
 
 
 
