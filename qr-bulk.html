@@ -10,7 +10,6 @@
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 <script src="js/auth.js"></script>
-
 <style>
 .qrTab{padding:10px 14px;border-radius:10px;color:#374151;white-space:nowrap}
 .qrTab:hover{background:#eef2ff;color:#4f46e5}
@@ -19,7 +18,6 @@
 </head>
 <body class="bg-gray-100">
 
-<!-- SAME NAVBAR (WITH LOGOUT SUPPORT) -->
 <header class="bg-white shadow sticky top-0 z-50">
 <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 <a id="logoLink" href="qr-dashboard.html" class="text-xl font-bold text-indigo-600">QRBulkGen</a>
@@ -34,117 +32,83 @@
 </div>
 </header>
 
-<!-- KEEP TYPE SLIDER UI (LEFT RIGHT ARROWS ANIMATION) -->
+<!-- TYPE SLIDER -->
 <div class="bg-white border-b sticky top-[72px] z-40">
 <div class="max-w-7xl mx-auto flex items-center px-2">
 <button id="leftArrow" onclick="slideTabs(-1)" class="p-2 text-xl">◀</button>
 <div id="tabsWrapper" class="overflow-hidden flex-1">
 <div id="tabs" class="flex gap-4 py-3 transition-all duration-300">
-<button class="qrTab active">Text</button>
-<button class="qrTab">Website</button>
-<button class="qrTab">WhatsApp</button>
-<button class="qrTab">WiFi</button>
-<button class="qrTab">UPI</button>
-<button class="qrTab">Email</button>
-<button class="qrTab">Phone</button>
-<button class="qrTab">Location</button>
-<button class="qrTab">Business Card</button>
-<button class="qrTab">Restaurant Menu</button>
-<button class="qrTab">Product Label</button>
-<button class="qrTab">Event Ticket</button>
+<button class="qrTab active" onclick="selectType('text',this)">Text</button>
+<button class="qrTab" onclick="selectType('url',this)">Website</button>
+<button class="qrTab" onclick="selectType('whatsapp',this)">WhatsApp</button>
+<button class="qrTab" onclick="selectType('wifi',this)">WiFi</button>
+<button class="qrTab" onclick="selectType('upi',this)">UPI</button>
+<button class="qrTab" onclick="selectType('email',this)">Email</button>
+<button class="qrTab" onclick="selectType('phone',this)">Phone</button>
+<button class="qrTab" onclick="selectType('location',this)">Location</button>
+<button class="qrTab" onclick="selectType('vcard',this)">Business Card</button>
+<button class="qrTab" onclick="selectType('menu',this)">Restaurant Menu</button>
+<button class="qrTab" onclick="selectType('product',this)">Product Label</button>
+<button class="qrTab" onclick="selectType('ticket',this)">Event Ticket</button>
 </div>
 </div>
 <button id="rightArrow" onclick="slideTabs(1)" class="p-2 text-xl">▶</button>
 </div>
 </div>
 
-<div class="max-w-4xl mx-auto p-6">
+<div class="max-w-7xl mx-auto p-6 grid md:grid-cols-2 gap-8">
+
+<!-- LEFT BOX -->
 <div class="bg-white rounded-2xl shadow p-6">
-<h2 class="text-2xl font-bold mb-4">Bulk QR Generator</h2>
+<h2 class="text-xl font-semibold mb-4">Selected: <span id="selectedType">Text</span> QR</h2>
 
-<div class="grid md:grid-cols-2 gap-4">
-<input type="file" id="excelFile" accept=".xlsx" class="border p-3 rounded-xl">
-<input type="file" id="logoFile" accept="image/*" class="border p-3 rounded-xl">
+<div class="grid grid-cols-2 gap-4 mb-4">
+<button onclick="downloadSample()" class="bg-gray-800 text-white px-4 py-2 rounded-xl">Step 1: Sample</button>
+<input type="file" id="excelFile" accept=".xlsx" class="border p-2 rounded-xl">
 </div>
 
-<div class="flex gap-4 mt-4">
-<button onclick="downloadSample()" class="bg-gray-800 text-white px-4 py-2 rounded-xl">Download Sample Excel</button>
-<button onclick="processExcel()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl">Generate ZIP</button>
+<div class="grid grid-cols-2 gap-4 mb-4">
+<input type="file" id="logoFile" accept="image/*" class="border p-2 rounded-xl">
+<button onclick="loadPreview()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl">Load Data</button>
 </div>
 
-<div id="status" class="mt-4 text-sm text-gray-600"></div>
+<hr class="my-4">
+<h3 class="font-semibold mb-3">Customization</h3>
+<div class="grid grid-cols-3 gap-3 items-end">
+<input type="color" id="qrColor" value="#000000" class="h-10" oninput="updatePreview()">
+<input type="color" id="bgColor" value="#ffffff" class="h-10" oninput="updatePreview()">
+<select id="qrStyle" class="border rounded h-10 px-2" onchange="updatePreview()">
+<option value="square">Square</option>
+<option value="dots">Dots</option>
+<option value="rounded">Rounded</option>
+<option value="classy">Classy</option>
+<option value="extra-rounded">Extra Rounded</option>
+</select>
+</div>
+</div>
+
+<!-- RIGHT BOX -->
+<div class="bg-white rounded-2xl shadow p-6 flex flex-col items-center">
+<h2 class="text-xl font-semibold mb-4">Live Preview</h2>
+<div id="preview" class="p-6 bg-white rounded-xl"></div>
+<div class="grid grid-cols-2 gap-3 mt-6 w-full">
+<button onclick="generateZip()" class="bg-green-600 text-white py-3 rounded-xl">Download ZIP</button>
+<button onclick="saveDashboard()" class="bg-indigo-600 text-white py-3 rounded-xl">Save</button>
+</div>
 </div>
 </div>
 
 <script>
-let tabPosition=0;
-function slideTabs(dir){
-const wrapper=document.getElementById("tabsWrapper");
-const tabs=document.getElementById("tabs");
-const left=document.getElementById("leftArrow");
-const right=document.getElementById("rightArrow");
-const maxScroll=tabs.scrollWidth - wrapper.clientWidth;
-
-tabPosition+=dir*200;
-if(tabPosition<0) tabPosition=0;
-if(tabPosition>maxScroll) tabPosition=maxScroll;
-
-tabs.style.transform=`translateX(-${tabPosition}px)`;
-left.style.visibility = tabPosition===0 ? "hidden":"visible";
-right.style.visibility = tabPosition>=maxScroll ? "hidden":"visible";
-}
-
-let logoURL=null;
-document.getElementById('logoFile').addEventListener('change',e=>{
- const f=e.target.files[0];
- if(f) logoURL=URL.createObjectURL(f);
-});
-
-function downloadSample(){
- const data=[
-  {type:'text',value:'Hello World',name:'sample1'},
-  {type:'url',value:'https://google.com',name:'google'},
-  {type:'phone',value:'9876543210',name:'call'}
- ];
- const ws=XLSX.utils.json_to_sheet(data);
- const wb=XLSX.utils.book_new();
- XLSX.utils.book_append_sheet(wb,ws,'QR');
- XLSX.writeFile(wb,'qr_bulk_sample.xlsx');
-}
-
-async function processExcel(){
- const file=document.getElementById('excelFile').files[0];
- if(!file) return alert('Upload excel');
- document.getElementById('status').innerText='Reading Excel...';
-
- const buf=await file.arrayBuffer();
- const wb=XLSX.read(buf);
- const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-
- const zip=new JSZip();
- let i=0;
- for(const r of rows){
-  i++;
-  document.getElementById('status').innerText=`Generating ${i}/${rows.length}`;
-
-  let data=r.value||'';
-  if(r.type==='phone') data=`tel:${data}`;
-  if(r.type==='email') data=`mailto:${data}`;
-
-  const qr=new QRCodeStyling({
-   width:800,height:800,data:data,image:logoURL,
-   dotsOptions:{color:'#000',type:'square'},
-   backgroundOptions:{color:'#fff'}
-  });
-
-  const blob=await qr.getRawData('png');
-  zip.file((r.name||'qr_'+i)+'.png',blob);
- }
- document.getElementById('status').innerText='Zipping...';
- const content=await zip.generateAsync({type:'blob'});
- saveAs(content,'QR_CODES.zip');
- document.getElementById('status').innerText='Done';
-}
+let currentType='text', rows=[], logoURL=null, qr;
+function selectType(t,el){currentType=t;document.getElementById('selectedType').innerText=t.charAt(0).toUpperCase()+t.slice(1);document.querySelectorAll('.qrTab').forEach(b=>b.classList.remove('active'));el.classList.add('active');updatePreview();}
+let tabPosition=0;function slideTabs(d){const w=tabsWrapper,t=tabs;const m=t.scrollWidth-w.clientWidth;tabPosition+=d*200;if(tabPosition<0)tabPosition=0;if(tabPosition>m)tabPosition=m;t.style.transform=`translateX(-${tabPosition}px)`;}
+document.getElementById('logoFile').addEventListener('change',e=>{const f=e.target.files[0];if(f)logoURL=URL.createObjectURL(f);updatePreview();});
+function downloadSample(){const data=[{type:'text',value:'Hello World',name:'sample1'}];const ws=XLSX.utils.json_to_sheet(data);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'QR');XLSX.writeFile(wb,'qr_bulk_sample.xlsx');}
+async function loadPreview(){const file=excelFile.files[0];if(!file)return alert('Upload excel');const buf=await file.arrayBuffer();const wb=XLSX.read(buf);rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);updatePreview();}
+function buildData(r){switch(currentType){case'url':return r.value;case'phone':return`tel:${r.value}`;case'email':return`mailto:${r.value}`;case'whatsapp':return`https://wa.me/${r.phone}?text=${encodeURIComponent(r.msg||'')}`;case'wifi':return`WIFI:T:WPA;S:${r.ssid};P:${r.password};;`;case'upi':return`upi://pay?pa=${r.upi}&am=${r.amount||''}`;case'location':return`https://www.openstreetmap.org/search?query=${encodeURIComponent(r.address||r.value)}`;case'vcard':return`BEGIN:VCARD\nVERSION:3.0\nFN:${r.name||''}\nORG:${r.org||''}\nTEL:${r.tel||''}\nEND:VCARD`;case'menu':return r.url||r.value;case'product':return`Product:${r.product}\nCode:${r.code}`;case'ticket':return`Event:${r.event}\nSeat:${r.seat}\nDate:${r.date}`;default:return r.value;}}
+function updatePreview(){if(!rows.length)return;const r=rows[0];preview.innerHTML='';qr=new QRCodeStyling({width:260,height:260,data:buildData(r),image:logoURL,dotsOptions:{color:qrColor.value,type:qrStyle.value},backgroundOptions:{color:bgColor.value}});qr.append(preview);}
+async function generateZip(){if(!rows.length)return alert('Load excel first');const zip=new JSZip();let i=0;for(const r of rows){i++;const q=new QRCodeStyling({width:800,height:800,data:buildData(r),image:logoURL,dotsOptions:{color:qrColor.value,type:qrStyle.value},backgroundOptions:{color:bgColor.value}});const blob=await q.getRawData('png');zip.file((r.name||'qr_'+i)+'.png',blob);}const content=await zip.generateAsync({type:'blob'});saveAs(content,'QR_CODES.zip');}
+function saveDashboard(){if(!qr)return alert('Load preview first');qr.getRawData('png').then(blob=>{const r=new FileReader();r.onload=()=>{let saved=JSON.parse(localStorage.getItem('savedQRs')||'[]');saved.push({name:'BulkPreview',date:new Date().toLocaleString(),data:r.result});localStorage.setItem('savedQRs',JSON.stringify(saved));alert('Saved to dashboard');};r.readAsDataURL(blob);});}
 </script>
 </body>
 </html>
