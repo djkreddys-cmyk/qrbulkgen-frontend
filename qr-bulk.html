@@ -56,18 +56,12 @@
 <button class="qrTab" onclick="selectType('menu',this)">Restaurant Menu</button>
 <button class="qrTab" onclick="selectType('product',this)">Product Label</button>
 <button class="qrTab" onclick="selectType('ticket',this)">Event Ticket</button>
-
-</div>
-
-
-</div>
-</div>
-
 <button id="rightArrow" onclick="slideTabs(1)" class="p-2 text-xl">▶</button>
-
 </div>
 </div>
-
+</div>
+</div>
+</div>
 <!-- CONTENT -->
 
 <div class="max-w-7xl mx-auto p-6 grid md:grid-cols-2 gap-8">
@@ -210,6 +204,7 @@ e.target.files[0] ? "Selected: "+e.target.files[0].name : "";
 document.getElementById("bulkLogo").addEventListener("change", e=>{
 const file = e.target.files[0];
 bulkLogoURL = file ? URL.createObjectURL(file) : null;
+updateBulkPreview();
 });
 
 /* SAMPLE DOWNLOAD */
@@ -320,12 +315,12 @@ document.getElementById("customizationArea").innerHTML = `
 
 <div>
 <label class="text-xs">Background</label>
-<input type="color" id="bgColor" value="#ffffff" class="w-full h-10">
+<input type="color" id="bgColor" value="#ffffff" class="w-full h-10" onchange="updateBulkPreview()">
 </div>
 
 <div>
 <label class="text-xs">Style</label>
-<select id="qrStyle" class="w-full border rounded-lg h-10 px-2">
+<select id="qrStyle" class="w-full border rounded-lg h-10 px-2" onchange="updateBulkPreview()">
 <option value="square">Square</option>
 <option value="dots">Dots</option>
 <option value="rounded">Rounded</option>
@@ -476,6 +471,7 @@ reader.readAsDataURL(blob);
 </script>
 </body>
 </html>
+
 
 
 
