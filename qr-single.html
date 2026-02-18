@@ -87,6 +87,7 @@ let currentType="text";
 let qr;
 let tabPosition=0;
 
+/* ---------- SLIDER ---------- */
 function slideTabs(dir){
 const tabs=document.getElementById("tabs");
 tabPosition+=dir*200;
@@ -94,6 +95,7 @@ if(tabPosition<0)tabPosition=0;
 tabs.style.transform=`translateX(-${tabPosition}px)`;
 }
 
+/* ---------- TAB SWITCH ---------- */
 function selectType(type,el){
 currentType=type;
 document.querySelectorAll(".qrTab").forEach(t=>t.classList.remove("active"));
@@ -101,10 +103,12 @@ el.classList.add("active");
 renderForm();
 }
 
+/* ---------- INPUT ---------- */
 function input(id,placeholder){
 return `<input id="${id}" placeholder="${placeholder}" class="w-full border rounded-xl p-3 mb-3" oninput="autoQR()">`;
 }
 
+/* ---------- FORM ---------- */
 function renderForm(){
 const a=document.getElementById("formArea");
 
@@ -116,8 +120,7 @@ wifi:`<h2 class="text-xl font-bold mb-4">WiFi</h2>${input('ssid','Network Name')
 upi:`<h2 class="text-xl font-bold mb-4">UPI</h2>${input('upi','UPI ID')}${input('amount','Amount')}`,
 email:`<h2 class="text-xl font-bold mb-4">Email</h2>${input('mail','Email')}${input('subject','Subject')}`,
 phone:`<h2 class="text-xl font-bold mb-4">Phone</h2>${input('call','Phone Number')}`,
-location:`<h2 class="text-xl font-bold mb-4">Location</h2>
-${input('address','Enter shop / office / landmark')}`,
+location:`<h2 class="text-xl font-bold mb-4">Location</h2>${input('address','Enter shop / office / landmark')}`,
 menu:`<h2 class="text-xl font-bold mb-4">Restaurant Menu</h2>${input('menuUrl','Menu URL')}`,
 product:`<h2 class="text-xl font-bold mb-4">Product Label</h2>${input('productName','Product Name')}${input('productCode','SKU Code')}`,
 ticket:`<h2 class="text-xl font-bold mb-4">Event Ticket</h2>${input('eventName','Event')}${input('seat','Seat')}${input('date','Date')}`,
@@ -127,14 +130,16 @@ vcard:`<h2 class="text-xl font-bold mb-4">Business Card</h2>${input('name','Name
 a.innerHTML=forms[currentType];
 }
 
-function autoQR(){ generateQR(); }
-
-function generateQR(){
+/* ---------- SAFE VALUE ---------- */
 function val(id){
 const el=document.getElementById(id);
 return el?el.value:"";
 }
 
+/* ---------- AUTO ---------- */
+function autoQR(){ generateQR(); }
+
+/* ---------- QR GENERATION ---------- */
 function generateQR(){
 let d="";
 
@@ -161,7 +166,7 @@ case"phone":
 d=`tel:${val('call')}`;
 break;
 
-/* LOCATION — OpenStreetMap */
+/* LOCATION — only after 3 letters */
 case"location":
 const addr=val('address').trim();
 if(addr.length<3){
@@ -183,6 +188,7 @@ case"ticket":
 d=`Event:${val('eventName')}\nSeat:${val('seat')}\nDate:${val('date')}`;
 break;
 
+/* VCARD FIXED */
 case"vcard":
 const name=val('name');
 const org=val('org');
@@ -195,12 +201,8 @@ return;
 
 d=`BEGIN:VCARD
 VERSION:3.0
-${name?`FN:${name}\n`:''}
-${org?`ORG:${org}\n`:''}
-${tel?`TEL:${tel}\n`:''}
-END:VCARD`;
+${name?`FN:${name}\n`:''}${org?`ORG:${org}\n`:''}${tel?`TEL:${tel}\n`:''}END:VCARD`;
 break;
-
 
 default:
 d=val('data');
@@ -213,10 +215,29 @@ console.log("QR error:",e);
 }
 }
 
+/* ---------- CREATE ---------- */
+function createQR(text){
+const c=document.getElementById("qrcode");
+c.innerHTML="";
+if(text) qr=new QRCode(c,{text,width:260,height:260});
+}
+
+/* ---------- DOWNLOAD ---------- */
+function downloadQR(){
+const img=document.querySelector("#qrcode img");
+if(!img)return alert("Generate QR first");
+const a=document.createElement("a");
+a.href=img.src;
+a.download="qr-code.png";
+a.click();
+}
+
+renderForm();
 </script>
 <!-- NAVBAR AUTH CONTROLLER (VERY IMPORTANT) -->
 <script src="js/auth.js"></script>
 </body>
 </html>
+
 
 
