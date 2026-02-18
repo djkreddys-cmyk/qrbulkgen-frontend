@@ -44,37 +44,26 @@
 
 <div id="resetModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
   <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-xl">
-
-```
 <h3 class="text-xl font-bold mb-4 text-center">Reset Password</h3>
-
 <div class="relative mb-3">
   <input id="resetEmail" type="email" placeholder="Registered Email"
     class="w-full border rounded-lg px-4 py-3 pr-10" />
   <span id="emailStatus" class="absolute right-3 top-3 text-xl"></span>
 </div>
-
 <input id="resetPassword" type="password" placeholder="New Password"
   class="w-full border rounded-lg px-4 py-3 mb-4 opacity-50" disabled />
-
 <button id="updatePasswordBtn"
   class="w-full bg-indigo-600 text-white py-3 rounded-lg mb-2">
   Update Password
 </button>
-
 <button id="cancelReset" class="w-full text-gray-500">
   Cancel
 </button>
-```
-
   </div>
 </div>
-
 <script>
 const API="https://qrbulkgen-backend-production.up.railway.app/api";
-
 let isLogin=false;
-
 const nameEl=document.getElementById("name");
 const emailEl=document.getElementById("email");
 const passwordEl=document.getElementById("password");
@@ -84,16 +73,13 @@ const switchBtn=document.getElementById("switchBtn");
 const switchText=document.getElementById("switchText");
 const forgotBox=document.getElementById("forgotBox");
 const msg=document.getElementById("msg");
-
 function show(t,color="red"){
  msg.innerText=t;
  msg.className="text-center text-sm mb-4 text-"+color+"-600";
 }
-
 // ---------- SWITCH MODE ----------
 switchBtn.onclick=()=>{
  isLogin=!isLogin;
-
  if(isLogin){
   title.innerText="Login";
   mainBtn.innerText="Login";
@@ -110,71 +96,57 @@ switchBtn.onclick=()=>{
   switchBtn.innerText="Login";
  }
 };
-
 // ---------- LOGIN / REGISTER ----------
 mainBtn.onclick=async()=>{
  const email=emailEl.value.trim();
  const password=passwordEl.value.trim();
-
  if(isLogin){
    const r=await fetch(API+"/login",{
      method:"POST",
      headers:{'Content-Type':'application/json'},
      body:JSON.stringify({email,password})
    });
-
    if(r.status!==200){ show("Invalid login"); return; }
-
    const data=await r.json();
    localStorage.setItem("token",data.token);
-
    const after = localStorage.getItem("afterLogin");
    localStorage.removeItem("afterLogin");
    window.location = after || "qr-dashboard.html";
-
  }else{
    const name=nameEl.value.trim();
    if(!name||!email||!password){ show("Fill all fields"); return; }
-
    const r=await fetch(API+"/register",{
      method:"POST",
      headers:{'Content-Type':'application/json'},
      body:JSON.stringify({name,email,password})
    });
-
    show(await r.text(),"green");
  }
 };
-
 // ---------- OPEN MODAL ----------
 document.getElementById("forgotBtn").onclick=()=>{
   document.getElementById("resetModal").classList.remove("hidden");
   document.getElementById("resetModal").classList.add("flex");
   document.getElementById("resetEmail").value=emailEl.value;
 };
-
 // ---------- CLOSE MODAL ----------
 document.getElementById("cancelReset").onclick=()=>{
   document.getElementById("resetModal").classList.add("hidden");
   document.getElementById("resetModal").classList.remove("flex");
 };
-
 // ---------- CHECK EMAIL ----------
 document.getElementById("resetEmail").addEventListener("input", async ()=>{
   const email=document.getElementById("resetEmail").value.trim();
   const status=document.getElementById("emailStatus");
   const pass=document.getElementById("resetPassword");
-
   if(email.length<5){
     status.innerHTML="";
     pass.disabled=true;
     pass.classList.add("opacity-50");
     return;
   }
-
   const r=await fetch(API+"/check-email",{method:"POST",headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
   const data=await r.json();
-
   if(data.exists){
     status.innerHTML="✔";
     status.className="absolute right-3 top-3 text-xl text-green-500";
@@ -187,23 +159,18 @@ document.getElementById("resetEmail").addEventListener("input", async ()=>{
     pass.classList.add("opacity-50");
   }
 });
-
 // ---------- UPDATE PASSWORD ----------
 document.getElementById("updatePasswordBtn").onclick=async()=>{
   const email=document.getElementById("resetEmail").value.trim();
   const newPassword=document.getElementById("resetPassword").value.trim();
-
   if(!newPassword){ alert("Enter new password"); return; }
-
   const r=await fetch(API+"/reset-password",{method:"POST",headers:{'Content-Type':'application/json'},body:JSON.stringify({email,newPassword})});
   alert(await r.text());
-
   if(r.ok){
     document.getElementById("resetModal").classList.add("hidden");
     document.getElementById("resetModal").classList.remove("flex");
   }
 };
 </script>
-
 </body>
 </html>
