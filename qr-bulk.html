@@ -170,6 +170,8 @@ tabs.style.transform=`translateX(-${tabPosition}px)`;
 function selectType(type,el){
 
 currentType=type;
+
+/* change active tab */
 document.querySelectorAll(".qrTab").forEach(t=>t.classList.remove("active"));
 el.classList.add("active");
 
@@ -192,10 +194,9 @@ ticket:"Ticket"
 document.getElementById("bulkTitle").innerText=
 names[type]+" QR Bulk Upload";
 
-/* refresh preview if data already loaded */
-updateBulkPreview();
+/* IMPORTANT — reset everything */
+resetBulkPage();
 }
-
 
 /* FILE NAME */
 document.getElementById("excelFile").addEventListener("change", e=>{
@@ -390,6 +391,33 @@ imageOptions:{crossOrigin:"anonymous",margin:6}
 
 previewQR.append(document.getElementById("bulkPreviewQR"));
 }
+function resetBulkPage(){
+
+/* clear excel data */
+excelData=[];
+
+/* clear file input */
+const file=document.getElementById("excelFile");
+if(file) file.value="";
+
+/* clear logo */
+const logo=document.getElementById("bulkLogo");
+if(logo) logo.value="";
+bulkLogoURL=null;
+
+/* clear texts */
+document.getElementById("fileName").innerText="";
+document.getElementById("rowsInfo").innerText="";
+
+/* clear preview */
+document.getElementById("previewTable").innerHTML="";
+document.getElementById("bulkPreviewQR").innerHTML="";
+
+/* reset customization */
+document.getElementById("qrColor").value="#000000";
+document.getElementById("bgColor").value="#ffffff";
+document.getElementById("qrStyle").value="square";
+}
 
 async function generateBulkQRs(){
 
@@ -473,6 +501,7 @@ reader.readAsDataURL(blob);
 </script>
 </body>
 </html>
+
 
 
 
