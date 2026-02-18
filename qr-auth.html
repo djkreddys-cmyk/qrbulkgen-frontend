@@ -18,7 +18,16 @@
 <p id="msg" class="text-center text-sm mb-4"></p>
 <input id="name" type="text" placeholder="Your Name" class="w-full border rounded-lg px-4 py-3 mb-3" />
 <input id="email" type="email" placeholder="Email" class="w-full border rounded-lg px-4 py-3 mb-3" />
-<input id="password" type="password" placeholder="Password" class="w-full border rounded-lg px-4 py-3 mb-3" />
+<div class="relative mb-3">
+  <input id="password" type="password"
+    placeholder="Password"
+    class="w-full border rounded-lg px-4 py-3 pr-12" />
+
+  <span id="eye"
+    class="absolute right-3 top-3 cursor-pointer select-none text-xl">
+    👁
+  </span>
+</div>
 <div id="forgotBox" class="text-right mb-3 hidden">
   <button id="forgotBtn" class="text-sm text-indigo-600 hover:underline">Forgot Password?</button>
 </div>
@@ -102,14 +111,38 @@ mainBtn.onclick=async()=>{
    window.location = after || "qr-dashboard.html";
  }else{
    const name=nameEl.value.trim();
-   if(!name||!email||!password){ show("Fill all fields"); return; }
+   if(!name||!email||!password){
+     show("Fill all fields");
+     return;
+   }
+
    const r=await fetch(API+"/register",{
      method:"POST",
      headers:{'Content-Type':'application/json'},
      body:JSON.stringify({name,email,password})
    });
-   show(await r.text(),"green");
- }
+
+   const text=await r.text();
+
+   if(r.ok){
+      show("Account created! Please login","green");
+
+      // switch to login mode automatically
+      isLogin=true;
+      title.innerText="Login";
+      mainBtn.innerText="Login";
+      nameEl.style.display="none";
+      forgotBox.classList.remove("hidden");
+      switchText.innerText="New here?";
+      switchBtn.innerText="Register";
+
+      // keep email, clear password
+      passwordEl.value="";
+      passwordEl.focus();
+   }else{
+      show(text);
+   }
+}
 };
 // ---------- OPEN MODAL ----------
 document.getElementById("forgotBtn").onclick=()=>{
@@ -159,7 +192,17 @@ document.getElementById("updatePasswordBtn").onclick=async()=>{
     document.getElementById("resetModal").classList.remove("flex");
   }
 };
+// HOLD TO VIEW PASSWORD
+const eye=document.getElementById("eye");
+
+eye.addEventListener("mousedown",()=> passwordEl.type="text");
+eye.addEventListener("mouseup",()=> passwordEl.type="password");
+eye.addEventListener("mouseleave",()=> passwordEl.type="password");
+
+eye.addEventListener("touchstart",()=> passwordEl.type="text");
+eye.addEventListener("touchend",()=> passwordEl.type="password");
 </script>
 </body>
 </html>
+
 
