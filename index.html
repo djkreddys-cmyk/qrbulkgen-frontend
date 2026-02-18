@@ -16,23 +16,34 @@
 <body class="bg-white text-gray-800">
 
 <!-- NAVBAR -->
+<header class="bg-white shadow sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
-<nav class="space-x-6 font-medium hidden md:flex items-center">
+    <!-- Logo -->
+    <a href="/index.html" class="text-xl font-bold text-indigo-600">
+      QRBulkGen
+    </a>
 
-  <!-- Only visible AFTER LOGIN -->
-  <div id="navPrivate" class="hidden space-x-6">
-    <a href="/qr-single.html" class="hover:text-indigo-600">Generate QR</a>
-    <a href="/qr-bulk.html" class="hover:text-indigo-600">Bulk Upload</a>
-    <a href="/qr-dashboard.html" class="hover:text-indigo-600">Dashboard</a>
+    <!-- Right Menu -->
+    <div class="flex items-center gap-6">
+
+      <!-- Protected links -->
+      <div id="navLinks" class="hidden md:flex items-center gap-6">
+        <a href="/qr-single.html" class="hover:text-indigo-600">Generate QR</a>
+        <a href="/qr-bulk.html" class="hover:text-indigo-600">Bulk Upload</a>
+        <a href="/qr-dashboard.html" class="hover:text-indigo-600">Dashboard</a>
+      </div>
+
+      <!-- Login/Profile -->
+      <div id="navUser" class="min-w-[140px] text-right">
+        <!-- JS will fill -->
+      </div>
+
+    </div>
   </div>
+</header>
 
-  <!-- User/Login area -->
-  <div id="navUser"></div>
-
-</nav>
-
-
-<!-- HERO -->
+  <!-- HERO -->
 
 <section class="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-10 items-center">
   <div>
@@ -207,6 +218,7 @@ window.location = page; }
 
 </body>
 </html>
+
 
 
 
