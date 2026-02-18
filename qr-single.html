@@ -10,6 +10,8 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
+<script src="js/auth.js"></script>
+
 <style>
 .qrTab{padding:10px 14px;border-radius:10px;color:#374151;white-space:nowrap}
 .qrTab:hover{background:#eef2ff;color:#4f46e5}
@@ -21,18 +23,43 @@
 
 <body class="bg-gray-100">
 
+<!-- NAVBAR -->
+
 <header class="bg-white shadow sticky top-0 z-50">
 <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-<a href="#" class="text-xl font-bold text-indigo-600">QRBulkGen</a>
+
+<a id="logoLink" href="qr-dashboard.html" class="text-xl font-bold text-indigo-600">
+QRBulkGen
+</a>
+
+<div class="flex items-center gap-6">
+<div id="navLinks" class="hidden md:flex gap-6">
+<a href="qr-single.html">Generate QR</a>
+<a href="qr-bulk.html">Bulk Upload</a>
+<a href="qr-dashboard.html">Dashboard</a>
+</div>
+<div id="navUser"></div>
+</div>
+
 </div>
 </header>
 
-<!-- TABS -->
+<!-- TYPE SLIDER -->
 
-<div class="bg-white border-b">
-<div class="max-w-7xl mx-auto flex gap-4 py-3 px-4 overflow-x-auto">
+<div class="bg-white border-b sticky top-[72px] z-40">
+<div class="max-w-7xl mx-auto flex items-center px-2">
 
-<button class="qrTab active" onclick="selectType('text',this)">Text</button> <button class="qrTab" onclick="selectType('url',this)">Website</button> <button class="qrTab" onclick="selectType('phone',this)">Phone</button> <button class="qrTab" onclick="selectType('email',this)">Email</button> <button class="qrTab" onclick="selectType('wifi',this)">WiFi</button> <button class="qrTab" onclick="selectType('upi',this)">UPI</button> <button class="qrTab" onclick="selectType('location',this)">Map Location</button>
+<button onclick="slideTabs(-1)" class="p-2 text-xl">◀</button>
+
+<div id="tabsWrapper" class="overflow-hidden flex-1">
+<div id="tabs" class="flex gap-4 py-3 transition-all duration-300">
+
+<button class="qrTab active" onclick="selectType('text',this)">Text</button> <button class="qrTab" onclick="selectType('url',this)">Website</button> <button class="qrTab" onclick="selectType('whatsapp',this)">WhatsApp</button> <button class="qrTab" onclick="selectType('wifi',this)">WiFi</button> <button class="qrTab" onclick="selectType('upi',this)">UPI</button> <button class="qrTab" onclick="selectType('email',this)">Email</button> <button class="qrTab" onclick="selectType('phone',this)">Phone</button> <button class="qrTab" onclick="selectType('location',this)">Location</button> <button class="qrTab" onclick="selectType('vcard',this)">Business Card</button> <button class="qrTab" onclick="selectType('menu',this)">Restaurant Menu</button> <button class="qrTab" onclick="selectType('product',this)">Product Label</button> <button class="qrTab" onclick="selectType('ticket',this)">Event Ticket</button>
+
+</div>
+</div>
+
+<button onclick="slideTabs(1)" class="p-2 text-xl">▶</button>
 
 </div>
 </div>
@@ -56,8 +83,15 @@ Download PNG
 <script>
 let currentType="text";
 let qr;
+let tabPosition=0;
 
-/* ---------- UI ---------- */
+function slideTabs(dir){
+const tabs=document.getElementById("tabs");
+tabPosition+=dir*200;
+if(tabPosition<0)tabPosition=0;
+tabs.style.transform=`translateX(-${tabPosition}px)`;
+}
+
 function selectType(type,el){
 currentType=type;
 document.querySelectorAll(".qrTab").forEach(t=>t.classList.remove("active"));
@@ -66,95 +100,8 @@ renderForm();
 }
 
 function input(id,placeholder){
-return `<input id="${id}" placeholder="${placeholder}" class="w-full border rounded-xl p-3 mb-3" oninput="generateQR()">`;
+return `<input id="${id}" placeholder="${placeholder}" class="w-full border rounded-xl p-3 mb-3" oninput="autoQR()">`;
 }
 
-/* ---------- FORM RENDER ---------- */
 function renderForm(){
-const a=document.getElementById("formArea");
-
-const forms={
-text:`<h2 class="text-xl font-bold mb-4">Text QR</h2>${input('data','Enter text')}`,
-
-url:`<h2 class="text-xl font-bold mb-4">Website</h2>${input('data','https://example.com')}`,
-
-phone:`<h2 class="text-xl font-bold mb-4">Phone</h2>${input('call','Phone Number')}`,
-
-email:`<h2 class="text-xl font-bold mb-4">Email</h2>${input('mail','Email Address')}`,
-
-wifi:`<h2 class="text-xl font-bold mb-4">WiFi</h2>
-${input('ssid','Network Name')}
-${input('pass','Password')}`,
-
-upi:`<h2 class="text-xl font-bold mb-4">UPI Payment</h2>
-${input('upi','UPI ID')}
-${input('amount','Amount')}`,
-
-location:`<h2 class="text-xl font-bold mb-4">Enter Location</h2>
-<input id="address" placeholder="Shop name / address / landmark"
-class="w-full border rounded-xl p-3 mb-3" oninput="generateQR()">`
-};
-
-a.innerHTML=forms[currentType];
-}
-
-/* ---------- QR GENERATOR ---------- */
-function generateQR(){
-
-let d="";
-
-try{
-switch(currentType){
-
-case"text":
-case"url":
-d=data?.value||"";
-break;
-
-case"phone":
-d=`tel:${call.value}`;
-break;
-
-case"email":
-d=`mailto:${mail.value}`;
-break;
-
-case"wifi":
-d=`WIFI:T:WPA;S:${ssid.value};P:${pass.value};;`;
-break;
-
-case"upi":
-d=`upi://pay?pa=${upi.value}&am=${amount.value}`;
-break;
-
-/* OPTION 3 — OPENSTREETMAP */
-case"location":
-d=`https://www.openstreetmap.org/search?query=${encodeURIComponent(address.value)}`;
-break;
-
-}
-
-createQR(d);
-}catch{}
-}
-
-function createQR(text){
-const c=document.getElementById("qrcode");
-c.innerHTML="";
-qr=new QRCode(c,{text,width:260,height:260});
-}
-
-function downloadQR(){
-const img=document.querySelector("#qrcode img");
-if(!img)return alert("Generate QR first");
-const a=document.createElement("a");
-a.href=img.src;
-a.download="qr-code.png";
-a.click();
-}
-
-renderForm();
-</script>
-
-</body>
-</html>
+const a=document.getElementBy
