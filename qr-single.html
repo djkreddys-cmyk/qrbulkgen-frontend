@@ -1,13 +1,14 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Generate QR — QRBulkGen</title>
-<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=googleReady" async defer></script>
+
 <script src="https://cdn.tailwindcss.com"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="js/auth.js"></script>
 
 <style>
 .qrTab{padding:10px 14px;border-radius:10px;color:#374151;white-space:nowrap}
@@ -15,60 +16,29 @@
 .qrTab.active{background:#4f46e5;color:white}
 .btnGen{width:100%;background:#4f46e5;color:white;padding:12px;border-radius:12px}
 </style>
+
 </head>
+
 <body class="bg-gray-100">
 
-<!-- NAVBAR -->
 <header class="bg-white shadow sticky top-0 z-50">
 <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-
-<a id="logoLink" href="qr-dashboard.html" class="text-xl font-bold text-indigo-600">
-QRBulkGen
-</a>
-
-<div class="flex items-center gap-6">
-<div id="navLinks" class="hidden md:flex gap-6">
-<a href="qr-single.html">Generate QR</a>
-<a href="qr-bulk.html">Bulk Upload</a>
-<a href="qr-dashboard.html">Dashboard</a>
-</div>
-<div id="navUser"></div>
-</div>
-
+<a href="#" class="text-xl font-bold text-indigo-600">QRBulkGen</a>
 </div>
 </header>
 
-<!-- TYPE SLIDER -->
-<div class="bg-white border-b sticky top-[72px] z-40">
-<div class="max-w-7xl mx-auto flex items-center px-2">
+<!-- TABS -->
 
-<button onclick="slideTabs(-1)" class="p-2 text-xl">◀</button>
+<div class="bg-white border-b">
+<div class="max-w-7xl mx-auto flex gap-4 py-3 px-4 overflow-x-auto">
 
-<div id="tabsWrapper" class="overflow-hidden flex-1">
-<div id="tabs" class="flex gap-4 py-3 transition-all duration-300">
-
-<button class="qrTab active" onclick="selectType('text',this)">Text</button>
-<button class="qrTab" onclick="selectType('url',this)">Website</button>
-<button class="qrTab" onclick="selectType('whatsapp',this)">WhatsApp</button>
-<button class="qrTab" onclick="selectType('wifi',this)">WiFi</button>
-<button class="qrTab" onclick="selectType('upi',this)">UPI</button>
-<button class="qrTab" onclick="selectType('email',this)">Email</button>
-<button class="qrTab" onclick="selectType('phone',this)">Phone</button>
-<button class="qrTab" onclick="selectType('location',this)">Location</button>
-<button class="qrTab" onclick="selectType('vcard',this)">Business Card</button>
-<button class="qrTab" onclick="selectType('menu',this)">Restaurant Menu</button>
-<button class="qrTab" onclick="selectType('product',this)">Product Label</button>
-<button class="qrTab" onclick="selectType('ticket',this)">Event Ticket</button>
-
-</div>
-</div>
-
-<button onclick="slideTabs(1)" class="p-2 text-xl">▶</button>
+<button class="qrTab active" onclick="selectType('text',this)">Text</button> <button class="qrTab" onclick="selectType('url',this)">Website</button> <button class="qrTab" onclick="selectType('phone',this)">Phone</button> <button class="qrTab" onclick="selectType('email',this)">Email</button> <button class="qrTab" onclick="selectType('wifi',this)">WiFi</button> <button class="qrTab" onclick="selectType('upi',this)">UPI</button> <button class="qrTab" onclick="selectType('location',this)">Map Location</button>
 
 </div>
 </div>
 
 <!-- CONTENT -->
+
 <div class="max-w-7xl mx-auto p-6 grid md:grid-cols-2 gap-8">
 
 <div id="formArea" class="bg-white rounded-2xl shadow p-6"></div>
@@ -86,15 +56,8 @@ Download PNG
 <script>
 let currentType="text";
 let qr;
-let tabPosition=0;
 
-function slideTabs(dir){
-const tabs=document.getElementById("tabs");
-tabPosition+=dir*200;
-if(tabPosition<0)tabPosition=0;
-tabs.style.transform=`translateX(-${tabPosition}px)`;
-}
-
+/* ---------- UI ---------- */
 function selectType(type,el){
 currentType=type;
 document.querySelectorAll(".qrTab").forEach(t=>t.classList.remove("active"));
@@ -103,51 +66,72 @@ renderForm();
 }
 
 function input(id,placeholder){
-return `<input id="${id}" placeholder="${placeholder}" class="w-full border rounded-xl p-3 mb-3" oninput="autoQR()">`;
+return `<input id="${id}" placeholder="${placeholder}" class="w-full border rounded-xl p-3 mb-3" oninput="generateQR()">`;
 }
 
+/* ---------- FORM RENDER ---------- */
 function renderForm(){
 const a=document.getElementById("formArea");
 
 const forms={
 text:`<h2 class="text-xl font-bold mb-4">Text QR</h2>${input('data','Enter text')}`,
+
 url:`<h2 class="text-xl font-bold mb-4">Website</h2>${input('data','https://example.com')}`,
-whatsapp:`<h2 class="text-xl font-bold mb-4">WhatsApp</h2>${input('phone','Phone')}${input('msg','Message')}`,
-wifi:`<h2 class="text-xl font-bold mb-4">WiFi</h2>${input('ssid','Network Name')}${input('pass','Password')}`,
-upi:`<h2 class="text-xl font-bold mb-4">UPI</h2>${input('upi','UPI ID')}${input('amount','Amount')}`,
-email:`<h2 class="text-xl font-bold mb-4">Email</h2>${input('mail','Email')}${input('subject','Subject')}`,
+
 phone:`<h2 class="text-xl font-bold mb-4">Phone</h2>${input('call','Phone Number')}`,
-location:`<h2 class="text-xl font-bold mb-4">Google Maps Location</h2>
-<input id="placeInput" placeholder="Search address"
-class="w-full border rounded-xl p-3 mb-3">
-<input type="hidden" id="placeLink">`,
-menu:`<h2 class="text-xl font-bold mb-4">Restaurant Menu</h2>${input('menuUrl','Menu URL')}`,
-product:`<h2 class="text-xl font-bold mb-4">Product Label</h2>${input('productName','Product Name')}${input('productCode','SKU Code')}`,
-ticket:`<h2 class="text-xl font-bold mb-4">Event Ticket</h2>${input('eventName','Event')}${input('seat','Seat')}${input('date','Date')}`,
-vcard:`<h2 class="text-xl font-bold mb-4">Business Card</h2>${input('name','Name')}${input('org','Company')}${input('tel','Phone')}`
+
+email:`<h2 class="text-xl font-bold mb-4">Email</h2>${input('mail','Email Address')}`,
+
+wifi:`<h2 class="text-xl font-bold mb-4">WiFi</h2>
+${input('ssid','Network Name')}
+${input('pass','Password')}`,
+
+upi:`<h2 class="text-xl font-bold mb-4">UPI Payment</h2>
+${input('upi','UPI ID')}
+${input('amount','Amount')}`,
+
+location:`<h2 class="text-xl font-bold mb-4">Enter Location</h2>
+<input id="address" placeholder="Shop name / address / landmark"
+class="w-full border rounded-xl p-3 mb-3" oninput="generateQR()">`
 };
 
 a.innerHTML=forms[currentType];
 }
 
-function autoQR(){ generateQR(); }
-
+/* ---------- QR GENERATOR ---------- */
 function generateQR(){
+
 let d="";
 
 try{
 switch(currentType){
-case"whatsapp":d=`https://wa.me/${phone.value}?text=${encodeURIComponent(msg.value)}`;break;
-case"wifi":d=`WIFI:T:WPA;S:${ssid.value};P:${pass.value};;`;break;
-case"upi":d=`upi://pay?pa=${upi.value}&am=${amount.value}`;break;
-case"email":d=`mailto:${mail.value}?subject=${subject.value}`;break;
-case"phone":d=`tel:${call.value}`;break;
-case"location":d=placeLink.value||"";break;
-case"menu":d=menuUrl.value;break;
-case"product":d=`Product:${productName.value}\nCode:${productCode.value}`;break;
-case"ticket":d=`Event:${eventName.value}\nSeat:${seat.value}\nDate:${date.value}`;break;
-case"vcard":d=`BEGIN:VCARD\nVERSION:3.0\nFN:${name.value}\nORG:${org.value}\nTEL:${tel.value}\nEND:VCARD`;break;
-default:d=data?.value||"";
+
+case"text":
+case"url":
+d=data?.value||"";
+break;
+
+case"phone":
+d=`tel:${call.value}`;
+break;
+
+case"email":
+d=`mailto:${mail.value}`;
+break;
+
+case"wifi":
+d=`WIFI:T:WPA;S:${ssid.value};P:${pass.value};;`;
+break;
+
+case"upi":
+d=`upi://pay?pa=${upi.value}&am=${amount.value}`;
+break;
+
+/* OPTION 3 — OPENSTREETMAP */
+case"location":
+d=`https://www.openstreetmap.org/search?query=${encodeURIComponent(address.value)}`;
+break;
+
 }
 
 createQR(d);
@@ -170,69 +154,7 @@ a.click();
 }
 
 renderForm();
-let autocomplete;
-
-function initAutocomplete(){
-
-const input=document.getElementById("placeInput");
-if(!input) return;
-
-/* prevent multiple initialization */
-if(input.dataset.loaded) return;
-input.dataset.loaded=true;
-
-autocomplete=new google.maps.places.Autocomplete(input);
-
-/* when user selects suggestion */
-autocomplete.addListener("place_changed",()=>{
-
-const place=autocomplete.getPlace();
-
-/* user pressed enter without choosing */
-if(!place.geometry){
-document.getElementById("placeLink").value="";
-return;
-}
-
-const lat=place.geometry.location.lat();
-const lng=place.geometry.location.lng();
-
-/* exact pinned google map link */
-const mapLink=`https://www.google.com/maps/search/?api=1&query=${lat},${lng}&query_place_id=${place.place_id}`;
-
-document.getElementById("placeLink").value=mapLink;
-
-generateQR();
-
-});
-}
-/* waits until google maps fully loads */
-function waitForGoogle(){
-
-if(typeof google === "undefined" || !google.maps || !google.maps.places){
-setTimeout(waitForGoogle,200);
-return;
-}
-
-initAutocomplete();
-
-}
-/* reload autocomplete whenever tab changes */
-const originalRenderForm=renderForm;
-renderForm=function(){
-originalRenderForm();
-
-if(currentType==="location"){
-waitForGoogle();
-}
-};
 </script>
-<!-- NAVBAR AUTH CONTROLLER (VERY IMPORTANT) -->
-<script src="js/auth.js"></script>
+
 </body>
 </html>
-
-
-
-
-
