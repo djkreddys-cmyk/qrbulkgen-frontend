@@ -47,26 +47,55 @@
   </div>
 </header>
 
-<!-- QR TYPE NAVBAR -->
-
+<!-- QR TYPE NAVBAR (SLIDER) -->
 <div class="bg-white border-b sticky top-[72px] z-40">
-  <div class="max-w-7xl mx-auto px-4 overflow-x-auto">
-    <div class="flex gap-6 py-3 text-sm font-medium whitespace-nowrap">
-      <button onclick="selectType('text',this)" class="qrTab active">Text</button>
-      <button onclick="selectType('url',this)" class="qrTab">Website</button>
-      <button onclick="selectType('email',this)" class="qrTab">Email</button>
-      <button onclick="selectType('phone',this)" class="qrTab">Phone</button>
-      <button onclick="selectType('Location',this)" class="qrTab">Location</button>
-      <button onclick="selectType('wifi',this)" class="qrTab">WiFi</button>
-      <button onclick="selectType('upi',this)" class="qrTab">UPI</button>
-      <button onclick="selectType('whatsapp',this)" class="qrTab">WhatsApp</button>
-      <button onclick="selectType('vcard',this)" class="qrTab">Business Card</button>
-      <button onclick="selectType('RestaurantMenu',this)" class="qrTab">RestaurantMenu</button>
-      <button onclick="selectType('productlabel',this)" class="qrTab">Product Label</button>
-      <button onclick="selectType('eventticket',this)" class="qrTab">Event Ticket</button>
+
+  <div class="max-w-7xl mx-auto flex items-center px-2">
+
+    <!-- LEFT ARROW -->
+    <button onclick="slideTabs(-1)" class="p-2 text-xl hover:text-indigo-600">
+      ◀
+    </button>
+
+    <!-- TABS CONTAINER -->
+    <div id="tabsWrapper" class="overflow-hidden flex-1">
+      <div id="tabs" class="flex gap-4 py-3 transition-all duration-300">
+
+        <button onclick="selectType('text',this)" class="qrTab active">Text</button>
+        <button onclick="selectType('url',this)" class="qrTab">Website</button>
+        <button onclick="selectType('email',this)" class="qrTab">Email</button>
+        <button onclick="selectType('phone',this)" class="qrTab">Phone</button>
+        <button onclick="selectType('location',this)" class="qrTab">Location</button>
+        <button onclick="selectType('wifi',this)" class="qrTab">WiFi</button>
+        <button onclick="selectType('upi',this)" class="qrTab">UPI</button>
+        <button onclick="selectType('whatsapp',this)" class="qrTab">WhatsApp</button>
+        <button onclick="selectType('vcard',this)" class="qrTab">Business Card</button>
+        <button onclick="selectType('menu',this)" class="qrTab">Restaurant Menu</button>
+        <button onclick="selectType('product',this)" class="qrTab">Product Label</button>
+        <button onclick="selectType('ticket',this)" class="qrTab">Event Ticket</button>
+
+      </div>
     </div>
+
+    <!-- RIGHT ARROW -->
+    <button onclick="slideTabs(1)" class="p-2 text-xl hover:text-indigo-600">
+      ▶
+    </button>
+
   </div>
 </div>
+let tabPosition = 0;
+
+function slideTabs(direction){
+  const tabs = document.getElementById("tabs");
+
+  tabPosition += direction * 200;
+
+  if(tabPosition < 0) tabPosition = 0;
+  if(tabPosition > tabs.scrollWidth) tabPosition = tabs.scrollWidth;
+
+  tabs.style.transform = `translateX(-${tabPosition}px)`;
+}
 
 <!-- CONTENT -->
 
@@ -147,6 +176,35 @@ area.innerHTML=`<h2 class="text-xl font-bold mb-4">Business Card</h2>
 <input id="org" placeholder="Company" class="w-full border rounded-xl p-3 mb-3">
 <input id="tel" placeholder="Phone" class="w-full border rounded-xl p-3 mb-4">
 <button onclick="generateQR('vcard')" class="btnGen">Generate QR</button>`;
+
+if(currentType==="location")
+area.innerHTML=`
+<h2 class="text-xl font-bold mb-4">Location QR</h2>
+<input id="lat" placeholder="Latitude" class="w-full border rounded-xl p-3 mb-3">
+<input id="lng" placeholder="Longitude" class="w-full border rounded-xl p-3 mb-4">
+<button onclick="generateQR('location')" class="btnGen">Generate QR</button>`;
+
+if(currentType==="menu")
+area.innerHTML=`
+<h2 class="text-xl font-bold mb-4">Restaurant Menu</h2>
+<input id="menuUrl" placeholder="Menu URL" class="w-full border rounded-xl p-3 mb-4">
+<button onclick="generateQR('menu')" class="btnGen">Generate QR</button>`;
+
+if(currentType==="product")
+area.innerHTML=`
+<h2 class="text-xl font-bold mb-4">Product Label</h2>
+<input id="productName" placeholder="Product Name" class="w-full border rounded-xl p-3 mb-3">
+<input id="productCode" placeholder="Product Code / SKU" class="w-full border rounded-xl p-3 mb-4">
+<button onclick="generateQR('product')" class="btnGen">Generate QR</button>`;
+
+if(currentType==="ticket")
+area.innerHTML=`
+<h2 class="text-xl font-bold mb-4">Event Ticket</h2>
+<input id="eventName" placeholder="Event Name" class="w-full border rounded-xl p-3 mb-3">
+<input id="seat" placeholder="Seat Number" class="w-full border rounded-xl p-3 mb-3">
+<input id="date" placeholder="Date" class="w-full border rounded-xl p-3 mb-4">
+<button onclick="generateQR('ticket')" class="btnGen">Generate QR</button>`;
+
 }
 
 function generateQR(mode){
@@ -163,6 +221,18 @@ data=`upi://pay?pa=${upi.value}&am=${amount.value}`;
 
 else if(mode==="email")
 data=`mailto:${mail.value}?subject=${subject.value}`;
+
+else if(mode==="location")
+data=`https://maps.google.com/?q=${lat.value},${lng.value}`;
+
+else if(mode==="menu")
+data=menuUrl.value;
+
+else if(mode==="product")
+data=`Product:${productName.value}\nCode:${productCode.value}`;
+
+else if(mode==="ticket")
+data=`Event:${eventName.value}\nSeat:${seat.value}\nDate:${date.value}`;
 
 else if(mode==="phone")
 data=`tel:${call.value}`;
@@ -201,4 +271,5 @@ renderForm();
 
 </body>
 </html>
+
 
