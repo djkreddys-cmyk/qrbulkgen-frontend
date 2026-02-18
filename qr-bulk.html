@@ -86,43 +86,54 @@
 
 <div class="bg-white rounded-2xl shadow p-6">
 
-<h2 class="text-xl font-bold mb-4">Bulk QR Upload</h2>
+<h2 class="text-xl font-bold mb-6">Bulk QR Upload</h2>
+
+<!-- ROW 1 -->
+<div class="grid md:grid-cols-2 gap-6 mb-6">
 
 <!-- STEP 1 -->
-
-<div class="mb-6">
+<div>
 <h3 class="font-semibold mb-2">Step 1 — Download Sample</h3>
-<button onclick="downloadSample()" class="bg-indigo-600 text-white px-5 py-2 rounded-xl">
+<button onclick="downloadSample()" class="bg-indigo-600 text-white px-5 py-2 rounded-xl w-full">
 Download Sample Excel
 </button>
-<p class="text-sm text-gray-500 mt-2">Fill sample file before upload.</p>
 </div>
 
 <!-- STEP 2 -->
-
-<div class="mb-6">
+<div>
 <h3 class="font-semibold mb-2">Step 2 — Upload Excel</h3>
 <input type="file" id="excelFile" accept=".xlsx,.xls,.csv"
 class="w-full border rounded-xl p-3">
 <p id="fileName" class="text-sm text-gray-500 mt-2"></p>
 </div>
 
-<!-- STEP 3 -->
+</div>
 
-<div class="mb-6">
-<h3 class="font-semibold mb-2">Step 3 — Load Data</h3>
+<!-- ROW 2 -->
+<div class="grid md:grid-cols-2 gap-6 mb-6">
+
+<!-- STEP 3 LOGO -->
+<div>
+<h3 class="font-semibold mb-2">Step 3 — Logo (Optional)</h3>
+<input type="file" id="bulkLogo" accept="image/*"
+class="w-full border rounded-xl p-3">
+</div>
+
+<!-- STEP 4 LOAD -->
+<div>
+<h3 class="font-semibold mb-2">Step 4 — Load Data</h3>
 <button onclick="processExcel()" class="bg-green-600 text-white px-6 py-3 rounded-xl w-full">
 Load Excel Data
 </button>
-<p id="rowsInfo" class="text-sm text-gray-500 mt-3"></p>
+<p id="rowsInfo" class="text-sm text-gray-500 mt-2"></p>
 </div>
 
-<!-- CUSTOMIZATION -->
+</div>
 
+<!-- QR CUSTOMIZATION -->
 <div id="customizationArea"></div>
 
 </div>
-
 <!-- RIGHT PANEL -->
 
 <div class="bg-white rounded-2xl shadow p-6">
@@ -227,6 +238,53 @@ renderPreview();
 };
 reader.readAsArrayBuffer(file);
 }
+function loadCustomizationUI(){
+document.getElementById("customizationArea").innerHTML = `
+<div class="border-t pt-5">
+
+<h3 class="font-semibold mb-4">QR Customization</h3>
+
+<div class="grid grid-cols-2 md:grid-cols-5 gap-3 items-end">
+
+<div>
+<label class="text-xs">QR Color</label>
+<input type="color" id="qrColor" value="#000000" class="w-full h-10">
+</div>
+
+<div>
+<label class="text-xs">Background</label>
+<input type="color" id="bgColor" value="#ffffff" class="w-full h-10">
+</div>
+
+<div>
+<label class="text-xs">Style</label>
+<select id="qrStyle" class="w-full border rounded-lg h-10 px-2">
+<option value="square">Square</option>
+<option value="dots">Dots</option>
+<option value="rounded">Rounded</option>
+<option value="classy">Classy</option>
+<option value="classy-rounded">Classy Rounded</option>
+<option value="extra-rounded">Extra Rounded</option>
+</select>
+</div>
+
+<div>
+<label class="text-xs">Center Logo</label>
+<input type="file" id="logoUpload" accept="image/*" class="w-full text-xs">
+</div>
+
+<div>
+<label class="text-xs invisible">Remove</label>
+<button type="button" onclick="document.getElementById('logoUpload').value='';"
+class="w-full h-10 text-red-500 border rounded-lg text-xs">
+Remove
+</button>
+</div>
+
+</div>
+</div>
+`;
+}
 /* PREVIEW TABLE */
 function renderPreview(){
 if(excelData.length===0)return;
@@ -246,8 +304,12 @@ html+="</tr>";
 html+="</table>";
 document.getElementById("previewTable").innerHTML=html;
 }
+window.addEventListener("DOMContentLoaded", ()=>{
+loadCustomizationUI();
+});
 </script>
 </body>
 </html>
+
 
 
