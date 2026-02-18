@@ -2,223 +2,198 @@
 
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generate QR — QRSingleGen</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Generate QR — QRBulkGen</title>
+
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script src="js/auth.js"></script>
+
+<style>
+.qrTab{padding:10px 14px;border-radius:10px;color:#374151}
+.qrTab:hover{background:#eef2ff;color:#4f46e5}
+.qrTab.active{background:#4f46e5;color:white}
+.btnGen{width:100%;background:#4f46e5;color:white;padding:12px;border-radius:12px}
+</style>
+
 </head>
 
-<body class="bg-gray-100 min-h-screen">
-<!--NAV BAR-->
-  <header class="bg-white shadow sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+<body class="bg-gray-100">
 
-    <!-- LOGO -->
-    <a id="logoLink" href="index.html" class="text-xl font-bold text-indigo-600">
-      QRBulkGen
-    </a>
+<!-- MAIN NAVBAR -->
 
-    <div class="flex items-center gap-6">
+<header class="bg-white shadow sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 
-      <!-- Protected Links -->
-      <div id="navLinks" class="hidden md:flex items-center gap-6">
-        <a href="qr-single.html" class="hover:text-indigo-600">Generate QR</a>
-        <a href="qr-bulk.html" class="hover:text-indigo-600">Bulk Upload</a>
-        <a href="qr-dashboard.html" class="hover:text-indigo-600">Dashboard</a>
-      </div>
+```
+<a id="logoLink" href="qr-dashboard.html" class="text-xl font-bold text-indigo-600">
+  QRBulkGen
+</a>
 
-      <!-- Login/Profile -->
-      <div id="navUser" class="min-w-[140px] text-right"></div>
+<div class="flex items-center gap-6">
+  <div id="navLinks" class="hidden md:flex gap-6">
+    <a href="qr-single.html">Generate QR</a>
+    <a href="qr-bulk.html">Bulk Upload</a>
+    <a href="qr-dashboard.html">Dashboard</a>
+  </div>
 
-    </div>
+  <div id="navUser"></div>
+</div>
+```
+
   </div>
 </header>
-<div class="max-w-6xl mx-auto p-6 grid md:grid-cols-2 gap-10">
 
-  <!-- FORM AREA -->
+<!-- QR TYPE NAVBAR -->
 
-  <div class="bg-white rounded-2xl shadow p-6">
-    <h2 id="qrTitle" class="text-2xl font-bold mb-6">Generate QR</h2>
-
-
-<div id="formArea" class="space-y-4"></div>
-
-<button onclick="generateQR()" class="mt-6 w-full bg-indigo-600 text-white py-3 rounded-xl">
-  Generate QR
-</button>
-
-
+<div class="bg-white border-b sticky top-[72px] z-40">
+  <div class="max-w-7xl mx-auto px-4 overflow-x-auto">
+    <div class="flex gap-6 py-3 text-sm font-medium whitespace-nowrap">
+      <button onclick="selectType('text',this)" class="qrTab active">Text</button>
+      <button onclick="selectType('url',this)" class="qrTab">Website</button>
+      <button onclick="selectType('whatsapp',this)" class="qrTab">WhatsApp</button>
+      <button onclick="selectType('wifi',this)" class="qrTab">WiFi</button>
+      <button onclick="selectType('upi',this)" class="qrTab">UPI</button>
+      <button onclick="selectType('email',this)" class="qrTab">Email</button>
+      <button onclick="selectType('phone',this)" class="qrTab">Phone</button>
+      <button onclick="selectType('vcard',this)" class="qrTab">Business Card</button>
+    </div>
   </div>
+</div>
+
+<!-- CONTENT -->
+
+<div class="max-w-7xl mx-auto p-6 grid md:grid-cols-2 gap-8">
+
+  <!-- FORM -->
+
+  <div id="formArea" class="bg-white rounded-2xl shadow p-6"></div>
 
   <!-- PREVIEW -->
 
-  <div class="bg-white rounded-2xl shadow p-6 text-center">
-    <h3 class="font-bold text-lg mb-4">Live Preview</h3>
-    <canvas id="qrCanvas" class="mx-auto"></canvas>
-
-
-<button onclick="downloadQR()" class="mt-6 px-6 py-3 bg-green-600 text-white rounded-xl">
-  Download PNG
-</button>
-
-
+  <div class="bg-white rounded-2xl shadow p-6 flex flex-col items-center">
+    <h2 class="text-xl font-semibold mb-4">Live Preview</h2>
+    <div id="qrcode" class="p-6 bg-white"></div>
+    <button onclick="downloadQR()" class="mt-6 bg-green-600 text-white px-6 py-3 rounded-xl">
+      Download PNG
+    </button>
   </div>
 
 </div>
 
-<script src="js/auth.js"></script>
-
 <script>
-const type = localStorage.getItem("qrType") || "text";
-const formArea = document.getElementById("formArea");
-const qrTitle = document.getElementById("qrTitle");
+let currentType="text";
+let qr;
 
-/* ---------------- FORM BUILDER ---------------- */
-
-function input(id,label,placeholder){
- return `
- <div>
-   <label class="text-sm text-gray-600">${label}</label>
-   <input id="${id}" class="w-full border rounded-lg px-4 py-2 mt-1" placeholder="${placeholder}">
- </div>`;
+function selectType(type,el){
+  currentType=type;
+  document.querySelectorAll(".qrTab").forEach(t=>t.classList.remove("active"));
+  el.classList.add("active");
+  renderForm();
 }
 
-function buildForm(){
+function renderForm(){
+const area=document.getElementById("formArea");
 
-switch(type){
+if(currentType==="text")
+area.innerHTML=`<h2 class="text-xl font-bold mb-4">Text QR</h2>
+<input id="data" placeholder="Enter text" class="w-full border rounded-xl p-3 mb-4">
+<button onclick="generateQR()" class="btnGen">Generate QR</button>`;
 
-case "text":
-qrTitle.innerText="Text QR";
-formArea.innerHTML=input("text","Enter Text","Hello world");
-break;
+if(currentType==="url")
+area.innerHTML=`<h2 class="text-xl font-bold mb-4">Website</h2>
+<input id="data" placeholder="https://example.com" class="w-full border rounded-xl p-3 mb-4">
+<button onclick="generateQR()" class="btnGen">Generate QR</button>`;
 
-case "website":
-qrTitle.innerText="Website QR";
-formArea.innerHTML=input("url","Website URL","https://example.com");
-break;
+if(currentType==="whatsapp")
+area.innerHTML=`<h2 class="text-xl font-bold mb-4">WhatsApp</h2>
+<input id="phone" placeholder="Phone" class="w-full border rounded-xl p-3 mb-3">
+<input id="msg" placeholder="Message" class="w-full border rounded-xl p-3 mb-4">
+<button onclick="generateQR('whatsapp')" class="btnGen">Generate QR</button>`;
 
-case "wifi":
-qrTitle.innerText="WiFi QR";
-formArea.innerHTML=
-input("ssid","WiFi Name","MyWiFi")+
-input("pass","Password","12345678")+
-input("sec","Security","WPA");
-break;
+if(currentType==="wifi")
+area.innerHTML=`<h2 class="text-xl font-bold mb-4">WiFi</h2>
+<input id="ssid" placeholder="Network name" class="w-full border rounded-xl p-3 mb-3">
+<input id="pass" placeholder="Password" class="w-full border rounded-xl p-3 mb-4">
+<button onclick="generateQR('wifi')" class="btnGen">Generate QR</button>`;
 
-case "whatsapp":
-qrTitle.innerText="WhatsApp QR";
-formArea.innerHTML=
-input("phone","Phone with country code","919999999999")+
-input("msg","Message","Hello!");
-break;
+if(currentType==="upi")
+area.innerHTML=`<h2 class="text-xl font-bold mb-4">UPI</h2>
+<input id="upi" placeholder="UPI ID" class="w-full border rounded-xl p-3 mb-3">
+<input id="amount" placeholder="Amount" class="w-full border rounded-xl p-3 mb-4">
+<button onclick="generateQR('upi')" class="btnGen">Generate QR</button>`;
 
-case "upi":
-qrTitle.innerText="UPI Payment QR";
-formArea.innerHTML=
-input("upi","UPI ID","name@upi")+
-input("name","Receiver Name","Ravi")+
-input("amt","Amount","100");
-break;
+if(currentType==="email")
+area.innerHTML=`<h2 class="text-xl font-bold mb-4">Email</h2>
+<input id="mail" placeholder="Email address" class="w-full border rounded-xl p-3 mb-3">
+<input id="subject" placeholder="Subject" class="w-full border rounded-xl p-3 mb-4">
+<button onclick="generateQR('email')" class="btnGen">Generate QR</button>`;
 
-case "email":
-qrTitle.innerText="Email QR";
-formArea.innerHTML=
-input("mail","Email","test@mail.com")+
-input("sub","Subject","Hello")+
-input("body","Message","How are you?");
-break;
+if(currentType==="phone")
+area.innerHTML=`<h2 class="text-xl font-bold mb-4">Phone</h2>
+<input id="call" placeholder="Phone number" class="w-full border rounded-xl p-3 mb-4">
+<button onclick="generateQR('phone')" class="btnGen">Generate QR</button>`;
 
-case "phone":
-qrTitle.innerText="Phone Call QR";
-formArea.innerHTML=input("call","Phone number","9999999999");
-break;
-
-case "location":
-qrTitle.innerText="Location QR";
-formArea.innerHTML=
-input("lat","Latitude","16.506")+
-input("lon","Longitude","80.648");
-break;
-
-case "vcard":
-qrTitle.innerText="Business Card QR";
-formArea.innerHTML=
-input("n","Name","John")+
-input("p","Phone","9999999999")+
-input("e","Email","john@mail.com")+
-input("c","Company","ABC Pvt Ltd");
-break;
-
+if(currentType==="vcard")
+area.innerHTML=`<h2 class="text-xl font-bold mb-4">Business Card</h2>
+<input id="name" placeholder="Name" class="w-full border rounded-xl p-3 mb-3">
+<input id="org" placeholder="Company" class="w-full border rounded-xl p-3 mb-3">
+<input id="tel" placeholder="Phone" class="w-full border rounded-xl p-3 mb-4">
+<button onclick="generateQR('vcard')" class="btnGen">Generate QR</button>`;
 }
 
-}
+function generateQR(mode){
+let data="";
 
-buildForm();
+if(mode==="whatsapp")
+data=`https://wa.me/${phone.value}?text=${encodeURIComponent(msg.value)}`;
 
-/* ---------------- DATA BUILDER ---------------- */
+else if(mode==="wifi")
+data=`WIFI:T:WPA;S:${ssid.value};P:${pass.value};;`;
 
-function getQRData(){
+else if(mode==="upi")
+data=`upi://pay?pa=${upi.value}&am=${amount.value}`;
 
-switch(type){
+else if(mode==="email")
+data=`mailto:${mail.value}?subject=${subject.value}`;
 
-case "text": return document.getElementById("text").value;
+else if(mode==="phone")
+data=`tel:${call.value}`;
 
-case "website": return document.getElementById("url").value;
-
-case "wifi":
-return `WIFI:T:${sec.value};S:${ssid.value};P:${pass.value};;`;
-
-case "whatsapp":
-return `https://wa.me/${phone.value}?text=${encodeURIComponent(msg.value)}`;
-
-case "upi":
-return `upi://pay?pa=${upi.value}&pn=${name.value}&am=${amt.value}`;
-
-case "email":
-return `mailto:${mail.value}?subject=${sub.value}&body=${body.value}`;
-
-case "phone":
-return `tel:${call.value}`;
-
-case "location":
-return `https://maps.google.com/?q=${lat.value},${lon.value}`;
-
-case "vcard":
-return `BEGIN:VCARD
+else if(mode==="vcard")
+data=`BEGIN:VCARD
 VERSION:3.0
-FN:${n.value}
-ORG:${c.value}
-TEL:${p.value}
-EMAIL:${e.value}
+FN:${name.value}
+ORG:${org.value}
+TEL:${tel.value}
 END:VCARD`;
+
+else
+data=document.getElementById("data").value;
+
+createQR(data);
 }
 
+function createQR(text){
+const container=document.getElementById("qrcode");
+container.innerHTML="";
+qr=new QRCode(container,{text,width:260,height:260});
 }
-
-/* ---------------- QR GENERATOR ---------------- */
-
-function generateQR(){
-const data=getQRData();
-if(!data) return alert("Fill details");
-
-QRCode.toCanvas(document.getElementById("qrCanvas"), data, {width:280});
-}
-
-/* ---------------- DOWNLOAD ---------------- */
 
 function downloadQR(){
-const canvas=document.getElementById("qrCanvas");
-const link=document.createElement("a");
-link.download="qr.png";
-link.href=canvas.toDataURL();
-link.click();
+const img=document.querySelector("#qrcode img");
+if(!img) return alert("Generate QR first");
+const a=document.createElement("a");
+a.href=img.src;
+a.download="qr-code.png";
+a.click();
 }
+
+renderForm();
 </script>
-<!-- ALWAYS LAST -->
-<script src="/js/auth.js"></script>
+
 </body>
 </html>
-
-
-
