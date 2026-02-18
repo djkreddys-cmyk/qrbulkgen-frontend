@@ -22,11 +22,11 @@
 
     <div class="flex items-center gap-6">
 
-      <!-- Hidden until login -->
+      <!-- Show only after login -->
       <div id="navLinks" class="items-center gap-6 hidden">
-        <a href="qr-single.html" class="hover:text-indigo-600">Generate QR</a>
-        <a href="qr-bulk.html" class="hover:text-indigo-600">Bulk Upload</a>
-        <a href="qr-dashboard.html" class="hover:text-indigo-600">Dashboard</a>
+        <a href="#" onclick="return requireLogin(event,'qr-single.html')" class="hover:text-indigo-600">Generate QR</a>
+        <a href="#" onclick="return requireLogin(event,'qr-bulk.html')" class="hover:text-indigo-600">Bulk Upload</a>
+        <a href="#" onclick="return requireLogin(event,'qr-dashboard.html')" class="hover:text-indigo-600">Dashboard</a>
       </div>
 
       <!-- Login / Profile -->
@@ -48,11 +48,11 @@
     </p>
 
     <div class="flex gap-4">
-      <a href="#" onclick="goTo('qr-single.html')" class="bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700">
+      <a href="#" onclick="return requireLogin(event,'qr-single.html')" class="bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700">
         Generate QR Now
       </a>
 
-      <a href="#" onclick="goTo('qr-bulk.html')" class="border px-6 py-3 rounded-xl hover:bg-gray-100">
+      <a href="#" onclick="return requireLogin(event,'qr-bulk.html')" class="border px-6 py-3 rounded-xl hover:bg-gray-100">
         Upload Excel
       </a>
     </div>
@@ -71,18 +71,18 @@
     <h2 class="text-3xl font-bold text-center mb-12">Create QR Codes For Anything</h2>
 
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 text-center">
-      <button onclick="goQR('text')" class="card">Text QR</button>
-      <button onclick="goQR('website')" class="card">Website</button>
-      <button onclick="goQR('email')" class="card">Email</button>
-      <button onclick="goQR('phone')" class="card">Phone</button>
-      <button onclick="goQR('location')" class="card">Location</button>
-      <button onclick="goQR('wifi')" class="card">WiFi</button>
-      <button onclick="goQR('upi')" class="card">UPI Payment</button>
-      <button onclick="goQR('whatsapp')" class="card">WhatsApp</button>
-      <button onclick="goQR('vcard')" class="card">Business Card</button>
-      <button onclick="goQR('menu')" class="card">Restaurant Menu</button>
-      <button onclick="goQR('product')" class="card">Product Label</button>
-      <button onclick="goQR('ticket')" class="card">Event Ticket</button>
+      <button onclick="selectQR('text')" class="card">Text QR</button>
+      <button onclick="selectQR('website')" class="card">Website</button>
+      <button onclick="selectQR('email')" class="card">Email</button>
+      <button onclick="selectQR('phone')" class="card">Phone</button>
+      <button onclick="selectQR('location')" class="card">Location</button>
+      <button onclick="selectQR('wifi')" class="card">WiFi</button>
+      <button onclick="selectQR('upi')" class="card">UPI Payment</button>
+      <button onclick="selectQR('whatsapp')" class="card">WhatsApp</button>
+      <button onclick="selectQR('vcard')" class="card">Business Card</button>
+      <button onclick="selectQR('menu')" class="card">Restaurant Menu</button>
+      <button onclick="selectQR('product')" class="card">Product Label</button>
+      <button onclick="selectQR('ticket')" class="card">Event Ticket</button>
     </div>
   </div>
 </section>
@@ -105,7 +105,7 @@
 <section class="bg-indigo-600 text-white py-20 text-center">
   <h2 class="text-3xl font-bold mb-6">Start generating QR codes for free</h2>
 
-  <a href="#" onclick="goTo('qr-single.html')"
+  <a href="#" onclick="return requireLogin(event,'qr-single.html')"
     class="bg-white text-indigo-600 px-8 py-3 rounded-xl font-semibold">
     Generate Now
   </a>
@@ -116,23 +116,26 @@
   © 2026 QRBulkGen — Made in India
 </footer>
 
-<!-- LOGIN FLOW CONTROLLER -->
+<!-- LOGIN CONTROL -->
 <script>
-function goTo(page){
+function requireLogin(e,page){
+  e.preventDefault();
+
   const token = localStorage.getItem("token");
 
   if(!token){
     localStorage.setItem("afterLogin", page);
-    window.location = "qr-auth.html";
-    return;
+    window.location.href = "qr-auth.html";
+    return false;
   }
 
-  window.location = page;
+  window.location.href = page;
+  return false;
 }
 
-function goQR(type){
+function selectQR(type){
   localStorage.setItem("qrType", type);
-  goTo("qr-single.html");
+  requireLogin(event,"qr-single.html");
 }
 </script>
 
