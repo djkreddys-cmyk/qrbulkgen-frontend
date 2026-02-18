@@ -167,57 +167,75 @@ e.target.files[0] ? "Selected: "+e.target.files[0].name : "";
 /* SAMPLE DOWNLOAD */
 function downloadSample(){
 let headers=["data"];
-
 switch(currentType){
-case"wifi":headers=["ssid","password"];break;
-case"phone":headers=["phone"];break;
-case"email":headers=["email","subject"];break;
-case"location":headers=["address"];break;
-case"vcard":headers=["name","company","phone"];break;
+case "text":
+headers=["text"];
+break;
+case "url":
+headers=["url"];
+break;
+case "whatsapp":
+headers=["phone","message"];
+break;
+case "wifi":
+headers=["ssid","password"];
+break;
+case "upi":
+headers=["upi_id","amount"];
+break;
+case "email":
+headers=["email","subject"];
+break;
+case "phone":
+headers=["phone"];
+break;
+case "location":
+headers=["address"];
+break;
+case "vcard":
+headers=["name","company","phone"];
+break;
+case "menu":
+headers=["menu_url"];
+break;
+case "product":
+headers=["product_name","product_code"];
+break;
+case "ticket":
+headers=["event","seat","date"];
+break;
 }
-
+/* create excel */
 const ws=XLSX.utils.aoa_to_sheet([headers]);
 const wb=XLSX.utils.book_new();
 XLSX.utils.book_append_sheet(wb,ws,"Sample");
-XLSX.writeFile(wb,"qr_sample.xlsx");
+XLSX.writeFile(wb, currentType+"_sample.xlsx");
 }
-
 /* PROCESS EXCEL */
 function processExcel(){
 const file=document.getElementById("excelFile").files[0];
 if(!file)return alert("Upload Excel first");
-
 const reader=new FileReader();
-
 reader.onload=function(e){
 const data=new Uint8Array(e.target.result);
 const workbook=XLSX.read(data,{type:"array"});
 const sheet=workbook.Sheets[workbook.SheetNames[0]];
-
 excelData=XLSX.utils.sheet_to_json(sheet);
-
 document.getElementById("rowsInfo").innerText =
 excelData.length+" rows loaded successfully";
-
 renderPreview();
 };
-
 reader.readAsArrayBuffer(file);
 }
-
 /* PREVIEW TABLE */
 function renderPreview(){
 if(excelData.length===0)return;
-
 let html="<table class='w-full border'>";
 html+="<tr>";
-
 Object.keys(excelData[0]).forEach(h=>{
 html+=`<th class="border px-2 py-1 bg-gray-100">${h}</th>`;
 });
-
 html+="</tr>";
-
 excelData.forEach(row=>{
 html+="<tr>";
 Object.values(row).forEach(v=>{
@@ -225,13 +243,11 @@ html+=`<td class="border px-2 py-1">${v??""}</td>`;
 });
 html+="</tr>";
 });
-
 html+="</table>";
 document.getElementById("previewTable").innerHTML=html;
 }
-
 </script>
-
 </body>
 </html>
+
 
