@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -7,41 +6,30 @@
 <title>Account — QRBulkGen</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
 <body class="bg-gray-100 min-h-screen flex flex-col">
-
 <header class="bg-white shadow sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between">
     <a href="index.html" class="text-xl font-bold text-indigo-600">QRBulkGen</a>
   </div>
 </header>
-
 <div class="flex-grow flex items-center justify-center px-4">
   <div class="bg-white w-full max-w-md rounded-2xl shadow-xl p-8">
-
 <h2 id="title" class="text-2xl font-bold text-center mb-6">Create Account</h2>
 <p id="msg" class="text-center text-sm mb-4"></p>
-
 <input id="name" type="text" placeholder="Your Name" class="w-full border rounded-lg px-4 py-3 mb-3" />
 <input id="email" type="email" placeholder="Email" class="w-full border rounded-lg px-4 py-3 mb-3" />
 <input id="password" type="password" placeholder="Password" class="w-full border rounded-lg px-4 py-3 mb-3" />
-
 <div id="forgotBox" class="text-right mb-3 hidden">
   <button id="forgotBtn" class="text-sm text-indigo-600 hover:underline">Forgot Password?</button>
 </div>
-
 <button id="mainBtn" class="w-full bg-indigo-600 text-white py-3 rounded-lg mb-4 hover:bg-indigo-700">Register</button>
-
 <p class="text-center text-sm">
   <span id="switchText">Already registered?</span>
   <button id="switchBtn" class="text-indigo-600 font-semibold">Login</button>
 </p>
-
   </div>
 </div>
-
 <!-- RESET PASSWORD MODAL -->
-
 <div id="resetModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
   <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-xl">
 <h3 class="text-xl font-bold mb-4 text-center">Reset Password</h3>
@@ -174,3 +162,4 @@ document.getElementById("updatePasswordBtn").onclick=async()=>{
 </script>
 </body>
 </html>
+
