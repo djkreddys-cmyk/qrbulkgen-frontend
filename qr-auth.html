@@ -9,29 +9,23 @@
 
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
-  <!-- NAVBAR -->
-  <header class="bg-white shadow sticky top-0 z-50">
+<!-- NAVBAR -->
+<header class="bg-white shadow sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
     <!-- Logo -->
-    <a href="/index.html" class="text-xl font-bold text-indigo-600">
+    <a href="index.html" class="text-xl font-bold text-indigo-600">
       QRBulkGen
     </a>
 
-    <!-- Right Menu -->
+    <!-- RIGHT SIDE -->
     <div class="flex items-center gap-6">
 
-      <!-- Protected links -->
-      <div id="navLinks" class="items-center gap-6"style="display:none">
-        <a href="/qr-single.html" class="hover:text-indigo-600">Generate QR</a>
-        <a href="/qr-bulk.html" class="hover:text-indigo-600">Bulk Upload</a>
-        <a href="/qr-dashboard.html" class="hover:text-indigo-600">Dashboard</a>
-      </div>
+      <!-- Protected links (hidden always on auth page) -->
+      <div id="navLinks" style="display:none"></div>
 
       <!-- Login/Profile -->
-      <div id="navUser" class="min-w-[140px] text-right">
-        <!-- JS will fill -->
-      </div>
+      <div id="navUser"></div>
 
     </div>
   </div>
@@ -193,9 +187,10 @@ async function resetPassword(){
  if(r.ok) closeResetModal();
 }
 </script>
-
+<script src="js/auth.js"></script>
 </body>
 </html>
+
 
 
 
