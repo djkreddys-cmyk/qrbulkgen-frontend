@@ -76,7 +76,8 @@
 
 <div class="bg-white rounded-2xl shadow p-6">
 
-<h2 class="text-xl font-bold mb-6">Bulk QR Upload</h2>
+<h2 id="bulkTitle" class="text-xl font-bold mb-6">Text QR Bulk Upload</h2>
+
 
 <!-- ROW 1 -->
 <div class="grid md:grid-cols-2 gap-6 mb-6">
@@ -128,7 +129,7 @@ Load Excel Data
 
 <div class="bg-white rounded-2xl shadow p-6">
 <h2 class="text-xl font-semibold mb-4">Preview Data</h2>
-
+<div id="bulkPreviewQR" class="mb-4 flex justify-center"></div>
 <div id="previewTable" class="overflow-auto max-h-[450px] text-sm"></div>
 
 <!-- BULK ACTION BUTTONS -->
@@ -173,10 +174,32 @@ tabs.style.transform=`translateX(-${tabPosition}px)`;
 
 /* SELECT TYPE */
 function selectType(type,el){
+
 currentType=type;
 document.querySelectorAll(".qrTab").forEach(t=>t.classList.remove("active"));
 el.classList.add("active");
+
+/* update title */
+const names={
+text:"Text",
+url:"Website",
+whatsapp:"WhatsApp",
+wifi:"WiFi",
+upi:"UPI",
+email:"Email",
+phone:"Phone",
+location:"Location",
+vcard:"Business Card",
+menu:"Menu",
+product:"Product",
+ticket:"Ticket"
+};
+
+document.getElementById("bulkTitle").innerText=
+names[type]+" QR Bulk Upload";
+
 }
+
 
 /* FILE NAME */
 document.getElementById("excelFile").addEventListener("change", e=>{
@@ -275,6 +298,8 @@ document.getElementById("rowsInfo").innerText =
 excelData.length+" rows loaded successfully";
 
 renderPreview();
+updateBulkPreview();
+
 };
 
 reader.readAsArrayBuffer(file);
@@ -290,7 +315,7 @@ document.getElementById("customizationArea").innerHTML = `
 
 <div>
 <label class="text-xs">QR Color</label>
-<input type="color" id="qrColor" value="#000000" class="w-full h-10">
+<input type="color" id="qrColor" value="#000000" class="w-full h-10" onchange="updateBulkPreview()">
 </div>
 
 <div>
@@ -337,6 +362,33 @@ document.getElementById("previewTable").innerHTML=html;
 window.addEventListener("DOMContentLoaded", ()=>{
 loadCustomizationUI();
 });
+let previewQR=null;
+
+function updateBulkPreview(){
+
+if(excelData.length===0) return;
+
+const color=document.getElementById("qrColor").value;
+const bg=document.getElementById("bgColor").value;
+const style=document.getElementById("qrStyle").value;
+
+let text=Object.values(excelData[0]).join(" ");
+
+document.getElementById("bulkPreviewQR").innerHTML="";
+
+previewQR=new QRCodeStyling({
+width:220,
+height:220,
+data:text,
+image:bulkLogoURL,
+dotsOptions:{color:color,type:style},
+backgroundOptions:{color:bg},
+imageOptions:{crossOrigin:"anonymous",margin:6}
+});
+
+previewQR.append(document.getElementById("bulkPreviewQR"));
+}
+
 async function generateBulkQRs(){
 
 if(excelData.length===0){
@@ -416,6 +468,7 @@ reader.readAsDataURL(blob);
 </script>
 </body>
 </html>
+
 
 
 
