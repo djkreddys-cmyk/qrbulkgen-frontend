@@ -46,7 +46,7 @@ header{position:sticky;top:0;z-index:999;background:white;}
 <div class="bg-white border-b overflow-hidden">
 <div class="max-w-7xl mx-auto flex items-center px-2">
 
-<button data-slide="-1" class="p-2 text-xl shrink-0">◀</button>
+<button onclick="slideTabs(-1)" class="p-2 text-xl shrink-0">◀</button>
 
 <div id="tabsWrapper" class="overflow-hidden flex-1">
 <div id="tabs" class="flex gap-4 py-3 w-max transition-transform duration-300">
@@ -67,7 +67,7 @@ header{position:sticky;top:0;z-index:999;background:white;}
 </div>
 </div>
 
-<button data-slide="1" class="p-2 text-xl shrink-0">▶</button>
+<button onclick="slideTabs(1)" class="p-2 text-xl shrink-0">▶</button>
 
 </div>
 </div>
@@ -89,7 +89,7 @@ header{position:sticky;top:0;z-index:999;background:white;}
 
 <div class="grid grid-cols-2 gap-4">
 <input type="file" id="bulkLogo" class="border rounded-xl p-2">
-<button id="loadBtn" class="bg-green-600 text-white py-2 rounded-xl">Load Data</button>
+<button onclick="processExcel()" class="bg-green-600 text-white py-2 rounded-xl">Load Data</button>
 </div>
 
 <p id="rowsInfo" class="text-sm text-gray-600"></p>
@@ -152,19 +152,6 @@ let excelData=[],currentType="text",bulkLogoURL=null,tabPos=0;
 
 /* LOGOUT */
 function logout(){localStorage.clear();location.href="login.html";}
-/* ===== SAFE START ===== */
-window.addEventListener("error", e=>{
-console.log("JS Error:", e.message);
-});
-document.addEventListener("DOMContentLoaded", initPage);
-/* ====================== */
-
-function initPage(){
-
-// make sure elements exist before binding
-bindControls();
-
-}
 function bindControls(){
 
 // arrows
@@ -205,15 +192,22 @@ updateBulkPreview();
 }
 
 /* TAB SLIDE */
+let tabPos = 0;
+
 function slideTabs(dir){
-const wrapper=document.getElementById("tabsWrapper");
-const tabs=document.getElementById("tabs");
-const max=tabs.scrollWidth-wrapper.clientWidth;
-tabPos+=dir*200;
-if(tabPos<0)tabPos=0;
-if(tabPos>max)tabPos=max;
-tabs.style.transform=`translateX(-${tabPos}px)`;
+const wrapper = document.getElementById("tabsWrapper");
+const tabs = document.getElementById("tabs");
+
+const max = tabs.scrollWidth - wrapper.clientWidth;
+
+tabPos += dir * 200;
+
+if(tabPos < 0) tabPos = 0;
+if(tabPos > max) tabPos = max;
+
+tabs.style.transform = `translateX(-${tabPos}px)`;
 }
+
 
 /* TYPE */
 function selectType(type,el){
@@ -335,6 +329,7 @@ r.readAsDataURL(b);
 
 </body>
 </html>
+
 
 
 
