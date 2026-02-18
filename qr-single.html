@@ -117,11 +117,23 @@ right.style.visibility = tabPosition>=maxScroll ? "hidden":"visible";
 
 /* ---------- TAB SWITCH ---------- */
 function selectType(type,el){
+
+/* reset customization when changing QR type */
+qrSettings={
+color:"#000000",
+bg:"#ffffff",
+style:"square",
+logo:null
+};
+
 currentType=type;
 document.querySelectorAll(".qrTab").forEach(t=>t.classList.remove("active"));
 el.classList.add("active");
 renderForm();
 setTimeout(()=>slideTabs(0),200);
+
+/* clear preview */
+document.getElementById("qrcode").innerHTML="";
 }
 
 /* ---------- INPUT ---------- */
@@ -355,6 +367,7 @@ renderForm();
 <script src="js/auth.js"></script>
 </body>
 </html>
+
 
 
 
