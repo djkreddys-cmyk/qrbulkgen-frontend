@@ -138,21 +138,20 @@ Download ZIP
 class="bg-indigo-600 text-white py-3 rounded-xl w-full">
 Save ZIP
 </button>
-
 </div>
-
+<div id="zipProgressBox" class="mt-4 hidden">
+<div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+<div id="zipProgressBar" class="bg-indigo-600 h-4 w-0 transition-all"></div>
 </div>
-
-
+<p id="zipProgressText" class="text-sm text-gray-600 mt-2 text-center">Preparing...</p>
 </div>
-
+</div>
+</div>
 <script>
-
 let currentType="text";
 let tabPosition=0;
 let excelData=[];
 let bulkLogoURL = null;
-
 /* SLIDER */
 function slideTabs(dir){
 const wrapper=document.getElementById("tabsWrapper");
@@ -370,7 +369,7 @@ const color=document.getElementById("qrColor").value;
 const bg=document.getElementById("bgColor").value;
 const style=document.getElementById("qrStyle").value;
 
-let text=Object.values(excelData[0]).join(" ");
+let text=createQRText(excelData[0]);
 
 document.getElementById("bulkPreviewQR").innerHTML="";
 
@@ -418,6 +417,56 @@ document.getElementById("qrColor").value="#000000";
 document.getElementById("bgColor").value="#ffffff";
 document.getElementById("qrStyle").value="square";
 }
+/* Convert Excel row → proper QR format */
+function createQRText(row){
+
+switch(currentType){
+
+case "text":
+return row.text || Object.values(row).join(" ");
+
+case "url":
+return row.url;
+
+case "phone":
+return `tel:${row.phone}`;
+
+case "email":
+return `mailto:${row.email}?subject=${encodeURIComponent(row.subject||"")}`;
+
+case "whatsapp":
+return `https://wa.me/${row.phone}?text=${encodeURIComponent(row.message||"")}`;
+
+case "upi":
+return `upi://pay?pa=${row.upi_id}&am=${row.amount||""}`;
+
+case "wifi":
+return `WIFI:T:WPA;S:${row.ssid};P:${row.password};;`;
+
+case "location":
+return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(row.address)}`;
+
+case "vcard":
+return `BEGIN:VCARD
+VERSION:3.0
+FN:${row.name}
+ORG:${row.company}
+TEL:${row.phone}
+END:VCARD`;
+
+case "menu":
+return row.menu_url;
+
+case "product":
+return `PRODUCT:${row.product_name};CODE:${row.product_code}`;
+
+case "ticket":
+return `EVENT:${row.event};SEAT:${row.seat};DATE:${row.date}`;
+
+default:
+return Object.values(row).join(" ");
+}
+}
 
 async function generateBulkQRs(){
 
@@ -426,41 +475,52 @@ alert("Load Excel first");
 return null;
 }
 
+document.getElementById("zipProgressBox").classList.remove("hidden");
+
 const color=document.getElementById("qrColor").value;
 const bg=document.getElementById("bgColor").value;
 const style=document.getElementById("qrStyle").value;
 
 const zip=new JSZip();
+const total=excelData.length;
 
-for(let i=0;i<excelData.length;i++){
+for(let i=0;i<total;i++){
 
-let text=Object.values(excelData[i]).join(" ");
+let text=createQRText(excelData[i]);
 
 const qr=new QRCodeStyling({
 width:500,
 height:500,
 data:text,
-
-image: bulkLogoURL,   // ← THIS makes logo appear
-
+image:bulkLogoURL,
 dotsOptions:{color:color,type:style},
 cornersSquareOptions:{type:style,color:color},
 cornersDotOptions:{type:style,color:color},
 backgroundOptions:{color:bg},
-
-
-imageOptions:{
-crossOrigin:"anonymous",
-margin:6
-}
+imageOptions:{crossOrigin:"anonymous",margin:6}
 });
 
 const blob=await qr.getRawData("png");
 zip.file(`QR_${i+1}.png`,blob);
+
+/* progress update */
+let percent=Math.round(((i+1)/total)*100);
+document.getElementById("zipProgressBar").style.width=percent+"%";
+document.getElementById("zipProgressText").innerText=
+`Generating ${i+1} / ${total} (${percent}%)`;
+
+await new Promise(r=>setTimeout(r,10)); // allows UI update
 }
 
-/* IMPORTANT: return zip */
-return await zip.generateAsync({type:"blob"});
+document.getElementById("zipProgressText").innerText="Compressing ZIP...";
+document.getElementById("zipProgressText").innerText="Done ✔";
+
+setTimeout(()=>{
+document.getElementById("zipProgressBox").classList.add("hidden");
+document.getElementById("zipProgressBar").style.width="0%";
+},1200);
+
+return zipBlob;
 }
 
 async function downloadBulkZip(){
@@ -497,10 +557,10 @@ alert("Bulk ZIP saved to Dashboard");
 
 reader.readAsDataURL(blob);
 }
-
 </script>
 </body>
 </html>
+
 
 
 
