@@ -10,14 +10,21 @@
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 <script src="js/auth.js"></script>
+
+<style>
+.qrTab{padding:10px 14px;border-radius:10px;color:#374151;white-space:nowrap}
+.qrTab:hover{background:#eef2ff;color:#4f46e5}
+.qrTab.active{background:#4f46e5;color:white}
+</style>
 </head>
 <body class="bg-gray-100">
 
+<!-- SAME NAVBAR (WITH LOGOUT SUPPORT) -->
 <header class="bg-white shadow sticky top-0 z-50">
 <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-<a href="qr-dashboard.html" class="text-xl font-bold text-indigo-600">QRBulkGen</a>
+<a id="logoLink" href="qr-dashboard.html" class="text-xl font-bold text-indigo-600">QRBulkGen</a>
 <div class="flex items-center gap-6">
-<div class="hidden md:flex gap-6">
+<div id="navLinks" class="hidden md:flex gap-6">
 <a href="qr-single.html">Generate QR</a>
 <a href="qr-bulk.html">Bulk Upload</a>
 <a href="qr-dashboard.html">Dashboard</a>
@@ -26,6 +33,30 @@
 </div>
 </div>
 </header>
+
+<!-- KEEP TYPE SLIDER UI (LEFT RIGHT ARROWS ANIMATION) -->
+<div class="bg-white border-b sticky top-[72px] z-40">
+<div class="max-w-7xl mx-auto flex items-center px-2">
+<button id="leftArrow" onclick="slideTabs(-1)" class="p-2 text-xl">◀</button>
+<div id="tabsWrapper" class="overflow-hidden flex-1">
+<div id="tabs" class="flex gap-4 py-3 transition-all duration-300">
+<button class="qrTab active">Text</button>
+<button class="qrTab">Website</button>
+<button class="qrTab">WhatsApp</button>
+<button class="qrTab">WiFi</button>
+<button class="qrTab">UPI</button>
+<button class="qrTab">Email</button>
+<button class="qrTab">Phone</button>
+<button class="qrTab">Location</button>
+<button class="qrTab">Business Card</button>
+<button class="qrTab">Restaurant Menu</button>
+<button class="qrTab">Product Label</button>
+<button class="qrTab">Event Ticket</button>
+</div>
+</div>
+<button id="rightArrow" onclick="slideTabs(1)" class="p-2 text-xl">▶</button>
+</div>
+</div>
 
 <div class="max-w-4xl mx-auto p-6">
 <div class="bg-white rounded-2xl shadow p-6">
@@ -46,8 +77,24 @@
 </div>
 
 <script>
-let logoURL=null;
+let tabPosition=0;
+function slideTabs(dir){
+const wrapper=document.getElementById("tabsWrapper");
+const tabs=document.getElementById("tabs");
+const left=document.getElementById("leftArrow");
+const right=document.getElementById("rightArrow");
+const maxScroll=tabs.scrollWidth - wrapper.clientWidth;
 
+tabPosition+=dir*200;
+if(tabPosition<0) tabPosition=0;
+if(tabPosition>maxScroll) tabPosition=maxScroll;
+
+tabs.style.transform=`translateX(-${tabPosition}px)`;
+left.style.visibility = tabPosition===0 ? "hidden":"visible";
+right.style.visibility = tabPosition>=maxScroll ? "hidden":"visible";
+}
+
+let logoURL=null;
 document.getElementById('logoFile').addEventListener('change',e=>{
  const f=e.target.files[0];
  if(f) logoURL=URL.createObjectURL(f);
