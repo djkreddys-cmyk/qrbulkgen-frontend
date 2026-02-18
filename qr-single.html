@@ -163,7 +163,12 @@ break;
 
 /* LOCATION — OpenStreetMap */
 case"location":
-d=`https://www.openstreetmap.org/search?query=${encodeURIComponent(val('address'))}`;
+const addr=val('address').trim();
+if(addr.length<3){
+document.getElementById("qrcode").innerHTML="";
+return;
+}
+d=`https://www.openstreetmap.org/search?query=${encodeURIComponent(addr)}`;
 break;
 
 case"menu":
@@ -179,8 +184,23 @@ d=`Event:${val('eventName')}\nSeat:${val('seat')}\nDate:${val('date')}`;
 break;
 
 case"vcard":
-d=`BEGIN:VCARD\nVERSION:3.0\nFN:${val('name')}\nORG:${val('org')}\nTEL:${val('tel')}\nEND:VCARD`;
+const name=val('name');
+const org=val('org');
+const tel=val('tel');
+
+if(!name && !org && !tel){
+document.getElementById("qrcode").innerHTML="";
+return;
+}
+
+d=`BEGIN:VCARD
+VERSION:3.0
+${name?`FN:${name}\n`:''}
+${org?`ORG:${org}\n`:''}
+${tel?`TEL:${tel}\n`:''}
+END:VCARD`;
 break;
+
 
 default:
 d=val('data');
@@ -198,4 +218,5 @@ console.log("QR error:",e);
 <script src="js/auth.js"></script>
 </body>
 </html>
+
 
