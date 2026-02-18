@@ -46,7 +46,7 @@ header{position:sticky;top:0;z-index:999;background:white;}
 <div class="bg-white border-b overflow-hidden">
 <div class="max-w-7xl mx-auto flex items-center px-2">
 
-<button onclick="slideTabs(-1)" class="p-2 text-xl shrink-0">◀</button>
+<button data-slide="-1" class="p-2 text-xl shrink-0">◀</button>
 
 <div id="tabsWrapper" class="overflow-hidden flex-1">
 <div id="tabs" class="flex gap-4 py-3 w-max transition-transform duration-300">
@@ -67,7 +67,7 @@ header{position:sticky;top:0;z-index:999;background:white;}
 </div>
 </div>
 
-<button onclick="slideTabs(1)" class="p-2 text-xl shrink-0">▶</button>
+<button data-slide="1" class="p-2 text-xl shrink-0">▶</button>
 
 </div>
 </div>
@@ -89,7 +89,7 @@ header{position:sticky;top:0;z-index:999;background:white;}
 
 <div class="grid grid-cols-2 gap-4">
 <input type="file" id="bulkLogo" class="border rounded-xl p-2">
-<button onclick="processExcel()" class="bg-green-600 text-white py-2 rounded-xl">Load Data</button>
+<button id="loadBtn" class="bg-green-600 text-white py-2 rounded-xl">Load Data</button>
 </div>
 
 <p id="rowsInfo" class="text-sm text-gray-600"></p>
@@ -152,6 +152,57 @@ let excelData=[],currentType="text",bulkLogoURL=null,tabPos=0;
 
 /* LOGOUT */
 function logout(){localStorage.clear();location.href="login.html";}
+/* ===== SAFE START ===== */
+window.addEventListener("error", e=>{
+console.log("JS Error:", e.message);
+});
+document.addEventListener("DOMContentLoaded", initPage);
+/* ====================== */
+
+function initPage(){
+
+// make sure elements exist before binding
+bindControls();
+
+}
+function bindControls(){
+
+// arrows
+document.querySelectorAll("[data-slide]").forEach(btn=>{
+btn.onclick=()=>slideTabs(parseInt(btn.dataset.slide));
+});
+
+// load button
+const loadBtn=document.getElementById("loadBtn");
+if(loadBtn) loadBtn.onclick=processExcel;
+
+// logo change
+const logo=document.getElementById("bulkLogo");
+if(logo) logo.onchange=e=>{
+const f=e.target.files[0];
+bulkLogoURL=f?URL.createObjectURL(f):null;
+updateBulkPreview();
+};
+
+}
+// arrows
+document.querySelectorAll("[data-slide]").forEach(btn=>{
+btn.onclick=()=>slideTabs(parseInt(btn.dataset.slide));
+});
+
+// load button
+const loadBtn=document.getElementById("loadBtn");
+if(loadBtn) loadBtn.onclick=processExcel;
+
+// logo change
+const logo=document.getElementById("bulkLogo");
+if(logo) logo.onchange=e=>{
+const f=e.target.files[0];
+bulkLogoURL=f?URL.createObjectURL(f):null;
+updateBulkPreview();
+};
+
+}
 
 /* TAB SLIDE */
 function slideTabs(dir){
@@ -284,6 +335,7 @@ r.readAsDataURL(b);
 
 </body>
 </html>
+
 
 
 
