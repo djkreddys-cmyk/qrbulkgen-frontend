@@ -89,9 +89,22 @@ let tabPosition=0;
 
 /* ---------- SLIDER ---------- */
 function slideTabs(dir){
+const wrapper=document.getElementById("tabsWrapper");
 const tabs=document.getElementById("tabs");
+
+/* total scrollable width */
+const maxScroll=tabs.scrollWidth - wrapper.clientWidth;
+
+/* move 200px per click */
 tabPosition+=dir*200;
-if(tabPosition<0)tabPosition=0;
+
+/* prevent over scrolling left */
+if(tabPosition<0) tabPosition=0;
+
+/* prevent over scrolling right */
+if(tabPosition>maxScroll) tabPosition=maxScroll;
+
+/* apply scroll */
 tabs.style.transform=`translateX(-${tabPosition}px)`;
 }
 
@@ -238,6 +251,7 @@ renderForm();
 <script src="js/auth.js"></script>
 </body>
 </html>
+
 
 
 
