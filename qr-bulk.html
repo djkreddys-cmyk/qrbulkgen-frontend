@@ -37,12 +37,12 @@
 <!-- TYPE SLIDER -->
 
 <div class="bg-white border-b sticky top-[72px] z-40">
-<div class="max-w-7xl mx-auto flex items-center px-2">
+<div class="max-w-7xl mx-auto flex items-center px-2 whitespace-nowrap">
 
 <button id="leftArrow" onclick="slideTabs(-1)" class="p-2 text-xl">◀</button>
 
-<div id="tabsWrapper" class="overflow-hidden flex-1">
-<div id="tabs" class="flex gap-4 py-3 transition-all duration-300">
+<div id="tabsWrapper" class="overflow-hidden flex-1 min-w-0">
+<div id="tabs" class="flex gap-4 py-3 transition-all duration-300 w-max">
 
 <button class="qrTab active" onclick="selectType('text',this)">Text</button>
 <button class="qrTab" onclick="selectType('url',this)">Website</button>
@@ -381,10 +381,15 @@ width:220,
 height:220,
 data:text,
 image:bulkLogoURL,
+
 dotsOptions:{color:color,type:style},
+cornersSquareOptions:{type:style,color:color},
+cornersDotOptions:{type:style,color:color},
+
 backgroundOptions:{color:bg},
 imageOptions:{crossOrigin:"anonymous",margin:6}
 });
+
 
 previewQR.append(document.getElementById("bulkPreviewQR"));
 }
@@ -414,7 +419,10 @@ data:text,
 image: bulkLogoURL,   // ← THIS makes logo appear
 
 dotsOptions:{color:color,type:style},
+cornersSquareOptions:{type:style,color:color},
+cornersDotOptions:{type:style,color:color},
 backgroundOptions:{color:bg},
+
 
 imageOptions:{
 crossOrigin:"anonymous",
@@ -468,6 +476,7 @@ reader.readAsDataURL(blob);
 </script>
 </body>
 </html>
+
 
 
 
