@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Generate QR — QRBulkGen</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://unpkg.com/qr-code-styling@1.6.0/lib/qr-code-styling.js"></script>
 <script src="js/auth.js"></script>
 
 <style>
@@ -41,7 +41,7 @@ QRBulkGen
 <div class="bg-white border-b sticky top-[72px] z-40">
 <div class="max-w-7xl mx-auto flex items-center px-2">
 
-<button onclick="slideTabs(-1)" class="p-2 text-xl">◀</button>
+<button id="leftArrow" onclick="slideTabs(-1)" class="p-2 text-xl">◀</button>
 
 <div id="tabsWrapper" class="overflow-hidden flex-1">
 <div id="tabs" class="flex gap-4 py-3 transition-all duration-300">
@@ -62,7 +62,7 @@ QRBulkGen
 </div>
 </div>
 
-<button onclick="slideTabs(1)" class="p-2 text-xl">▶</button>
+<button id="rightArrow" onclick="slideTabs(1)" class="p-2 text-xl">▶</button>
 
 </div>
 </div>
@@ -72,14 +72,41 @@ QRBulkGen
 
 <div id="formArea" class="bg-white rounded-2xl shadow p-6"></div>
 
-<div class="bg-white rounded-2xl shadow p-6 flex flex-col items-center">
+<div class="bg-white rounded-2xl shadow p-6 flex flex-col items-center w-full">
 <h2 class="text-xl font-semibold mb-4">Live Preview</h2>
-<div id="qrcode" class="p-6 bg-white"></div>
-<button onclick="downloadQR()" class="mt-6 bg-green-600 text-white px-6 py-3 rounded-xl">
+
+<div id="qrcode" class="p-6 bg-white rounded-xl"></div>
+
+<!-- CUSTOMIZATION PANEL -->
+<div class="w-full mt-6 border-t pt-4">
+
+<h3 class="font-semibold mb-3">QR Customization</h3>
+
+<label class="text-sm">QR Color</label>
+<input type="color" id="qrColor" value="#000000" class="w-full mb-3">
+
+<label class="text-sm">Background Color</label>
+<input type="color" id="bgColor" value="#ffffff" class="w-full mb-3">
+
+<label class="text-sm">QR Style</label>
+<select id="qrStyle" class="w-full border rounded-lg p-2 mb-3">
+<option value="square">Square</option>
+<option value="dots">Dots</option>
+<option value="rounded">Rounded</option>
+<option value="classy">Classy</option>
+<option value="classy-rounded">Classy Rounded</option>
+<option value="extra-rounded">Extra Rounded</option>
+</select>
+
+<label class="text-sm">Center Logo</label>
+<input type="file" id="logoUpload" accept="image/*" class="w-full mb-4">
+
+</div>
+
+<button onclick="downloadQR()" class="mt-4 bg-green-600 text-white px-6 py-3 rounded-xl">
 Download PNG
 </button>
 </div>
-
 </div>
 
 <script>
@@ -229,29 +256,68 @@ console.log("QR error:",e);
 }
 }
 
-/* ---------- CREATE ---------- */
+let qrCode;
+
 function createQR(text){
-const c=document.getElementById("qrcode");
-c.innerHTML="";
-if(text) qr=new QRCode(c,{text,width:260,height:260});
+
+if(!text){
+document.getElementById("qrcode").innerHTML="";
+return;
 }
+
+const color=document.getElementById("qrColor")?.value || "#000000";
+const bg=document.getElementById("bgColor")?.value || "#ffffff";
+const style=document.getElementById("qrStyle")?.value || "square";
+
+const logoInput=document.getElementById("logoUpload");
+let logoURL=null;
+
+if(logoInput && logoInput.files[0]){
+logoURL=URL.createObjectURL(logoInput.files[0]);
+}
+
+document.getElementById("qrcode").innerHTML="";
+
+qrCode=new QRCodeStyling({
+width:260,
+height:260,
+data:text,
+image:logoURL,
+dotsOptions:{
+color:color,
+type:style
+},
+backgroundOptions:{
+color:bg
+},
+imageOptions:{
+crossOrigin:"anonymous",
+margin:5
+}
+});
+
+qrCode.append(document.getElementById("qrcode"));
+}
+
 
 /* ---------- DOWNLOAD ---------- */
 function downloadQR(){
-const img=document.querySelector("#qrcode img");
-if(!img)return alert("Generate QR first");
-const a=document.createElement("a");
-a.href=img.src;
-a.download="qr-code.png";
-a.click();
+if(!qrCode) return alert("Generate QR first");
+qrCode.download({ name:"qr-code", extension:"png" });
 }
 
 renderForm();
+document.addEventListener("input",e=>{
+if(["qrColor","bgColor","qrStyle","logoUpload"].includes(e.target.id)){
+generateQR();
+}
+});
 </script>
 <!-- NAVBAR AUTH CONTROLLER (VERY IMPORTANT) -->
 <script src="js/auth.js"></script>
 </body>
 </html>
+
 
 
 
