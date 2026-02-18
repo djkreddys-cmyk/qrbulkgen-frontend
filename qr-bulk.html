@@ -1,300 +1,103 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>QRBulkGen - Bulk Upload</title>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bulk QR Upload — QRBulkGen</title>
 <script src="https://cdn.tailwindcss.com"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
 <script src="https://unpkg.com/qr-code-styling@1.6.0/lib/qr-code-styling.js"></script>
-
-<style>
-html,body{overflow-x:hidden;background:#f3f4f6;}
-header{position:sticky;top:0;z-index:999;background:white;}
-.qrTab{padding:10px 14px;border-radius:10px;color:#374151;white-space:nowrap}
-.qrTab:hover{background:#eef2ff;color:#4f46e5}
-.qrTab.active{background:#4f46e5;color:white}
-</style>
-
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+<script src="js/auth.js"></script>
 </head>
+<body class="bg-gray-100">
 
-<body>
-
-<!-- NAVBAR -->
-
-<header class="shadow">
+<header class="bg-white shadow sticky top-0 z-50">
 <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-<h1 class="text-xl font-bold text-indigo-600">QRBulkGen</h1>
-
-<div class="flex gap-6 items-center">
+<a href="qr-dashboard.html" class="text-xl font-bold text-indigo-600">QRBulkGen</a>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex gap-6">
 <a href="qr-single.html">Generate QR</a>
-<a href="qr-bulk.html" class="font-semibold text-indigo-600">Bulk Upload</a>
+<a href="qr-bulk.html">Bulk Upload</a>
 <a href="qr-dashboard.html">Dashboard</a>
-<span class="text-gray-600">👤 Jayakrishna</span>
-<button onclick="logout()" class="text-red-500">Logout</button>
+</div>
+<div id="navUser"></div>
 </div>
 </div>
 </header>
 
-<!-- QR TYPE TABS -->
-
-<div class="bg-white border-b overflow-hidden">
-<div class="max-w-7xl mx-auto flex items-center px-2">
-
-<button onclick="slideTabs(-1)" class="p-2 text-xl shrink-0">◀</button>
-
-<div id="tabsWrapper" class="overflow-hidden flex-1">
-<div id="tabs" class="flex gap-4 py-3 w-max transition-transform duration-300">
-
-<button class="qrTab active" onclick="selectType('text',this)">Text</button>
-<button class="qrTab" onclick="selectType('url',this)">Website</button>
-<button class="qrTab" onclick="selectType('whatsapp',this)">WhatsApp</button>
-<button class="qrTab" onclick="selectType('wifi',this)">WiFi</button>
-<button class="qrTab" onclick="selectType('upi',this)">UPI</button>
-<button class="qrTab" onclick="selectType('email',this)">Email</button>
-<button class="qrTab" onclick="selectType('phone',this)">Phone</button>
-<button class="qrTab" onclick="selectType('location',this)">Location</button>
-<button class="qrTab" onclick="selectType('vcard',this)">Business Card</button>
-<button class="qrTab" onclick="selectType('restaurantmenu',this)">Restaurant Menu</button>
-<button class="qrTab" onclick="selectType('productlabel',this)">Product Label</button>
-<button class="qrTab" onclick="selectType('eventticket',this)">Event Ticket</button>
-
-</div>
-</div>
-
-<button onclick="slideTabs(1)" class="p-2 text-xl shrink-0">▶</button>
-
-</div>
-</div>
-
-<!-- MAIN -->
-
-<div class="max-w-7xl mx-auto p-6 grid md:grid-cols-2 gap-8 items-start">
-
-<!-- LEFT PANEL -->
-
-<div class="bg-white rounded-2xl shadow p-6 space-y-6">
-
-<h2 id="bulkTitle" class="text-xl font-bold">Text QR Bulk Upload</h2>
-
-<div class="grid grid-cols-2 gap-4">
-<button onclick="downloadSample()" class="bg-indigo-600 text-white py-2 rounded-xl">Download Sample</button>
-<input type="file" id="excelFile" class="border rounded-xl p-2">
-</div>
-
-<div class="grid grid-cols-2 gap-4">
-<input type="file" id="bulkLogo" class="border rounded-xl p-2">
-<button onclick="processExcel()" class="bg-green-600 text-white py-2 rounded-xl">Load Data</button>
-</div>
-
-<p id="rowsInfo" class="text-sm text-gray-600"></p>
-
-<div class="pt-4 border-t">
-<h3 class="font-semibold mb-3">Customize QR</h3>
-
-<div class="grid grid-cols-3 gap-4">
-<div>
-<label class="text-xs">QR Color</label>
-<input type="color" id="qrColor" value="#000000" class="w-full h-10" onchange="updateBulkPreview()">
-</div>
-
-<div>
-<label class="text-xs">Background</label>
-<input type="color" id="bgColor" value="#ffffff" class="w-full h-10" onchange="updateBulkPreview()">
-</div>
-
-<div>
-<label class="text-xs">Style</label>
-<select id="qrStyle" class="border rounded w-full h-10" onchange="updateBulkPreview()">
-<option value="square">Square</option>
-<option value="dots">Dots</option>
-<option value="rounded">Rounded</option>
-<option value="classy">Classy</option>
-<option value="extra-rounded">Extra Rounded</option>
-</select>
-</div>
-</div>
-</div>
-
-</div>
-
-<!-- RIGHT PANEL -->
-
+<div class="max-w-4xl mx-auto p-6">
 <div class="bg-white rounded-2xl shadow p-6">
+<h2 class="text-2xl font-bold mb-4">Bulk QR Generator</h2>
 
-<h2 class="text-xl font-semibold mb-4">Live Preview</h2>
-
-<div id="bulkPreviewQR" class="flex justify-center mb-6"></div>
-<div id="previewTable" class="text-sm mb-4"></div>
-
-<div class="grid grid-cols-2 gap-4">
-<button onclick="downloadBulkZip()" class="bg-green-600 text-white py-3 rounded-xl">Download ZIP</button>
-<button onclick="saveBulkZip()" class="bg-indigo-600 text-white py-3 rounded-xl">Save ZIP</button>
+<div class="grid md:grid-cols-2 gap-4">
+<input type="file" id="excelFile" accept=".xlsx" class="border p-3 rounded-xl">
+<input type="file" id="logoFile" accept="image/*" class="border p-3 rounded-xl">
 </div>
 
-<div id="zipProgressBox" class="mt-4 hidden">
-<div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
-<div id="zipProgressBar" class="bg-indigo-600 h-4 w-0 transition-all"></div>
-</div>
-<p id="zipProgressText" class="text-sm text-center mt-2">Preparing...</p>
+<div class="flex gap-4 mt-4">
+<button onclick="downloadSample()" class="bg-gray-800 text-white px-4 py-2 rounded-xl">Download Sample Excel</button>
+<button onclick="processExcel()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl">Generate ZIP</button>
 </div>
 
+<div id="status" class="mt-4 text-sm text-gray-600"></div>
 </div>
 </div>
 
 <script>
-let excelData=[],currentType="text",bulkLogoURL=null,tabPos=0;
+let logoURL=null;
 
-/* LOGOUT */
-function logout(){localStorage.clear();location.href="login.html";}
-/* TAB SLIDE */
-let tabPos = 0;
-
-function slideTabs(dir){
-const wrapper = document.getElementById("tabsWrapper");
-const tabs = document.getElementById("tabs");
-
-const max = tabs.scrollWidth - wrapper.clientWidth;
-
-tabPos += dir * 200;
-
-if(tabPos < 0) tabPos = 0;
-if(tabPos > max) tabPos = max;
-
-tabs.style.transform = `translateX(-${tabPos}px)`;
-}
-
-
-/* TYPE */
-function selectType(type,el){
-currentType=type;
-document.querySelectorAll(".qrTab").forEach(t=>t.classList.remove("active"));
-el.classList.add("active");
-bulkTitle.innerText=type.toUpperCase()+" QR Bulk Upload";
-}
-
-/* SAMPLE */
-function downloadSample(){
-let headers=["text"];
-switch(currentType){
-case"url":headers=["url"];break;
-case"wifi":headers=["ssid","password"];break;
-case"upi":headers=["upi_id","amount"];break;
-case"email":headers=["email"];break;
-case"phone":headers=["phone"];break;
-case"whatsapp":headers=["phone","message"];break;
-case"location":headers=["address"];break;
-case"vcard":headers=["name","company","phone"];break;
-case"restaurantmenu":headers=["menu_url"];break;
-case"productlabel":headers=["product_name","product_code"];break;
-case"eventticket":headers=["event","seat","date"];break;
-}
-const ws=XLSX.utils.aoa_to_sheet([headers]);
-const wb=XLSX.utils.book_new();
-XLSX.utils.book_append_sheet(wb,ws,"Sample");
-XLSX.writeFile(wb,"sample.xlsx");
-}
-
-/* FORMAT */
-function createQRText(r){
-switch(currentType){
-case"wifi":return`WIFI:T:WPA;S:${r.ssid};P:${r.password};;`;
-case"upi":return`upi://pay?pa=${r.upi_id}&am=${r.amount||""}`;
-case"email":return`mailto:${r.email}`;
-case"phone":return`tel:${r.phone}`;
-case"whatsapp":return`https://wa.me/${r.phone}?text=${encodeURIComponent(r.message||"")}`;
-case"location":return`https://maps.google.com/?q=${encodeURIComponent(r.address)}`;
-case"vcard":return`BEGIN:VCARD\nFN:${r.name}\nORG:${r.company}\nTEL:${r.phone}\nEND:VCARD`;
-default:return r.text||Object.values(r).join(" ");
-}
-}
-
-/* LOAD EXCEL */
-function processExcel(){
-const f=excelFile.files[0]; if(!f){alert("Choose file");return;}
-const reader=new FileReader();
-reader.onload=e=>{
-const wb=XLSX.read(new Uint8Array(e.target.result),{type:"array"});
-const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:""});
-const h=rows[0];
-excelData=rows.slice(1).map(r=>Object.fromEntries(h.map((k,i)=>[k,r[i]])));
-rowsInfo.innerText=excelData.length+" rows loaded";
-renderPreview();updateBulkPreview();
-};
-reader.readAsArrayBuffer(f);
-}
-
-/* PREVIEW TABLE */
-function renderPreview(){
-if(!excelData.length)return previewTable.innerHTML="";
-let d=excelData.slice(0,4),html="<table class='w-full border text-xs'><tr>";
-Object.keys(d[0]).forEach(h=>html+=`<th class='border px-2 py-1 bg-gray-100'>${h}</th>`);
-html+="</tr>";
-d.forEach(r=>{html+="<tr>";Object.values(r).forEach(v=>html+=`<td class='border px-2 py-1'>${v}</td>`);html+="</tr>";});
-previewTable.innerHTML=html+"</table>";
-}
-
-/* PREVIEW QR */
-function updateBulkPreview(){
-if(!excelData.length)return bulkPreviewQR.innerHTML="";
-const qr=new QRCodeStyling({
-width:220,height:220,data:createQRText(excelData[0]),image:bulkLogoURL,
-dotsOptions:{color:qrColor.value,type:qrStyle.value},
-backgroundOptions:{color:bgColor.value}
+document.getElementById('logoFile').addEventListener('change',e=>{
+ const f=e.target.files[0];
+ if(f) logoURL=URL.createObjectURL(f);
 });
-bulkPreviewQR.innerHTML="";qr.append(bulkPreviewQR);
-}
-bulkLogo.onchange=e=>{const f=e.target.files[0];bulkLogoURL=f?URL.createObjectURL(f):null;updateBulkPreview();};
 
-/* ZIP */
-async function generateBulkQRs(){
-zipProgressBox.classList.remove("hidden");
-const zip=new JSZip();
-for(let i=0;i<excelData.length;i++){
-const qr=new QRCodeStyling({width:500,height:500,data:createQRText(excelData[i]),image:bulkLogoURL,
-dotsOptions:{color:qrColor.value,type:qrStyle.value},backgroundOptions:{color:bgColor.value}});
-const blob=await qr.getRawData("png");
-zip.file(`QR_${i+1}.png`,blob);
-zipProgressBar.style.width=((i+1)/excelData.length*100)+"%";
-zipProgressText.innerText=`Generating ${i+1}/${excelData.length}`;
-}
-zipProgressText.innerText="Compressing...";
-return await zip.generateAsync({type:"blob"});
-}
-async function downloadBulkZip(){const b=await generateBulkQRs();
-const a=document.createElement("a");
-a.href=URL.createObjectURL(b);
-a.download="bulk_qr.zip";
-a.click();}
-  
-async function saveBulkZip(){
-const b = await generateBulkQRs();
-const r = new FileReader();
-
-r.onload = () => {
-let s = JSON.parse(localStorage.getItem("savedQRs") || "[]");
-s.push({name:"Bulk QR",data:r.result});
-localStorage.setItem("savedQRs", JSON.stringify(s));
-alert("Saved");
-};
-
-r.readAsDataURL(b);
+function downloadSample(){
+ const data=[
+  {type:'text',value:'Hello World',name:'sample1'},
+  {type:'url',value:'https://google.com',name:'google'},
+  {type:'phone',value:'9876543210',name:'call'}
+ ];
+ const ws=XLSX.utils.json_to_sheet(data);
+ const wb=XLSX.utils.book_new();
+ XLSX.utils.book_append_sheet(wb,ws,'QR');
+ XLSX.writeFile(wb,'qr_bulk_sample.xlsx');
 }
 
+async function processExcel(){
+ const file=document.getElementById('excelFile').files[0];
+ if(!file) return alert('Upload excel');
+ document.getElementById('status').innerText='Reading Excel...';
+
+ const buf=await file.arrayBuffer();
+ const wb=XLSX.read(buf);
+ const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+
+ const zip=new JSZip();
+ let i=0;
+ for(const r of rows){
+  i++;
+  document.getElementById('status').innerText=`Generating ${i}/${rows.length}`;
+
+  let data=r.value||'';
+  if(r.type==='phone') data=`tel:${data}`;
+  if(r.type==='email') data=`mailto:${data}`;
+
+  const qr=new QRCodeStyling({
+   width:800,height:800,data:data,image:logoURL,
+   dotsOptions:{color:'#000',type:'square'},
+   backgroundOptions:{color:'#fff'}
+  });
+
+  const blob=await qr.getRawData('png');
+  zip.file((r.name||'qr_'+i)+'.png',blob);
+ }
+ document.getElementById('status').innerText='Zipping...';
+ const content=await zip.generateAsync({type:'blob'});
+ saveAs(content,'QR_CODES.zip');
+ document.getElementById('status').innerText='Done';
+}
 </script>
-<!-- NAVBAR AUTH CONTROLLER (VERY IMPORTANT) -->
-<script src="js/auth.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
