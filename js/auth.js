@@ -16,7 +16,7 @@ function setupNavbar(){
   // NOT LOGGED IN
   if(!token){
     navUser.innerHTML=`<a href="/qr-auth.html" class="text-red-500 font-semibold">Login / Register</a>`;
-    if(navLinks) navLinks.style.display="none";
+    if(navLinks) navLinks.classList.add("hidden");
     return;
   }
 
@@ -25,7 +25,7 @@ function setupNavbar(){
   if(!user || !user.name){
     localStorage.removeItem("token");
     navUser.innerHTML=`<a href="/qr-auth.html" class="text-red-500 font-semibold">Login / Register</a>`;
-    if(navLinks) navLinks.style.display="none";
+    if(navLinks) navLinks.classList.add("hidden");
     return;
   }
 
@@ -35,14 +35,19 @@ function setupNavbar(){
     <button onclick="logout()" class="text-red-500 ml-3">Logout</button>
   `;
 
-  if(navLinks) navLinks.style.display="flex";
+  if(navLinks) navLinks.classList.remove("hidden");
 }
-
-document.addEventListener("DOMContentLoaded",setupNavbar);
 
 function logout(){
   localStorage.removeItem("token");
   window.location="/index.html";
+}
+
+function requireLogin(){
+  const token=localStorage.getItem("token");
+  if(!token){
+    window.location="/qr-auth.html";
+  }
 }
 
 document.addEventListener("DOMContentLoaded",setupNavbar);
