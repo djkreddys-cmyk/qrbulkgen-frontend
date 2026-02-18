@@ -91,21 +91,21 @@ let tabPosition=0;
 function slideTabs(dir){
 const wrapper=document.getElementById("tabsWrapper");
 const tabs=document.getElementById("tabs");
+const left=document.getElementById("leftArrow");
+const right=document.getElementById("rightArrow");
 
-/* total scrollable width */
 const maxScroll=tabs.scrollWidth - wrapper.clientWidth;
 
-/* move 200px per click */
 tabPosition+=dir*200;
 
-/* prevent over scrolling left */
 if(tabPosition<0) tabPosition=0;
-
-/* prevent over scrolling right */
 if(tabPosition>maxScroll) tabPosition=maxScroll;
 
-/* apply scroll */
 tabs.style.transform=`translateX(-${tabPosition}px)`;
+
+/* hide arrows */
+left.style.visibility = tabPosition===0 ? "hidden":"visible";
+right.style.visibility = tabPosition>=maxScroll ? "hidden":"visible";
 }
 
 /* ---------- TAB SWITCH ---------- */
@@ -114,6 +114,7 @@ currentType=type;
 document.querySelectorAll(".qrTab").forEach(t=>t.classList.remove("active"));
 el.classList.add("active");
 renderForm();
+setTimeout(()=>slideTabs(0),200);
 }
 
 /* ---------- INPUT ---------- */
@@ -251,6 +252,7 @@ renderForm();
 <script src="js/auth.js"></script>
 </body>
 </html>
+
 
 
 
