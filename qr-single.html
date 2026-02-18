@@ -118,7 +118,16 @@ wifi:`<h2 class="text-xl font-bold mb-4">WiFi</h2>${input('ssid','Network Name')
 upi:`<h2 class="text-xl font-bold mb-4">UPI</h2>${input('upi','UPI ID')}${input('amount','Amount')}`,
 email:`<h2 class="text-xl font-bold mb-4">Email</h2>${input('mail','Email')}${input('subject','Subject')}`,
 phone:`<h2 class="text-xl font-bold mb-4">Phone</h2>${input('call','Phone Number')}`,
-location:`<h2 class="text-xl font-bold mb-4">Location</h2>${input('lat','Latitude')}${input('lng','Longitude')}`,
+location:`<h2 class="text-xl font-bold mb-4">Location</h2>
+<div id="locationBox" class="hidden qr-section">
+  <label class="font-medium">Enter Address</label>
+  <input id="addressInput" type="text" placeholder="Search location..."
+    class="w-full border rounded-xl p-3 mt-2">
+
+  <p class="text-sm text-gray-500 mt-2">
+    Start typing and choose suggestion
+  </p>
+</div>
 menu:`<h2 class="text-xl font-bold mb-4">Restaurant Menu</h2>${input('menuUrl','Menu URL')}`,
 product:`<h2 class="text-xl font-bold mb-4">Product Label</h2>${input('productName','Product Name')}${input('productCode','SKU Code')}`,
 ticket:`<h2 class="text-xl font-bold mb-4">Event Ticket</h2>${input('eventName','Event')}${input('seat','Seat')}${input('date','Date')}`,
@@ -166,9 +175,58 @@ a.href=img.src;
 a.download="qr-code.png";
 a.click();
 }
+function generateQR(customText){
 
+  const text = customText || document.getElementById('qrInput').value || 'QRBulkGen';
+  const color = document.getElementById('color').value;
+  const container = document.getElementById('qrcode');
+
+  container.innerHTML='';
+
+  new QRCode(container,{
+    text:text,
+    width:260,
+    height:260,
+    colorDark:color,
+    colorLight:'#ffffff'
+  });
+}
 renderForm();
 </script>
 <script src="js/protect.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+<script>
+let selectedPlace = null;
+
+function initLocationAutocomplete(){
+
+  const input = document.getElementById("addressInput");
+  if(!input) return;
+
+  const autocomplete = new google.maps.places.Autocomplete(input);
+
+  autocomplete.addListener("place_changed", function(){
+
+    const place = autocomplete.getPlace();
+
+    if(!place.geometry){
+      alert("Please select location from list");
+      return;
+    }
+
+    const lat = place.geometry.location.lat();
+    const lng = place.geometry.location.lng();
+
+    // Save Google Maps link
+    selectedPlace = `https://maps.google.com/?q=${lat},${lng}`;
+
+    // Auto generate QR preview
+    generateQR(selectedPlace);
+  });
+}
+
+window.addEventListener("load", initLocationAutocomplete);
+</script>
 </body>
 </html>
+
