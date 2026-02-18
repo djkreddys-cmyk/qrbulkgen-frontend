@@ -4,33 +4,22 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Account — QRBulkGen</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
 <!-- NAVBAR -->
+
 <header class="bg-white shadow sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-
-    <!-- Logo -->
-    <a href="index.html" class="text-xl font-bold text-indigo-600">
-      QRBulkGen
-    </a>
-
-    <!-- RIGHT SIDE -->
-    <div class="flex items-center gap-6">
-
-      <!-- Protected links (hidden always on auth page) -->
-      <div id="navLinks" style="display:none"></div>
-
-      <!-- Login/Profile -->
-      <div id="navUser"></div>
-
-    </div>
+    <a href="index.html" class="text-xl font-bold text-indigo-600">QRBulkGen</a>
+    <div id="navUser"></div>
   </div>
 </header>
 
+<!-- AUTH CARD -->
 
 <div class="flex-grow flex items-center justify-center px-4">
   <div class="bg-white w-full max-w-md rounded-2xl shadow-xl p-8">
@@ -39,11 +28,13 @@
 <p id="msg" class="text-center text-sm mb-4"></p>
 
 <input id="name" type="text" placeholder="Your Name" class="w-full border rounded-lg px-4 py-3 mb-3" />
+
 <input id="email" type="email" placeholder="Email" class="w-full border rounded-lg px-4 py-3 mb-3" />
+
 <input id="password" type="password" placeholder="Password" class="w-full border rounded-lg px-4 py-3 mb-3" />
 
 <div id="forgotBox" class="text-right mb-3 hidden">
-  <button onclick="forgotPassword()" class="text-sm text-indigo-600 hover:underline">Forgot Password?</button>
+  <button onclick="openReset()" class="text-sm text-indigo-600 hover:underline">Forgot Password?</button>
 </div>
 
 <button id="mainBtn" class="w-full bg-indigo-600 text-white py-3 rounded-lg mb-4 hover:bg-indigo-700">Register</button>
@@ -56,19 +47,27 @@
   </div>
 </div>
 
+<!-- RESET PASSWORD MODAL -->
+
 <div id="resetModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
   <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-xl">
     <h3 class="text-xl font-bold mb-4 text-center">Reset Password</h3>
 
+```
 <div class="relative mb-3">
-  <input id="resetEmail" type="email" placeholder="Registered Email" class="w-full border rounded-lg px-4 py-3 pr-10" oninput="checkEmail()" />
+  <input id="resetEmail" type="email" placeholder="Registered Email"
+    class="w-full border rounded-lg px-4 py-3 pr-10" oninput="checkEmail()" />
   <span id="emailStatus" class="absolute right-3 top-3 text-xl"></span>
 </div>
 
-<input id="resetPassword" type="password" placeholder="New Password" class="w-full border rounded-lg px-4 py-3 mb-4 opacity-50" disabled />
+<input id="resetPassword" type="password" placeholder="New Password"
+  class="w-full border rounded-lg px-4 py-3 mb-4 opacity-50" disabled />
 
-<button onclick="resetPassword()" class="w-full bg-indigo-600 text-white py-3 rounded-lg mb-2">Update Password</button>
-<button onclick="closeResetModal()" class="w-full text-gray-500">Cancel</button>
+<button onclick="resetPassword()"
+  class="w-full bg-indigo-600 text-white py-3 rounded-lg mb-2">Update Password</button>
+
+<button onclick="closeReset()" class="w-full text-gray-500">Cancel</button>
+```
 
   </div>
 </div>
@@ -92,8 +91,10 @@ function show(t,color="red"){
  msg.className="text-center text-sm mb-4 text-"+color+"-600";
 }
 
+// SWITCH MODE
 function toggleMode(){
  isLogin=!isLogin;
+
  if(isLogin){
   title.innerText="Login";
   mainBtn.innerText="Login";
@@ -111,6 +112,7 @@ function toggleMode(){
  }
 }
 
+// MAIN BUTTON
 mainBtn.onclick=async()=>{
  const email=emailEl.value.trim();
  const password=passwordEl.value.trim();
@@ -121,36 +123,37 @@ mainBtn.onclick=async()=>{
      headers:{'Content-Type':'application/json'},
      body:JSON.stringify({email,password})
    });
+
    if(r.status!==200){ show("Invalid login"); return; }
+
    const data=await r.json();
    localStorage.setItem("token",data.token);
-   const after = localStorage.getItem("afterLogin");
 
-if(after){
-  localStorage.removeItem("afterLogin");
-  window.location = after;
-}else{
-  window.location = "qr-dashboard.html";
-}
+   // IMPORTANT → let guard.js handle redirect
+   location.reload();
+
  }else{
    const name=nameEl.value.trim();
    if(!name||!email||!password){ show("Fill all fields"); return; }
+
    const r=await fetch(API+"/register",{
      method:"POST",
      headers:{'Content-Type':'application/json'},
      body:JSON.stringify({name,email,password})
    });
+
    show(await r.text(),"green");
  }
 };
 
-function forgotPassword(){
+// RESET MODAL
+function openReset(){
  document.getElementById("resetModal").classList.remove("hidden");
  document.getElementById("resetModal").classList.add("flex");
  document.getElementById("resetEmail").value=emailEl.value;
 }
 
-function closeResetModal(){
+function closeReset(){
  document.getElementById("resetModal").classList.add("hidden");
  document.getElementById("resetModal").classList.remove("flex");
 }
@@ -159,9 +162,22 @@ async function checkEmail(){
  const email=document.getElementById("resetEmail").value.trim();
  const status=document.getElementById("emailStatus");
  const pass=document.getElementById("resetPassword");
- if(email.length<5){ status.innerHTML=""; pass.disabled=true; pass.classList.add("opacity-50"); return; }
- const r=await fetch(API+"/check-email",{method:"POST",headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+
+ if(email.length<5){
+  status.innerHTML="";
+  pass.disabled=true;
+  pass.classList.add("opacity-50");
+  return;
+ }
+
+ const r=await fetch(API+"/check-email",{
+  method:"POST",
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({email})
+ });
+
  const data=await r.json();
+
  if(data.exists){
    status.innerHTML="✔";
    status.className="absolute right-3 top-3 text-xl text-green-500";
@@ -179,18 +195,26 @@ async function checkEmail(){
 
 async function resetPassword(){
  if(!emailValid){ alert("Please enter registered email"); return; }
+
  const email=document.getElementById("resetEmail").value.trim();
  const newPassword=document.getElementById("resetPassword").value.trim();
+
  if(!newPassword){ alert("Enter new password"); return; }
- const r=await fetch(API+"/reset-password",{method:"POST",headers:{'Content-Type':'application/json'},body:JSON.stringify({email,newPassword})});
+
+ const r=await fetch(API+"/reset-password",{
+  method:"POST",
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({email,newPassword})
+ });
+
  alert(await r.text());
- if(r.ok) closeResetModal();
+ if(r.ok) closeReset();
 }
 </script>
+
+<script src="js/guard.js"></script>
+
 <script src="js/auth.js"></script>
+
 </body>
 </html>
-
-
-
-
