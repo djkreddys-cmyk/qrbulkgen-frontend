@@ -380,16 +380,15 @@ const size=parseInt(document.getElementById("qrSize").value);
 qrCode.update({width:size,height:size});
 qrCode.download({name:"qr-code",extension:"png"});
 /* ensure first tab loads correctly after navigation */
+/* default load */
 window.addEventListener("DOMContentLoaded", () => {
 
-const activeTab = document.querySelector(".qrTab.active");
-
-if(activeTab){
-selectType("text", activeTab);
-}
+currentType = "text";          // default QR type
+renderForm();                  // show inputs immediately
+slideTabs(0);                  // fix arrow visibility
+document.getElementById("qrcode").innerHTML=""; // empty preview
 
 });
-
 
 /* restore preview size */
 qrCode.update({width:260,height:260});
@@ -490,6 +489,7 @@ class="w-full border rounded p-2 mb-4">
 
 </body>
 </html>
+
 
 
 
