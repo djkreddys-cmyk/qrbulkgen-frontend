@@ -206,7 +206,17 @@ generateQR();
 
 });
 }
+/* waits until google maps fully loads */
+function waitForGoogle(){
 
+if(typeof google === "undefined" || !google.maps || !google.maps.places){
+setTimeout(waitForGoogle,200);
+return;
+}
+
+initAutocomplete();
+
+}
 /* reload autocomplete whenever tab changes */
 const originalRenderForm=renderForm;
 renderForm=function(){
@@ -221,6 +231,7 @@ waitForGoogle();
 <script src="js/auth.js"></script>
 </body>
 </html>
+
 
 
 
