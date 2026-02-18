@@ -113,7 +113,14 @@ mainBtn.onclick=async()=>{
    if(r.status!==200){ show("Invalid login"); return; }
    const data=await r.json();
    localStorage.setItem("token",data.token);
-   window.location="qr-dashboard.html";
+   const after = localStorage.getItem("afterLogin");
+
+if(after){
+  localStorage.removeItem("afterLogin");
+  window.location = after;
+}else{
+  window.location = "qr-dashboard.html";
+}
  }else{
    const name=nameEl.value.trim();
    if(!name||!email||!password){ show("Fill all fields"); return; }
@@ -172,6 +179,7 @@ async function resetPassword(){
 
 </body>
 </html>
+
 
 
 
