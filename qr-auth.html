@@ -147,7 +147,82 @@ mainBtn.onclick=async()=>{
 
   </div>
 </div>
+  <script>
+// ---------- OPEN MODAL ----------
+function forgotPassword(){
+  document.getElementById("resetModal").classList.remove("hidden");
+  document.getElementById("resetModal").classList.add("flex");
+
+  // autofill typed email
+  document.getElementById("resetEmail").value = emailEl.value;
+}
+
+// ---------- CLOSE MODAL ----------
+document.getElementById("cancelReset").onclick = ()=>{
+  document.getElementById("resetModal").classList.add("hidden");
+  document.getElementById("resetModal").classList.remove("flex");
+}
+
+// ---------- CHECK EMAIL ----------
+document.getElementById("resetEmail").addEventListener("input", async ()=>{
+  const email = document.getElementById("resetEmail").value.trim();
+  const status = document.getElementById("emailStatus");
+  const pass = document.getElementById("resetPassword");
+
+  if(email.length < 5){
+    status.innerHTML="";
+    pass.disabled=true;
+    pass.classList.add("opacity-50");
+    return;
+  }
+
+  const r = await fetch(API+"/check-email",{
+    method:"POST",
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email})
+  });
+
+  const data = await r.json();
+
+  if(data.exists){
+    status.innerHTML="✔";
+    status.className="absolute right-3 top-3 text-xl text-green-500";
+    pass.disabled=false;
+    pass.classList.remove("opacity-50");
+  }else{
+    status.innerHTML="✖";
+    status.className="absolute right-3 top-3 text-xl text-red-500";
+    pass.disabled=true;
+    pass.classList.add("opacity-50");
+  }
+});
+
+// ---------- UPDATE PASSWORD ----------
+document.getElementById("updatePasswordBtn").onclick = async ()=>{
+  const email=document.getElementById("resetEmail").value.trim();
+  const newPassword=document.getElementById("resetPassword").value.trim();
+
+  if(!newPassword){
+    alert("Enter new password");
+    return;
+  }
+
+  const r=await fetch(API+"/reset-password",{
+    method:"POST",
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email,newPassword})
+  });
+
+  alert(await r.text());
+
+  if(r.ok){
+    document.getElementById("resetModal").classList.add("hidden");
+    document.getElementById("resetModal").classList.remove("flex");
+  }
+};
+</script>
 </body>
 </html>
+
 
 
