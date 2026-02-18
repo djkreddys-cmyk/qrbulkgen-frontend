@@ -2,190 +2,202 @@
 
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Single QR Generator</title>
-  <script src="js/protect.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generate QR — QRBulkGen</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-100 min-h-screen">
 
- <!-- NAVBAR -->
-<header class="bg-white shadow sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-
-    <!-- Logo -->
-    <a href="/index.html" class="text-xl font-bold text-indigo-600">
-      QRBulkGen
-    </a>
-
-    <!-- Right Menu -->
-    <div class="flex items-center gap-6">
-
-      <!-- Protected links -->
-      <div id="navLinks" class="hidden md:flex items-center gap-6">
-        <a href="/qr-single.html" class="hover:text-indigo-600">Generate QR</a>
-        <a href="/qr-bulk.html" class="hover:text-indigo-600">Bulk Upload</a>
-        <a href="/qr-dashboard.html" class="hover:text-indigo-600">Dashboard</a>
-      </div>
-
-      <!-- Login/Profile -->
-      <div id="navUser" class="min-w-[140px] text-right">
-        <!-- JS will fill -->
-      </div>
-
-    </div>
-  </div>
+<header class="bg-white shadow p-4 flex justify-between">
+  <a href="index.html" class="text-xl font-bold text-indigo-600">QRBulkGen</a>
+  <div id="navUser"></div>
 </header>
 
+<div class="max-w-6xl mx-auto p-6 grid md:grid-cols-2 gap-10">
 
-<div class="max-w-7xl mx-auto p-6 grid md:grid-cols-2 gap-8">
-
-  <!-- LEFT INPUT PANEL -->
+  <!-- FORM AREA -->
 
   <div class="bg-white rounded-2xl shadow p-6">
-    <h2 class="text-2xl font-bold mb-6">Create QR Code</h2>
+    <h2 id="qrTitle" class="text-2xl font-bold mb-6">Generate QR</h2>
 
+```
+<div id="formArea" class="space-y-4"></div>
 
-<!-- Input -->
-<input id="qrInput" type="text" placeholder="Enter URL or text"
-  class="w-full border rounded-xl p-3 mb-6" />
-
-<!-- Color -->
-<div class="mb-6">
-  <label class="block mb-2 font-medium">QR Color</label>
-  <input id="color" type="color" value="#000000" />
-</div>
-
-<!-- Size -->
-<div class="mb-6">
-  <label class="block mb-2 font-medium">Size</label>
-  <input id="size" type="range" min="150" max="400" value="250" />
-</div>
-
-<button onclick="generateQR()"
-  class="mt-4 w-full bg-indigo-600 text-white py-3 rounded-xl">
+<button onclick="generateQR()" class="mt-6 w-full bg-indigo-600 text-white py-3 rounded-xl">
   Generate QR
 </button>
-
+```
 
   </div>
 
-  <!-- RIGHT PREVIEW PANEL -->
+  <!-- PREVIEW -->
 
-  <div class="bg-white rounded-2xl shadow p-6 flex flex-col items-center justify-center">
-    <h2 class="text-xl font-semibold mb-6">Live Preview</h2>
+  <div class="bg-white rounded-2xl shadow p-6 text-center">
+    <h3 class="font-bold text-lg mb-4">Live Preview</h3>
+    <canvas id="qrCanvas" class="mx-auto"></canvas>
 
-
-<div id="qrcode" class="p-6 bg-white"></div>
-
-<button onclick="downloadQR()"
-  class="mt-6 bg-green-600 text-white px-6 py-3 rounded-xl">
+```
+<button onclick="downloadQR()" class="mt-6 px-6 py-3 bg-green-600 text-white rounded-xl">
   Download PNG
 </button>
-
-<button onclick="saveProject()"
-  class="mt-3 bg-blue-600 text-white px-6 py-3 rounded-xl">
-  Save Project
-</button>
-
+```
 
   </div>
 
 </div>
 
+<script src="js/auth.js"></script>
+
 <script>
-const API="https://qrbulkgen-backend-production.up.railway.app/api";
+const type = localStorage.getItem("qrType") || "text";
+const formArea = document.getElementById("formArea");
+const qrTitle = document.getElementById("qrTitle");
 
-let qr;
-let lastQRData="";
+/* ---------------- FORM BUILDER ---------------- */
 
-// GENERATE QR
+function input(id,label,placeholder){
+ return `
+ <div>
+   <label class="text-sm text-gray-600">${label}</label>
+   <input id="${id}" class="w-full border rounded-lg px-4 py-2 mt-1" placeholder="${placeholder}">
+ </div>`;
+}
+
+function buildForm(){
+
+switch(type){
+
+case "text":
+qrTitle.innerText="Text QR";
+formArea.innerHTML=input("text","Enter Text","Hello world");
+break;
+
+case "website":
+qrTitle.innerText="Website QR";
+formArea.innerHTML=input("url","Website URL","https://example.com");
+break;
+
+case "wifi":
+qrTitle.innerText="WiFi QR";
+formArea.innerHTML=
+input("ssid","WiFi Name","MyWiFi")+
+input("pass","Password","12345678")+
+input("sec","Security","WPA");
+break;
+
+case "whatsapp":
+qrTitle.innerText="WhatsApp QR";
+formArea.innerHTML=
+input("phone","Phone with country code","919999999999")+
+input("msg","Message","Hello!");
+break;
+
+case "upi":
+qrTitle.innerText="UPI Payment QR";
+formArea.innerHTML=
+input("upi","UPI ID","name@upi")+
+input("name","Receiver Name","Ravi")+
+input("amt","Amount","100");
+break;
+
+case "email":
+qrTitle.innerText="Email QR";
+formArea.innerHTML=
+input("mail","Email","test@mail.com")+
+input("sub","Subject","Hello")+
+input("body","Message","How are you?");
+break;
+
+case "phone":
+qrTitle.innerText="Phone Call QR";
+formArea.innerHTML=input("call","Phone number","9999999999");
+break;
+
+case "location":
+qrTitle.innerText="Location QR";
+formArea.innerHTML=
+input("lat","Latitude","16.506")+
+input("lon","Longitude","80.648");
+break;
+
+case "vcard":
+qrTitle.innerText="Business Card QR";
+formArea.innerHTML=
+input("n","Name","John")+
+input("p","Phone","9999999999")+
+input("e","Email","john@mail.com")+
+input("c","Company","ABC Pvt Ltd");
+break;
+
+}
+
+}
+
+buildForm();
+
+/* ---------------- DATA BUILDER ---------------- */
+
+function getQRData(){
+
+switch(type){
+
+case "text": return document.getElementById("text").value;
+
+case "website": return document.getElementById("url").value;
+
+case "wifi":
+return `WIFI:T:${sec.value};S:${ssid.value};P:${pass.value};;`;
+
+case "whatsapp":
+return `https://wa.me/${phone.value}?text=${encodeURIComponent(msg.value)}`;
+
+case "upi":
+return `upi://pay?pa=${upi.value}&pn=${name.value}&am=${amt.value}`;
+
+case "email":
+return `mailto:${mail.value}?subject=${sub.value}&body=${body.value}`;
+
+case "phone":
+return `tel:${call.value}`;
+
+case "location":
+return `https://maps.google.com/?q=${lat.value},${lon.value}`;
+
+case "vcard":
+return `BEGIN:VCARD
+VERSION:3.0
+FN:${n.value}
+ORG:${c.value}
+TEL:${p.value}
+EMAIL:${e.value}
+END:VCARD`;
+}
+
+}
+
+/* ---------------- QR GENERATOR ---------------- */
+
 function generateQR(){
-  const text=document.getElementById('qrInput').value || 'https://example.com';
-  const color=document.getElementById('color').value;
-  const size=document.getElementById('size').value;
+const data=getQRData();
+if(!data) return alert("Fill details");
 
-  lastQRData=text;
-
-  document.getElementById('qrcode').innerHTML='';
-  qr=new QRCode(document.getElementById('qrcode'),{
-    text:text,
-    width:Number(size),
-    height:Number(size),
-    colorDark:color,
-    colorLight:'#ffffff'
-  });
+QRCode.toCanvas(document.getElementById("qrCanvas"), data, {width:280});
 }
 
-// DOWNLOAD
+/* ---------------- DOWNLOAD ---------------- */
+
 function downloadQR(){
-  const img=document.querySelector('#qrcode img');
-  if(!img){
-    alert("Generate QR first");
-    return;
-  }
-  const link=document.createElement('a');
-  link.href=img.src;
-  link.download='qr-code.png';
-  link.click();
+const canvas=document.getElementById("qrCanvas");
+const link=document.createElement("a");
+link.download="qr.png";
+link.href=canvas.toDataURL();
+link.click();
 }
-
-// SAVE TO DATABASE
-async function saveProject(){
-
-  const token=localStorage.getItem("token");
-
-  if(!token){
-    alert("Please login first");
-    location.href="qr-auth.html";
-    return;
-  }
-
-  if(!lastQRData){
-    alert("Generate QR first");
-    return;
-  }
-
-  const name=prompt("Enter project name");
-  if(!name)return;
-
-  const r=await fetch(API+"/projects",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      "Authorization":token
-    },
-    body:JSON.stringify({
-      name:name,
-      data:lastQRData
-    })
-  });
-
-  if(r.status===200){
-    alert("Saved to dashboard!");
-  }else{
-    alert("Error saving project");
-  }
-}
-
-// REOPEN FROM DASHBOARD
-window.onload=()=>{
-  const data=localStorage.getItem("lastQR");
-  if(data){
-    document.getElementById('qrInput').value=data;
-    generateQR();
-    localStorage.removeItem("lastQR");
-  }
-};
 </script>
+<!-- ALWAYS LAST -->
 <script src="/js/auth.js"></script>
 </body>
 </html>
-
-
-
-
-
