@@ -338,28 +338,48 @@ document.getElementById("customizationArea").innerHTML = `
 
 /* PREVIEW TABLE */
 function renderPreview(){
-if(excelData.length===0)return;
+
+if(excelData.length===0){
+document.getElementById("previewTable").innerHTML="";
+return;
+}
+
+/* show only first 4 rows */
+const previewRows = excelData.slice(0,4);
+
 let html="<div class='border rounded-xl overflow-hidden'>";
 html+="<table class='w-full table-fixed text-xs'>";
+
+/* headers */
 html+="<tr>";
-Object.keys(excelData[0]).forEach(h=>{
+Object.keys(previewRows[0]).forEach(h=>{
 html+=`<th class="px-2 py-2 bg-gray-100 font-semibold break-words">${h}</th>`;
 });
 html+="</tr>";
-excelData.forEach(row=>{
-html+="<tr>";
+
+/* rows */
+previewRows.forEach(row=>{
+html+="<tr class='border-t'>";
 Object.values(row).forEach(v=>{
-html+=`<td class="px-2 py-2 break-words">${v??""}</td>`;
+html+=`<td class="px-2 py-2 break-words">${v ?? ""}</td>`;
 });
 html+="</tr>";
 });
-html+="</table></div>";
+
+html+="</table>";
+
+/* info message */
+if(excelData.length>4){
+html+=`<div class="text-center text-xs text-gray-500 py-2 bg-gray-50">
+Showing first 4 rows out of ${excelData.length} records
+</div>`;
+}
+
+html+="</div>";
 
 document.getElementById("previewTable").innerHTML=html;
 }
-window.addEventListener("DOMContentLoaded", ()=>{
-loadCustomizationUI();
-});
+
 let previewQR=null;
 
 function updateBulkPreview(){
@@ -561,6 +581,7 @@ reader.readAsDataURL(blob);
 </script>
 </body>
 </html>
+
 
 
 
