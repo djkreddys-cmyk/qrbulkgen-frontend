@@ -260,11 +260,30 @@ zipProgressText.innerText=`Generating ${i+1}/${excelData.length}`;
 zipProgressText.innerText="Compressing...";
 return await zip.generateAsync({type:"blob"});
 }
-async function downloadBulkZip(){const b=await generateBulkQRs();const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="bulk_qr.zip";a.click();}
-async function saveBulkZip(){const b=await generateBulkQRs();const r=new FileReader();r.onload=()=>{let s=JSON.parse(localStorage.getItem("savedQRs")||"[]");s.push({name:"Bulk QR",data:r.result});localStorage.setItem("savedQRs",JSON.stringify(s);alert("Saved");};r.readAsDataURL(b);}
+async function downloadBulkZip(){const b=await generateBulkQRs();
+const a=document.createElement("a");
+a.href=URL.createObjectURL(b);
+a.download="bulk_qr.zip";
+a.click();}
+  
+async function saveBulkZip(){
+const b = await generateBulkQRs();
+const r = new FileReader();
+
+r.onload = () => {
+let s = JSON.parse(localStorage.getItem("savedQRs") || "[]");
+s.push({name:"Bulk QR",data:r.result});
+localStorage.setItem("savedQRs", JSON.stringify(s));
+alert("Saved");
+};
+
+r.readAsDataURL(b);
+}
+
 </script>
 
 </body>
 </html>
+
 
 
