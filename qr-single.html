@@ -118,7 +118,8 @@ wifi:`<h2 class="text-xl font-bold mb-4">WiFi</h2>${input('ssid','Network Name')
 upi:`<h2 class="text-xl font-bold mb-4">UPI</h2>${input('upi','UPI ID')}${input('amount','Amount')}`,
 email:`<h2 class="text-xl font-bold mb-4">Email</h2>${input('mail','Email')}${input('subject','Subject')}`,
 phone:`<h2 class="text-xl font-bold mb-4">Phone</h2>${input('call','Phone Number')}`,
-location:`<h2 class="text-xl font-bold mb-4">Location</h2>${input('lat','Latitude')}${input('lng','Longitude')}`,
+location:`<h2 class="text-xl font-bold mb-4">Location</h2>location:`<h2 class="text-xl font-bold mb-4">Google Maps Location</h2>
+<input id="placeInput" placeholder="Search address"class="w-full border rounded-xl p-3 mb-3"><input type="hidden" id="placeLink">`,
 menu:`<h2 class="text-xl font-bold mb-4">Restaurant Menu</h2>${input('menuUrl','Menu URL')}`,
 product:`<h2 class="text-xl font-bold mb-4">Product Label</h2>${input('productName','Product Name')}${input('productCode','SKU Code')}`,
 ticket:`<h2 class="text-xl font-bold mb-4">Event Ticket</h2>${input('eventName','Event')}${input('seat','Seat')}${input('date','Date')}`,
@@ -140,7 +141,7 @@ case"wifi":d=`WIFI:T:WPA;S:${ssid.value};P:${pass.value};;`;break;
 case"upi":d=`upi://pay?pa=${upi.value}&am=${amount.value}`;break;
 case"email":d=`mailto:${mail.value}?subject=${subject.value}`;break;
 case"phone":d=`tel:${call.value}`;break;
-case"location":d=`https://maps.google.com/?q=${lat.value},${lng.value}`;break;
+case"location":d=`placeLink.value;`break;
 case"menu":d=menuUrl.value;break;
 case"product":d=`Product:${productName.value}\nCode:${productCode.value}`;break;
 case"ticket":d=`Event:${eventName.value}\nSeat:${seat.value}\nDate:${date.value}`;break;
@@ -171,5 +172,41 @@ renderForm();
 </script>
 <!-- NAVBAR AUTH CONTROLLER (VERY IMPORTANT) -->
 <script src="js/auth.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+let autocomplete;
+
+function initAutocomplete(){
+const input=document.getElementById("placeInput");
+if(!input) return;
+
+autocomplete=new google.maps.places.Autocomplete(input,{
+fields:["place_id","geometry","name","formatted_address"]
+});
+
+autocomplete.addListener("place_changed",()=>{
+const place=autocomplete.getPlace();
+
+if(!place.geometry) return alert("Please select from dropdown");
+
+const lat=place.geometry.location.lat();
+const lng=place.geometry.location.lng();
+
+/* exact Google maps link */
+const mapLink=`https://www.google.com/maps/search/?api=1&query=${lat},${lng}&query_place_id=${place.place_id}`;
+
+document.getElementById("placeLink").value=mapLink;
+
+generateQR();
+});
+}
+
+/* re-run when tab changes */
+const originalRenderForm=renderForm;
+renderForm=function(){
+originalRenderForm();
+setTimeout(initAutocomplete,200);
+}
+
 </body>
 </html>
+
