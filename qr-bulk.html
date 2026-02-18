@@ -51,7 +51,18 @@ header{position:sticky;top:0;z-index:999;background:white;}
 <div id="tabsWrapper" class="overflow-hidden flex-1">
 <div id="tabs" class="flex gap-4 py-3 w-max transition-transform duration-300">
 
-<button class="qrTab active" onclick="selectType('text',this)">Text</button> <button class="qrTab" onclick="selectType('url',this)">Website</button> <button class="qrTab" onclick="selectType('whatsapp',this)">WhatsApp</button> <button class="qrTab" onclick="selectType('wifi',this)">WiFi</button> <button class="qrTab" onclick="selectType('upi',this)">UPI</button> <button class="qrTab" onclick="selectType('email',this)">Email</button> <button class="qrTab" onclick="selectType('phone',this)">Phone</button> <button class="qrTab" onclick="selectType('location',this)">Location</button> <button class="qrTab" onclick="selectType('vcard',this)">Business Card</button> <button class="qrTab" onclick="selectType('menu',this)">Menu</button> <button class="qrTab" onclick="selectType('product',this)">Product</button> <button class="qrTab" onclick="selectType('ticket',this)">Ticket</button>
+<button class="qrTab active" onclick="selectType('text',this)">Text</button>
+<button class="qrTab" onclick="selectType('url',this)">Website</button>
+<button class="qrTab" onclick="selectType('whatsapp',this)">WhatsApp</button>
+<button class="qrTab" onclick="selectType('wifi',this)">WiFi</button>
+<button class="qrTab" onclick="selectType('upi',this)">UPI</button>
+<button class="qrTab" onclick="selectType('email',this)">Email</button>
+<button class="qrTab" onclick="selectType('phone',this)">Phone</button>
+<button class="qrTab" onclick="selectType('location',this)">Location</button>
+<button class="qrTab" onclick="selectType('vcard',this)">Business Card</button>
+<button class="qrTab" onclick="selectType('menu',this)">Menu</button>
+<button class="qrTab" onclick="selectType('productlabel',this)">Product Label</button>
+<button class="qrTab" onclick="selectType('eventticket',this)">Event Ticket</button>
 
 </div>
 </div>
@@ -174,8 +185,8 @@ case"whatsapp":headers=["phone","message"];break;
 case"location":headers=["address"];break;
 case"vcard":headers=["name","company","phone"];break;
 case"menu":headers=["menu_url"];break;
-case"product":headers=["product_name","product_code"];break;
-case"ticket":headers=["event","seat","date"];break;
+case"productlabel":headers=["product_name","product_code"];break;
+case"eventticket":headers=["event","seat","date"];break;
 }
 const ws=XLSX.utils.aoa_to_sheet([headers]);
 const wb=XLSX.utils.book_new();
@@ -255,3 +266,4 @@ async function saveBulkZip(){const b=await generateBulkQRs();const r=new FileRea
 
 </body>
 </html>
+
