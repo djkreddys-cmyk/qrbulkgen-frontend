@@ -152,45 +152,6 @@ let excelData=[],currentType="text",bulkLogoURL=null,tabPos=0;
 
 /* LOGOUT */
 function logout(){localStorage.clear();location.href="login.html";}
-function bindControls(){
-
-// arrows
-document.querySelectorAll("[data-slide]").forEach(btn=>{
-btn.onclick=()=>slideTabs(parseInt(btn.dataset.slide));
-});
-
-// load button
-const loadBtn=document.getElementById("loadBtn");
-if(loadBtn) loadBtn.onclick=processExcel;
-
-// logo change
-const logo=document.getElementById("bulkLogo");
-if(logo) logo.onchange=e=>{
-const f=e.target.files[0];
-bulkLogoURL=f?URL.createObjectURL(f):null;
-updateBulkPreview();
-};
-
-}
-// arrows
-document.querySelectorAll("[data-slide]").forEach(btn=>{
-btn.onclick=()=>slideTabs(parseInt(btn.dataset.slide));
-});
-
-// load button
-const loadBtn=document.getElementById("loadBtn");
-if(loadBtn) loadBtn.onclick=processExcel;
-
-// logo change
-const logo=document.getElementById("bulkLogo");
-if(logo) logo.onchange=e=>{
-const f=e.target.files[0];
-bulkLogoURL=f?URL.createObjectURL(f):null;
-updateBulkPreview();
-};
-
-}
-
 /* TAB SLIDE */
 let tabPos = 0;
 
@@ -330,6 +291,7 @@ r.readAsDataURL(b);
 <script src="js/auth.js"></script>
 </body>
 </html>
+
 
 
 
