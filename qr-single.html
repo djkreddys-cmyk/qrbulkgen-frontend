@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -7,259 +6,161 @@
 <title>Generate QR — QRBulkGen</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
 <script src="js/auth.js"></script>
 
 <style>
-.qrTab{padding:10px 14px;border-radius:10px;color:#374151}
+.qrTab{padding:10px 14px;border-radius:10px;color:#374151;white-space:nowrap}
 .qrTab:hover{background:#eef2ff;color:#4f46e5}
 .qrTab.active{background:#4f46e5;color:white}
 .btnGen{width:100%;background:#4f46e5;color:white;padding:12px;border-radius:12px}
 </style>
-
 </head>
 
 <body class="bg-gray-100">
 
-<!-- MAIN NAVBAR -->
-
+<!-- NAVBAR -->
 <header class="bg-white shadow sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+<div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 
-```
 <a id="logoLink" href="qr-dashboard.html" class="text-xl font-bold text-indigo-600">
-  QRBulkGen
+QRBulkGen
 </a>
 
 <div class="flex items-center gap-6">
-  <div id="navLinks" class="hidden md:flex gap-6">
-    <a href="qr-single.html">Generate QR</a>
-    <a href="qr-bulk.html">Bulk Upload</a>
-    <a href="qr-dashboard.html">Dashboard</a>
-  </div>
-
-  <div id="navUser"></div>
+<div id="navLinks" class="hidden md:flex gap-6">
+<a href="qr-single.html">Generate QR</a>
+<a href="qr-bulk.html">Bulk Upload</a>
+<a href="qr-dashboard.html">Dashboard</a>
 </div>
-```
+<div id="navUser"></div>
+</div>
 
-  </div>
+</div>
 </header>
 
-<!-- QR TYPE NAVBAR (SLIDER) -->
+<!-- TYPE SLIDER -->
 <div class="bg-white border-b sticky top-[72px] z-40">
+<div class="max-w-7xl mx-auto flex items-center px-2">
 
-  <div class="max-w-7xl mx-auto flex items-center px-2">
+<button onclick="slideTabs(-1)" class="p-2 text-xl">◀</button>
 
-    <!-- LEFT ARROW -->
-    <button onclick="slideTabs(-1)" class="p-2 text-xl hover:text-indigo-600">
-      ◀
-    </button>
+<div id="tabsWrapper" class="overflow-hidden flex-1">
+<div id="tabs" class="flex gap-4 py-3 transition-all duration-300">
 
-    <!-- TABS CONTAINER -->
-    <div id="tabsWrapper" class="overflow-hidden flex-1">
-      <div id="tabs" class="flex gap-4 py-3 transition-all duration-300">
+<button class="qrTab active" onclick="selectType('text',this)">Text</button>
+<button class="qrTab" onclick="selectType('url',this)">Website</button>
+<button class="qrTab" onclick="selectType('whatsapp',this)">WhatsApp</button>
+<button class="qrTab" onclick="selectType('wifi',this)">WiFi</button>
+<button class="qrTab" onclick="selectType('upi',this)">UPI</button>
+<button class="qrTab" onclick="selectType('email',this)">Email</button>
+<button class="qrTab" onclick="selectType('phone',this)">Phone</button>
+<button class="qrTab" onclick="selectType('location',this)">Location</button>
+<button class="qrTab" onclick="selectType('vcard',this)">Business Card</button>
+<button class="qrTab" onclick="selectType('menu',this)">Restaurant Menu</button>
+<button class="qrTab" onclick="selectType('product',this)">Product Label</button>
+<button class="qrTab" onclick="selectType('ticket',this)">Event Ticket</button>
 
-        <button onclick="selectType('text',this)" class="qrTab active">Text</button>
-        <button onclick="selectType('url',this)" class="qrTab">Website</button>
-        <button onclick="selectType('email',this)" class="qrTab">Email</button>
-        <button onclick="selectType('phone',this)" class="qrTab">Phone</button>
-        <button onclick="selectType('location',this)" class="qrTab">Location</button>
-        <button onclick="selectType('wifi',this)" class="qrTab">WiFi</button>
-        <button onclick="selectType('upi',this)" class="qrTab">UPI</button>
-        <button onclick="selectType('whatsapp',this)" class="qrTab">WhatsApp</button>
-        <button onclick="selectType('vcard',this)" class="qrTab">Business Card</button>
-        <button onclick="selectType('menu',this)" class="qrTab">Restaurant Menu</button>
-        <button onclick="selectType('product',this)" class="qrTab">Product Label</button>
-        <button onclick="selectType('ticket',this)" class="qrTab">Event Ticket</button>
-
-      </div>
-    </div>
-
-    <!-- RIGHT ARROW -->
-    <button onclick="slideTabs(1)" class="p-2 text-xl hover:text-indigo-600">
-      ▶
-    </button>
-
-  </div>
 </div>
-let tabPosition = 0;
+</div>
 
-function slideTabs(direction){
-  const tabs = document.getElementById("tabs");
+<button onclick="slideTabs(1)" class="p-2 text-xl">▶</button>
 
-  tabPosition += direction * 200;
-
-  if(tabPosition < 0) tabPosition = 0;
-  if(tabPosition > tabs.scrollWidth) tabPosition = tabs.scrollWidth;
-
-  tabs.style.transform = `translateX(-${tabPosition}px)`;
-}
+</div>
+</div>
 
 <!-- CONTENT -->
-
 <div class="max-w-7xl mx-auto p-6 grid md:grid-cols-2 gap-8">
 
-  <!-- FORM -->
+<div id="formArea" class="bg-white rounded-2xl shadow p-6"></div>
 
-  <div id="formArea" class="bg-white rounded-2xl shadow p-6"></div>
-
-  <!-- PREVIEW -->
-
-  <div class="bg-white rounded-2xl shadow p-6 flex flex-col items-center">
-    <h2 class="text-xl font-semibold mb-4">Live Preview</h2>
-    <div id="qrcode" class="p-6 bg-white"></div>
-    <button onclick="downloadQR()" class="mt-6 bg-green-600 text-white px-6 py-3 rounded-xl">
-      Download PNG
-    </button>
-  </div>
+<div class="bg-white rounded-2xl shadow p-6 flex flex-col items-center">
+<h2 class="text-xl font-semibold mb-4">Live Preview</h2>
+<div id="qrcode" class="p-6 bg-white"></div>
+<button onclick="downloadQR()" class="mt-6 bg-green-600 text-white px-6 py-3 rounded-xl">
+Download PNG
+</button>
+</div>
 
 </div>
 
 <script>
 let currentType="text";
 let qr;
+let tabPosition=0;
+
+function slideTabs(dir){
+const tabs=document.getElementById("tabs");
+tabPosition+=dir*200;
+if(tabPosition<0)tabPosition=0;
+tabs.style.transform=`translateX(-${tabPosition}px)`;
+}
 
 function selectType(type,el){
-  currentType=type;
-  document.querySelectorAll(".qrTab").forEach(t=>t.classList.remove("active"));
-  el.classList.add("active");
-  renderForm();
+currentType=type;
+document.querySelectorAll(".qrTab").forEach(t=>t.classList.remove("active"));
+el.classList.add("active");
+renderForm();
+}
+
+function input(id,placeholder){
+return `<input id="${id}" placeholder="${placeholder}" class="w-full border rounded-xl p-3 mb-3" oninput="autoQR()">`;
 }
 
 function renderForm(){
-const area=document.getElementById("formArea");
+const a=document.getElementById("formArea");
 
-if(currentType==="text")
-area.innerHTML=`<h2 class="text-xl font-bold mb-4">Text QR</h2>
-<input id="data" placeholder="Enter text" class="w-full border rounded-xl p-3 mb-4">
-<button onclick="generateQR()" class="btnGen">Generate QR</button>`;
+const forms={
+text:`<h2 class="text-xl font-bold mb-4">Text QR</h2>${input('data','Enter text')}`,
+url:`<h2 class="text-xl font-bold mb-4">Website</h2>${input('data','https://example.com')}`,
+whatsapp:`<h2 class="text-xl font-bold mb-4">WhatsApp</h2>${input('phone','Phone')}${input('msg','Message')}`,
+wifi:`<h2 class="text-xl font-bold mb-4">WiFi</h2>${input('ssid','Network Name')}${input('pass','Password')}`,
+upi:`<h2 class="text-xl font-bold mb-4">UPI</h2>${input('upi','UPI ID')}${input('amount','Amount')}`,
+email:`<h2 class="text-xl font-bold mb-4">Email</h2>${input('mail','Email')}${input('subject','Subject')}`,
+phone:`<h2 class="text-xl font-bold mb-4">Phone</h2>${input('call','Phone Number')}`,
+location:`<h2 class="text-xl font-bold mb-4">Location</h2>${input('lat','Latitude')}${input('lng','Longitude')}`,
+menu:`<h2 class="text-xl font-bold mb-4">Restaurant Menu</h2>${input('menuUrl','Menu URL')}`,
+product:`<h2 class="text-xl font-bold mb-4">Product Label</h2>${input('productName','Product Name')}${input('productCode','SKU Code')}`,
+ticket:`<h2 class="text-xl font-bold mb-4">Event Ticket</h2>${input('eventName','Event')}${input('seat','Seat')}${input('date','Date')}`,
+vcard:`<h2 class="text-xl font-bold mb-4">Business Card</h2>${input('name','Name')}${input('org','Company')}${input('tel','Phone')}`
+};
 
-if(currentType==="url")
-area.innerHTML=`<h2 class="text-xl font-bold mb-4">Website</h2>
-<input id="data" placeholder="https://example.com" class="w-full border rounded-xl p-3 mb-4">
-<button onclick="generateQR()" class="btnGen">Generate QR</button>`;
-
-if(currentType==="whatsapp")
-area.innerHTML=`<h2 class="text-xl font-bold mb-4">WhatsApp</h2>
-<input id="phone" placeholder="Phone" class="w-full border rounded-xl p-3 mb-3">
-<input id="msg" placeholder="Message" class="w-full border rounded-xl p-3 mb-4">
-<button onclick="generateQR('whatsapp')" class="btnGen">Generate QR</button>`;
-
-if(currentType==="wifi")
-area.innerHTML=`<h2 class="text-xl font-bold mb-4">WiFi</h2>
-<input id="ssid" placeholder="Network name" class="w-full border rounded-xl p-3 mb-3">
-<input id="pass" placeholder="Password" class="w-full border rounded-xl p-3 mb-4">
-<button onclick="generateQR('wifi')" class="btnGen">Generate QR</button>`;
-
-if(currentType==="upi")
-area.innerHTML=`<h2 class="text-xl font-bold mb-4">UPI</h2>
-<input id="upi" placeholder="UPI ID" class="w-full border rounded-xl p-3 mb-3">
-<input id="amount" placeholder="Amount" class="w-full border rounded-xl p-3 mb-4">
-<button onclick="generateQR('upi')" class="btnGen">Generate QR</button>`;
-
-if(currentType==="email")
-area.innerHTML=`<h2 class="text-xl font-bold mb-4">Email</h2>
-<input id="mail" placeholder="Email address" class="w-full border rounded-xl p-3 mb-3">
-<input id="subject" placeholder="Subject" class="w-full border rounded-xl p-3 mb-4">
-<button onclick="generateQR('email')" class="btnGen">Generate QR</button>`;
-
-if(currentType==="phone")
-area.innerHTML=`<h2 class="text-xl font-bold mb-4">Phone</h2>
-<input id="call" placeholder="Phone number" class="w-full border rounded-xl p-3 mb-4">
-<button onclick="generateQR('phone')" class="btnGen">Generate QR</button>`;
-
-if(currentType==="vcard")
-area.innerHTML=`<h2 class="text-xl font-bold mb-4">Business Card</h2>
-<input id="name" placeholder="Name" class="w-full border rounded-xl p-3 mb-3">
-<input id="org" placeholder="Company" class="w-full border rounded-xl p-3 mb-3">
-<input id="tel" placeholder="Phone" class="w-full border rounded-xl p-3 mb-4">
-<button onclick="generateQR('vcard')" class="btnGen">Generate QR</button>`;
-
-if(currentType==="location")
-area.innerHTML=`
-<h2 class="text-xl font-bold mb-4">Location QR</h2>
-<input id="lat" placeholder="Latitude" class="w-full border rounded-xl p-3 mb-3">
-<input id="lng" placeholder="Longitude" class="w-full border rounded-xl p-3 mb-4">
-<button onclick="generateQR('location')" class="btnGen">Generate QR</button>`;
-
-if(currentType==="menu")
-area.innerHTML=`
-<h2 class="text-xl font-bold mb-4">Restaurant Menu</h2>
-<input id="menuUrl" placeholder="Menu URL" class="w-full border rounded-xl p-3 mb-4">
-<button onclick="generateQR('menu')" class="btnGen">Generate QR</button>`;
-
-if(currentType==="product")
-area.innerHTML=`
-<h2 class="text-xl font-bold mb-4">Product Label</h2>
-<input id="productName" placeholder="Product Name" class="w-full border rounded-xl p-3 mb-3">
-<input id="productCode" placeholder="Product Code / SKU" class="w-full border rounded-xl p-3 mb-4">
-<button onclick="generateQR('product')" class="btnGen">Generate QR</button>`;
-
-if(currentType==="ticket")
-area.innerHTML=`
-<h2 class="text-xl font-bold mb-4">Event Ticket</h2>
-<input id="eventName" placeholder="Event Name" class="w-full border rounded-xl p-3 mb-3">
-<input id="seat" placeholder="Seat Number" class="w-full border rounded-xl p-3 mb-3">
-<input id="date" placeholder="Date" class="w-full border rounded-xl p-3 mb-4">
-<button onclick="generateQR('ticket')" class="btnGen">Generate QR</button>`;
-
+a.innerHTML=forms[currentType];
 }
 
-function generateQR(mode){
-let data="";
+function autoQR(){ generateQR(); }
 
-if(mode==="whatsapp")
-data=`https://wa.me/${phone.value}?text=${encodeURIComponent(msg.value)}`;
+function generateQR(){
+let d="";
 
-else if(mode==="wifi")
-data=`WIFI:T:WPA;S:${ssid.value};P:${pass.value};;`;
+try{
+switch(currentType){
+case"whatsapp":d=`https://wa.me/${phone.value}?text=${encodeURIComponent(msg.value)}`;break;
+case"wifi":d=`WIFI:T:WPA;S:${ssid.value};P:${pass.value};;`;break;
+case"upi":d=`upi://pay?pa=${upi.value}&am=${amount.value}`;break;
+case"email":d=`mailto:${mail.value}?subject=${subject.value}`;break;
+case"phone":d=`tel:${call.value}`;break;
+case"location":d=`https://maps.google.com/?q=${lat.value},${lng.value}`;break;
+case"menu":d=menuUrl.value;break;
+case"product":d=`Product:${productName.value}\nCode:${productCode.value}`;break;
+case"ticket":d=`Event:${eventName.value}\nSeat:${seat.value}\nDate:${date.value}`;break;
+case"vcard":d=`BEGIN:VCARD\nVERSION:3.0\nFN:${name.value}\nORG:${org.value}\nTEL:${tel.value}\nEND:VCARD`;break;
+default:d=data?.value||"";
+}
 
-else if(mode==="upi")
-data=`upi://pay?pa=${upi.value}&am=${amount.value}`;
-
-else if(mode==="email")
-data=`mailto:${mail.value}?subject=${subject.value}`;
-
-else if(mode==="location")
-data=`https://maps.google.com/?q=${lat.value},${lng.value}`;
-
-else if(mode==="menu")
-data=menuUrl.value;
-
-else if(mode==="product")
-data=`Product:${productName.value}\nCode:${productCode.value}`;
-
-else if(mode==="ticket")
-data=`Event:${eventName.value}\nSeat:${seat.value}\nDate:${date.value}`;
-
-else if(mode==="phone")
-data=`tel:${call.value}`;
-
-else if(mode==="vcard")
-data=`BEGIN:VCARD
-VERSION:3.0
-FN:${name.value}
-ORG:${org.value}
-TEL:${tel.value}
-END:VCARD`;
-
-else
-data=document.getElementById("data").value;
-
-createQR(data);
+createQR(d);
+}catch{}
 }
 
 function createQR(text){
-const container=document.getElementById("qrcode");
-container.innerHTML="";
-qr=new QRCode(container,{text,width:260,height:260});
+const c=document.getElementById("qrcode");
+c.innerHTML="";
+qr=new QRCode(c,{text,width:260,height:260});
 }
 
 function downloadQR(){
 const img=document.querySelector("#qrcode img");
-if(!img) return alert("Generate QR first");
+if(!img)return alert("Generate QR first");
 const a=document.createElement("a");
 a.href=img.src;
 a.download="qr-code.png";
@@ -268,8 +169,6 @@ a.click();
 
 renderForm();
 </script>
-
+<script src="js/protect.js"></script>
 </body>
 </html>
-
-
