@@ -120,6 +120,11 @@ Load Excel Data
 
 </div>
 <!-- RIGHT PANEL -->
+<h2 class="text-xl font-semibold mb-4">Preview Data</h2>
+<!-- LIVE QR PREVIEW -->
+<div id="bulkPreviewQR" class="mb-4 flex justify-center"></div>
+
+<div id="previewTable" class="text-sm"></div>
 
 <div class="bg-white rounded-2xl shadow p-6">
 <h2 class="text-xl font-semibold mb-4">Preview Data</h2>
@@ -534,6 +539,10 @@ await new Promise(r=>setTimeout(r,10)); // allows UI update
 }
 
 document.getElementById("zipProgressText").innerText="Compressing ZIP...";
+
+/* CREATE ZIP HERE */
+const zipBlob = await zip.generateAsync({type:"blob"});
+
 document.getElementById("zipProgressText").innerText="Done ✔";
 
 setTimeout(()=>{
@@ -543,6 +552,7 @@ document.getElementById("zipProgressBar").style.width="0%";
 
 return zipBlob;
 }
+
 
 async function downloadBulkZip(){
 const blob=await generateBulkQRs();
@@ -581,6 +591,7 @@ reader.readAsDataURL(blob);
 </script>
 </body>
 </html>
+
 
 
 
