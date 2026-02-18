@@ -124,8 +124,7 @@ Load Excel Data
 <div class="bg-white rounded-2xl shadow p-6">
 <h2 class="text-xl font-semibold mb-4">Preview Data</h2>
 <div id="bulkPreviewQR" class="mb-4 flex justify-center"></div>
-<div id="previewTable" class="overflow-auto max-h-[450px] text-sm"></div>
-
+<div id="previewTable" class="text-sm"></div>
 <!-- BULK ACTION BUTTONS -->
 <div class="grid grid-cols-2 gap-3 mt-4">
 
@@ -340,20 +339,22 @@ document.getElementById("customizationArea").innerHTML = `
 /* PREVIEW TABLE */
 function renderPreview(){
 if(excelData.length===0)return;
-let html="<table class='w-full border'>";
+let html="<div class='border rounded-xl overflow-hidden'>";
+html+="<table class='w-full table-fixed text-xs'>";
 html+="<tr>";
 Object.keys(excelData[0]).forEach(h=>{
-html+=`<th class="border px-2 py-1 bg-gray-100">${h}</th>`;
+html+=`<th class="px-2 py-2 bg-gray-100 font-semibold break-words">${h}</th>`;
 });
 html+="</tr>";
 excelData.forEach(row=>{
 html+="<tr>";
 Object.values(row).forEach(v=>{
-html+=`<td class="border px-2 py-1">${v??""}</td>`;
+html+=`<td class="px-2 py-2 break-words">${v??""}</td>`;
 });
 html+="</tr>";
 });
-html+="</table>";
+html+="</table></div>";
+
 document.getElementById("previewTable").innerHTML=html;
 }
 window.addEventListener("DOMContentLoaded", ()=>{
@@ -560,6 +561,7 @@ reader.readAsDataURL(blob);
 </script>
 </body>
 </html>
+
 
 
 
