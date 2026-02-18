@@ -1,14 +1,22 @@
-// Protect private pages only
-
 (function(){
 
-  const token = localStorage.getItem("token");
+const token = localStorage.getItem("token");
 
-  // Not logged in → go login
-  if(!token){
-    localStorage.setItem("afterLogin", window.location.pathname);
-    window.location = "/qr-auth.html";
-    return;
+if(!token){
+  localStorage.setItem("afterLogin", window.location.pathname);
+  window.location = "qr-auth.html";
+  return;
+}
+
+// verify token structure
+try{
+  const payload = JSON.parse(atob(token.split('.')[1]));
+  if(!payload?.id){
+    throw "bad";
   }
+}catch{
+  localStorage.removeItem("token");
+  window.location = "qr-auth.html";
+}
 
 })();
