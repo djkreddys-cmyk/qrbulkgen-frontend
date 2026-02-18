@@ -73,14 +73,36 @@
     <h2 class="text-3xl font-bold text-center mb-12">Create QR Codes For Anything</h2>
 
 
-<div class="grid md:grid-cols-3 gap-6">
-  <a href="/upi-qr-code-generator" class="p-6 bg-white rounded-2xl shadow hover:shadow-lg">UPI Payment QR</a>
-  <a href="/student-id-card-qr-code" class="p-6 bg-white rounded-2xl shadow hover:shadow-lg">Student ID QR</a>
-  <a href="/restaurant-menu-qr-code" class="p-6 bg-white rounded-2xl shadow hover:shadow-lg">Menu QR</a>
-  <a href="/event-ticket-qr-code" class="p-6 bg-white rounded-2xl shadow hover:shadow-lg">Event Ticket QR</a>
-  <a href="/product-label-qr-code" class="p-6 bg-white rounded-2xl shadow hover:shadow-lg">Product Label QR</a>
-  <a href="/whatsapp-qr-code-generator" class="p-6 bg-white rounded-2xl shadow hover:shadow-lg">WhatsApp QR</a>
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 text-center">
+
+<button onclick="goQR('upi')" class="card">UPI Payment</button>
+<button onclick="goQR('wifi')" class="card">WiFi Access</button>
+<button onclick="goQR('whatsapp')" class="card">WhatsApp Chat</button>
+<button onclick="goQR('menu')" class="card">Restaurant Menu</button>
+<button onclick="goQR('student')" class="card">Student ID</button>
+<button onclick="goQR('product')" class="card">Product Label</button>
+<button onclick="goQR('ticket')" class="card">Event Ticket</button>
+<button onclick="goQR('website')" class="card">Website</button>
+<button onclick="goQR('email')" class="card">Email</button>
+<button onclick="goQR('phone')" class="card">Phone Call</button>
+<button onclick="goQR('location')" class="card">Location Map</button>
+<button onclick="goQR('vcard')" class="card">Business Card</button>
+
 </div>
+
+<style>
+.card{
+  padding:20px;
+  background:white;
+  border-radius:16px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+  transition:0.2s;
+}
+.card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 8px 20px rgba(0,0,0,0.15);
+}
+</style>
 
 
   </div>
@@ -180,6 +202,7 @@ function logout(){
 <script src="/js/auth.js"></script>
 </body>
 </html>
+
 
 
 
