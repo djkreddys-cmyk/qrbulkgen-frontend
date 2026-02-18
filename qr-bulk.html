@@ -300,7 +300,6 @@ excelData.length+" rows loaded successfully";
 
 renderPreview();
 updateBulkPreview();
-
 };
 
 reader.readAsArrayBuffer(file);
@@ -389,7 +388,10 @@ let previewQR=null;
 
 function updateBulkPreview(){
 
-if(excelData.length===0) return;
+if(excelData.length===0){
+document.getElementById("bulkPreviewQR").innerHTML="";
+return;
+}
 
 const color=document.getElementById("qrColor").value;
 const bg=document.getElementById("bgColor").value;
@@ -413,9 +415,9 @@ backgroundOptions:{color:bg},
 imageOptions:{crossOrigin:"anonymous",margin:6}
 });
 
-
 previewQR.append(document.getElementById("bulkPreviewQR"));
 }
+
 function resetBulkPage(){
 
 /* clear excel data */
@@ -591,6 +593,7 @@ reader.readAsDataURL(blob);
 </script>
 </body>
 </html>
+
 
 
 
