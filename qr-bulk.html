@@ -60,7 +60,7 @@ header{position:sticky;top:0;z-index:999;background:white;}
 <button class="qrTab" onclick="selectType('phone',this)">Phone</button>
 <button class="qrTab" onclick="selectType('location',this)">Location</button>
 <button class="qrTab" onclick="selectType('vcard',this)">Business Card</button>
-<button class="qrTab" onclick="selectType('menu',this)">Menu</button>
+<button class="qrTab" onclick="selectType('restaurantmenu',this)">Restaurant Menu</button>
 <button class="qrTab" onclick="selectType('productlabel',this)">Product Label</button>
 <button class="qrTab" onclick="selectType('eventticket',this)">Event Ticket</button>
 
@@ -184,7 +184,7 @@ case"phone":headers=["phone"];break;
 case"whatsapp":headers=["phone","message"];break;
 case"location":headers=["address"];break;
 case"vcard":headers=["name","company","phone"];break;
-case"menu":headers=["menu_url"];break;
+case"restaurantmenu":headers=["menu_url"];break;
 case"productlabel":headers=["product_name","product_code"];break;
 case"eventticket":headers=["event","seat","date"];break;
 }
@@ -266,4 +266,5 @@ async function saveBulkZip(){const b=await generateBulkQRs();const r=new FileRea
 
 </body>
 </html>
+
 
