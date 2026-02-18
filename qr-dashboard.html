@@ -20,17 +20,33 @@ requireLogin();
 <body class="bg-gray-100 min-h-screen">
 
 <!-- Navbar -->
+<header class="bg-white shadow sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
-<header class="bg-white shadow p-4 flex justify-between items-center">
-  <a href="index.html" class="text-xl font-bold text-indigo-600">QRBulkGen</a>
+    <!-- Logo -->
+    <a href="/index.html" class="text-xl font-bold text-indigo-600">
+      QRBulkGen
+    </a>
 
-  <nav class="space-x-6 font-medium flex items-center">
-    <a href="qr-single.html">Generate QR</a>
-    <a href="qr-bulk.html">Bulk Upload</a>
-    <span class="font-bold text-indigo-600">Dashboard</span>
-    <div id="navUser"></div>
-  </nav>
+    <!-- Right Menu -->
+    <div class="flex items-center gap-6">
+
+      <!-- Protected links -->
+      <div id="navLinks" class="hidden md:flex items-center gap-6">
+        <a href="/qr-single.html" class="hover:text-indigo-600">Generate QR</a>
+        <a href="/qr-bulk.html" class="hover:text-indigo-600">Bulk Upload</a>
+        <a href="/qr-dashboard.html" class="hover:text-indigo-600">Dashboard</a>
+      </div>
+
+      <!-- Login/Profile -->
+      <div id="navUser" class="min-w-[140px] text-right">
+        <!-- JS will fill -->
+      </div>
+
+    </div>
+  </div>
 </header>
+
 
 <!-- Page -->
 
@@ -109,3 +125,4 @@ loadProjects();
 
 </body>
 </html>
+
