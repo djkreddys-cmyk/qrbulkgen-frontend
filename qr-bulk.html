@@ -197,39 +197,6 @@ if(validateRows()){
  updatePreview();
 }
 }
-function buildData(r){
- if(currentType==='text') return r.value||'';
- if(currentType==='url') return r.value||'';
-
- if(currentType==='phone') return 'tel:'+(r.value||'');
- if(currentType==='email') return 'mailto:'+(r.value||'');
-
- if(currentType==='whatsapp')
-  return 'https://wa.me/'+(r.phone||'')+'?text='+encodeURIComponent(r.msg||'');
-
- if(currentType==='wifi')
-  return 'WIFI:T:WPA;S:'+(r.ssid||'')+';P:'+(r.password||'')+';;';
-
- if(currentType==='upi')
-  return 'upi://pay?pa='+(r.upi||'')+'&am='+(r.amount||'');
-
- if(currentType==='location')
-  return 'https://www.openstreetmap.org/search?query='+encodeURIComponent(r.address||'');
-
- if(currentType==='vcard')
-  return 'BEGIN:VCARD\\nVERSION:3.0\\nFN:'+(r.name||'')+'\\nORG:'+(r.org||'')+'\\nTEL:'+(r.tel||'')+'\\nEND:VCARD';
-
- if(currentType==='menu') return r.url||'';
-
- if(currentType==='product')
-  return 'Product:'+(r.product||'')+'\\nCode:'+(r.code||'');
-
- if(currentType==='ticket')
-  return 'Event:'+(r.event||'')+'\\nSeat:'+(r.seat||'')+'\\nDate:'+(r.date||'');
-
- return '';
-}
-
 function updatePreview(){
  if(rows.length===0){
  document.getElementById('preview').innerHTML=
@@ -240,8 +207,17 @@ function updatePreview(){
  if(currentIndex>=rows.length)currentIndex=rows.length-1;
  var r=rows[currentIndex];
  document.getElementById('preview').innerHTML='';
- qr=new QRCodeStyling({width:260,height:260,data:buildData(r),image:logoURL,dotsOptions:{color:qrColor.value,type:qrStyle.value},backgroundOptions:{color:bgColor.value}});
- qr.append(document.getElementById('preview'));
+ qr = renderQR(
+ document.getElementById('preview'),
+ buildQRData(currentType, r),
+ {
+   color: qrColor.value,
+   bg: bgColor.value,
+   style: qrStyle.value,
+   logo: logoURL,
+   size:260
+ }
+);
  document.getElementById('rowIndicator').innerText='Row '+(currentIndex+1)+' / '+rows.length;
 }
 
@@ -254,8 +230,15 @@ async function generateZip(){
  const zip=new JSZip();
  for(let i=0;i<rows.length;i++){
   const r=rows[i];
-  const q=new QRCodeStyling({width:800,height:800,data:buildData(r),image:logoURL,dotsOptions:{color:qrColor.value,type:qrStyle.value},backgroundOptions:{color:bgColor.value}});
-  const blob=await q.getRawData('png');
+  const tempQR = new QRCodeStyling({
+ width:800,
+ height:800,
+ data: buildQRData(currentType, r),
+ image: logoURL,
+ dotsOptions:{color:qrColor.value,type:qrStyle.value},
+ backgroundOptions:{color:bgColor.value}
+});
+const blob=await tempQR.getRawData('png');
   zip.file((r.name||('qr_'+(i+1)))+'.png',blob);
  }
  const content=await zip.generateAsync({type:'blob'});
@@ -340,6 +323,7 @@ function validateRows(){
 </script>
 </body>
 </html>
+
 
 
 
