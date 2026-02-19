@@ -397,36 +397,41 @@ function updateArrows(maxScroll = null){
   left.style.visibility  = tabPosition <= edge ? "hidden":"visible";
   right.style.visibility = tabPosition >= maxScroll-edge ? "hidden":"visible";
 }
-
+/* ---------- INITIAL LOAD ---------- */
 window.addEventListener("load",()=>{
 
-  const waitForEngine = setInterval(()=>{
-    if(typeof QR_TYPES !== "undefined"){
+  const waitForEngine=setInterval(()=>{
+    if(window.QR_TYPES){
 
       clearInterval(waitForEngine);
 
       renderBulkTabs();
-      setTimeout(updateArrows,150);
-      // reset slider
-      tabPosition = 0;
-      document.getElementById('tabs').style.transform = "translateX(0px)";
 
-      currentType = Object.keys(QR_TYPES)[0];
-      document.getElementById('selectedType').innerText = QR_TYPES[currentType].label;
+      // wait for layout paint
+      requestAnimationFrame(()=>{
+        requestAnimationFrame(()=>{
 
-      updateColumnHint();
+          tabPosition=0;
+          document.getElementById('tabs').style.transform="translateX(0px)";
 
-      updateArrows();   // ⭐ important
+          currentType=Object.keys(QR_TYPES)[0];
+          document.getElementById('selectedType').innerText=QR_TYPES[currentType].label;
+
+          updateColumnHint();
+          updateArrows();
+
+        });
+      });
 
     }
   },50);
 
 });
 
-
 </script>
 </body>
 </html>
+
 
 
 
