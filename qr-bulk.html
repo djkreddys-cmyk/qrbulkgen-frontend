@@ -367,25 +367,30 @@ function updateColumnHint(){
 
 function validateRows(){
 
- let required=["value"];
+  if(!window.QR_TYPES || !QR_TYPES[currentType]) return false;
 
- if(currentType==='whatsapp') required=["phone","msg"];
- else if(currentType==='wifi') required=["ssid","password"];
- else if(currentType==='upi') required=["upi"];
- else if(currentType==='location') required=["address"];
- else if(currentType==='vcard') required=["name","tel"];
- else if(currentType==='menu') required=["url"];
- else if(currentType==='product') required=["product","code"];
- else if(currentType==='ticket') required=["event","seat","date"];
+  const required = QR_TYPES[currentType].fields.map(f=>f.id);
 
- let errors=[];
+  let errors=[];
 
- rows.forEach((r,i)=>{
-   required.forEach(col=>{
-     if(!r[col] || String(r[col]).trim()==='')
-     errors.push(`Row ${i+1} missing "${col}"`);
-   });
- });
+  rows.forEach((r,i)=>{
+    required.forEach(col=>{
+      if(!r[col] || String(r[col]).trim()==='')
+        errors.push(`Row ${i+1} missing "${col}"`);
+    });
+  });
+
+  const box=document.getElementById("errorBox");
+
+  if(errors.length){
+    box.classList.remove("hidden");
+    box.innerHTML=errors.join("<br>");
+    return false;
+  }else{
+    box.classList.add("hidden");
+    return true;
+  }
+}
 
  const box=document.getElementById("errorBox");
 
@@ -445,6 +450,7 @@ window.addEventListener("load",()=>{
 </script>
 </body>
 </html>
+
 
 
 
