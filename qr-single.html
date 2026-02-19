@@ -293,9 +293,7 @@ document.getElementById("qrcode").innerHTML="";
 return;
 }
 
-d=`BEGIN:VCARD
-VERSION:3.0
-${name?`FN:${name}\n`:''}${org?`ORG:${org}\n`:''}${tel?`TEL:${tel}\n`:''}END:VCARD`;
+d=`BEGIN:VCARD\\nVERSION:3.0\\n${name?`FN:${name}\\n`:''}${org?`ORG:${org}\\n`:''}${tel?`TEL:${tel}\\n`:''}END:VCARD`;
 break;
 
 default:
@@ -468,6 +466,7 @@ class="w-full border rounded p-2 mb-4">
 
 </body>
 </html>
+
 
 
 
