@@ -159,12 +159,18 @@ let tabPosition=0;
 function slideTabs(d){
  const w=document.getElementById('tabsWrapper');
  const t=document.getElementById('tabs');
- const m=t.scrollWidth-w.clientWidth;
- tabPosition+=d*200;
+
+ const max=t.scrollWidth-w.clientWidth;
+
+ tabPosition+=d*(w.clientWidth*0.8);
  if(tabPosition<0)tabPosition=0;
- if(tabPosition>m)tabPosition=m;
+ if(tabPosition>max)tabPosition=max;
+
  t.style.transform='translateX(-'+tabPosition+'px)';
+
+ updateArrows();
 }
+
 
 document.getElementById('logoFile').addEventListener('change',function(e){
  const f=e.target.files[0];
@@ -327,6 +333,16 @@ function validateRows(){
    return true;
  }
 }
+function updateArrows(){
+  const wrapper = document.getElementById('tabsWrapper');
+  const left = document.getElementById('leftArrow');
+  const right = document.getElementById('rightArrow');
+
+  const maxScroll = wrapper.scrollWidth - wrapper.clientWidth;
+
+  left.style.visibility = tabPosition <= 5 ? "hidden":"visible";
+  right.style.visibility = tabPosition >= maxScroll-5 ? "hidden":"visible";
+}
 
 window.addEventListener("load",()=>{
 
@@ -340,17 +356,21 @@ window.addEventListener("load",()=>{
       // reset slider
       tabPosition = 0;
       document.getElementById('tabs').style.transform = "translateX(0px)";
-      document.getElementById('leftArrow').style.visibility = "hidden";
 
       currentType = Object.keys(QR_TYPES)[0];
       document.getElementById('selectedType').innerText = QR_TYPES[currentType].label;
 
       updateColumnHint();
+
+      updateArrows();   // ⭐ important
+
     }
   },50);
 
 });
 
+
 </script>
 </body>
 </html>
+
