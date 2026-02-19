@@ -215,26 +215,43 @@ if(validateRows()){
 }
 }
 function updatePreview(){
+
  if(rows.length===0){
- document.getElementById('preview').innerHTML=
- '<div class="text-gray-400 text-sm">Load Excel data to preview QR</div>';
- return;
-}
+  document.getElementById('preview').innerHTML=
+  '<div class="text-gray-400 text-sm">Load Excel data to preview QR</div>';
+  return;
+ }
+
  if(currentIndex<0)currentIndex=0;
  if(currentIndex>=rows.length)currentIndex=rows.length-1;
- var r=rows[currentIndex];
- document.getElementById('preview').innerHTML='';
+
+ const r=rows[currentIndex];
+
+ // build QR text safely
+ const text = buildQRData(currentType, r);
+
+ const box=document.getElementById('preview');
+ box.innerHTML="";
+
+ // IMPORTANT: do not render empty QR
+ if(!text || String(text).trim()===""){
+  box.innerHTML='<div class="text-gray-400 text-sm">This row has missing data</div>';
+  document.getElementById('rowIndicator').innerText='Row '+(currentIndex+1)+' / '+rows.length;
+  return;
+ }
+
  qr = renderQR(
- document.getElementById('preview'),
- buildQRData(currentType, r),
- {
+  box,
+  text,
+  {
    color: qrColor.value,
    bg: bgColor.value,
    style: qrStyle.value,
    logo: logoURL,
    size:260
- }
-);
+  }
+ );
+
  document.getElementById('rowIndicator').innerText='Row '+(currentIndex+1)+' / '+rows.length;
 }
 
@@ -383,6 +400,7 @@ window.addEventListener("load",()=>{
 </script>
 </body>
 </html>
+
 
 
 
