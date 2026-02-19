@@ -112,3 +112,16 @@ app_download:{
 }
 
 };
+/* ---------- GLOBAL ACCESS ---------- */
+window.QR_TYPES = QR_TYPES;
+
+window.buildQRData = function(type,data){
+  if(!QR_TYPES[type]) return "";
+  try{
+    return QR_TYPES[type].build(data)||"";
+  }catch(e){
+    console.log("QR build error:",e);
+    return "";
+  }
+};
+
