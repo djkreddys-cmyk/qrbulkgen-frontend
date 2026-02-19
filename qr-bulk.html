@@ -354,19 +354,17 @@ function prevRow(){
 }
 function updateColumnHint(){
 
- let hint="value, name";
+  if(!window.QR_TYPES || !QR_TYPES[currentType]){
+    document.getElementById("columnHint").innerText="";
+    return;
+  }
 
- if(currentType==='whatsapp') hint="phone, msg, name";
- else if(currentType==='wifi') hint="ssid, password, name";
- else if(currentType==='upi') hint="upi, amount, name";
- else if(currentType==='location') hint="address, name";
- else if(currentType==='vcard') hint="name, org, tel";
- else if(currentType==='menu') hint="url, name";
- else if(currentType==='product') hint="product, code, name";
- else if(currentType==='ticket') hint="event, seat, date, name";
+  const fields = QR_TYPES[currentType].fields.map(f=>f.id);
 
- document.getElementById("columnHint").innerText="Required columns: "+hint;
+  document.getElementById("columnHint").innerText =
+    "Required columns: " + fields.join(", ");
 }
+
 function validateRows(){
 
  let required=["value"];
@@ -447,6 +445,7 @@ window.addEventListener("load",()=>{
 </script>
 </body>
 </html>
+
 
 
 
