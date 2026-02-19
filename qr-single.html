@@ -118,8 +118,10 @@ if(tabPosition > maxScroll) tabPosition = maxScroll;
 tabs.style.transform = `translateX(-${tabPosition}px)`;
 
 /* arrow visibility */
-left.style.visibility = tabPosition <= 0 ? "hidden" : "visible";
-right.style.visibility = tabPosition >= maxScroll - 5 ? "hidden" : "visible";
+const maxScroll = wrapper.scrollWidth - wrapper.clientWidth;
+
+  left.style.visibility = wrapper.scrollLeft <= 5 ? "hidden" : "visible";
+  right.style.visibility = wrapper.scrollLeft >= maxScroll - 5 ? "hidden" : "visible";
 }
 
 /* ---------- TAB SWITCH ---------- */
@@ -351,7 +353,8 @@ window.addEventListener("load", () => {
   setTimeout(()=>{
     initSlider();
   },150);
-
+document.getElementById("tabsWrapper").addEventListener("scroll", updateArrows);
+updateArrows();
 });
 
 </script>
@@ -394,6 +397,7 @@ class="w-full border rounded p-2 mb-4">
 
 </body>
 </html>
+
 
 
 
