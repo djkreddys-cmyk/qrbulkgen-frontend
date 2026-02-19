@@ -62,51 +62,32 @@
 <div class="bg-white rounded-2xl shadow p-6">
 <h2 class="text-xl font-semibold mb-4">Selected: <span id="selectedType">Text</span> QR</h2>
 
-<!-- STEP 1 -->
-<button onclick="downloadSample()" 
-class="bg-gray-800 text-white px-4 py-2 rounded-xl w-full mb-4">
-Step 1: Download Sample Excel
-</button>
+<div class="grid grid-cols-2 gap-4 mb-4">
+<div>
+<p class="text-xs text-gray-500 mb-1">Upload Excel Data File</p>
+<input type="file" id="excelFile" accept=".xlsx" class="border p-2 rounded-xl w-full">
+</div>
+<div>
+<button onclick="downloadSample()" class="bg-gray-800 text-white px-4 py-2 rounded-xl w-full">Step 1: Download Sample</button>
+</div>
+</div>
 
-<!-- STEP 2 -->
-<p class="text-xs text-gray-500 mb-1">Step 2: Upload Excel Data File</p>
-<input type="file" id="excelFile" accept=".xlsx" 
-class="border p-2 rounded-xl w-full mb-4">
-
-<!-- STEP 3 -->
-<p class="text-xs text-gray-500 mb-1">Step 3: Upload Logo (Optional)</p>
-<input type="file" id="logoFile" accept="image/*" 
-class="border p-2 rounded-xl w-full mb-4">
-
-<!-- STEP 4 -->
-<button onclick="loadPreview()" 
-class="bg-indigo-600 text-white px-4 py-2 rounded-xl w-full mb-4">
-Step 4: Load Data
-</button>
+<div class="grid grid-cols-2 gap-4 mb-4">
+<div>
+<p class="text-xs text-gray-500 mb-1">Upload Logo (Optional)</p>
+<input type="file" id="logoFile" accept="image/*" class="border p-2 rounded-xl w-full">
+</div>
+<div class="flex items-end">
+<button onclick="loadPreview()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl w-full">Step 4: Load Data</button>
+</div>
+</div>
 
 <hr class="my-4">
-
 <h3 class="font-semibold mb-3">Customization</h3>
-
 <div class="grid grid-cols-3 gap-3 items-end">
-
-<div>
-<label class="text-xs">QR Color</label>
-<input type="color" id="qrColor" value="#000000"
-class="w-full h-10" oninput="updatePreview()">
-</div>
-
-<div>
-<label class="text-xs">Background</label>
-<input type="color" id="bgColor" value="#ffffff"
-class="w-full h-10" oninput="updatePreview()">
-</div>
-
-<div>
-<label class="text-xs">Style</label>
-<select id="qrStyle"
-class="w-full border rounded-lg h-10 px-2"
-onchange="updatePreview()">
+<input type="color" id="qrColor" value="#000000" class="h-10" oninput="updatePreview()">
+<input type="color" id="bgColor" value="#ffffff" class="h-10" oninput="updatePreview()">
+<select id="qrStyle" class="border rounded h-10 px-2" onchange="updatePreview()">
 <option value="square">Square</option>
 <option value="dots">Dots</option>
 <option value="rounded">Rounded</option>
@@ -114,14 +95,17 @@ onchange="updatePreview()">
 <option value="extra-rounded">Extra Rounded</option>
 </select>
 </div>
-
-</div>
 </div>
 
 <!-- RIGHT BOX -->
 <div class="bg-white rounded-2xl shadow p-6 flex flex-col items-center">
 <h2 class="text-xl font-semibold mb-4">Live Preview</h2>
 <div id="preview" class="p-6 bg-white rounded-xl"></div>
+<div class="flex gap-3 mt-4">
+<button onclick="prevRow()" class="border px-4 py-2 rounded-lg">◀ Previous</button>
+<span id="rowIndicator" class="text-sm text-gray-500 self-center">Row 0 / 0</span>
+<button onclick="nextRow()" class="border px-4 py-2 rounded-lg">Next ▶</button>
+</div>
 <div class="grid grid-cols-2 gap-3 mt-6 w-full">
 <button onclick="generateZip()" class="bg-green-600 text-white py-3 rounded-xl">Download ZIP</button>
 <button onclick="saveDashboard()" class="bg-indigo-600 text-white py-3 rounded-xl">Save</button>
@@ -134,6 +118,7 @@ let currentType='text';
 let rows=[];
 let logoURL=null;
 let qr=null;
+let currentIndex=0;
 
 function selectType(t,el){
   currentType=t;
@@ -191,43 +176,36 @@ async function loadPreview(){
 }
 
 function buildData(r){
-
- if(currentType==='phone') return 'tel:'+(r.value||'');
-
- if(currentType==='email') return 'mailto:'+(r.value||'');
-
- if(currentType==='whatsapp')
-  return 'https://wa.me/'+(r.phone||'')+'?text='+encodeURIComponent(r.msg||'');
-
- if(currentType==='wifi')
-  return 'WIFI:T:WPA;S:'+(r.ssid||'')+';P:'+(r.password||'')+';;';
-
- if(currentType==='upi')
-  return 'upi://pay?pa='+(r.upi||'')+'&am='+(r.amount||'');
-
- if(currentType==='location')
-  return 'https://www.openstreetmap.org/search?query='+encodeURIComponent(r.address||'');
-
- if(currentType==='vcard')
-  return 'BEGIN:VCARD\\nVERSION:3.0\\nFN:'+(r.name||'')+'\\nORG:'+(r.org||'')+'\\nTEL:'+(r.tel||'')+'\\nEND:VCARD';
-
- if(currentType==='menu') return r.url||'';
-
- if(currentType==='product')
-  return 'Product:'+(r.product||'')+'\\nCode:'+(r.code||'');
-
- if(currentType==='ticket')
-  return 'Event:'+(r.event||'')+'\\nSeat:'+(r.seat||'')+'\\nDate:'+(r.date||'');
-
+ if(currentType==='phone')return 'tel:'+ (r.value||'');
+ if(currentType==='email')return 'mailto:'+ (r.value||'');
+ if(currentType==='whatsapp')return 'https://wa.me/'+(r.phone||'')+'?text='+(encodeURIComponent(r.msg||''));
+ if(currentType==='wifi')return 'WIFI:T:WPA;S:'+(r.ssid||'')+';P:'+(r.password||'')+';;';
+ if(currentType==='upi')return 'upi://pay?pa='+(r.upi||'')+'&am='+(r.amount||'');
+ if(currentType==='location')return 'https://www.openstreetmap.org/search?query='+(encodeURIComponent(r.address||''));
+ if(currentType==='vcard')return 'BEGIN:VCARD
+VERSION:3.0
+FN:'+(r.name||'')+'
+ORG:'+(r.org||'')+'
+TEL:'+(r.tel||'')+'
+END:VCARD';
+ if(currentType==='menu')return r.url||'';
+ if(currentType==='product')return 'Product:'+(r.product||'')+'
+Code:'+(r.code||'');
+ if(currentType==='ticket')return 'Event:'+(r.event||'')+'
+Seat:'+(r.seat||'')+'
+Date:'+(r.date||'');
  return r.value||'';
 }
 
 function updatePreview(){
  if(rows.length===0)return;
- var r=rows[0];
+ if(currentIndex<0)currentIndex=0;
+ if(currentIndex>=rows.length)currentIndex=rows.length-1;
+ var r=rows[currentIndex];
  document.getElementById('preview').innerHTML='';
  qr=new QRCodeStyling({width:260,height:260,data:buildData(r),image:logoURL,dotsOptions:{color:qrColor.value,type:qrStyle.value},backgroundOptions:{color:bgColor.value}});
  qr.append(document.getElementById('preview'));
+ document.getElementById('rowIndicator').innerText='Row '+(currentIndex+1)+' / '+rows.length;
 }
 
 async function generateZip(){
@@ -255,10 +233,34 @@ function saveDashboard(){
   };
   r.readAsDataURL(blob);
  });
+function saveDashboard(){
+ if(!qr){alert('Load preview first');return;}
+ qr.getRawData('png').then(function(blob){
+  const r=new FileReader();
+  r.onload=function(){
+   let saved=JSON.parse(localStorage.getItem('savedQRs')||'[]');
+   saved.push({name:'BulkPreview',date:new Date().toLocaleString(),data:r.result});
+   localStorage.setItem('savedQRs',JSON.stringify(saved));
+   alert('Saved to dashboard');
+  };
+  r.readAsDataURL(blob);
+ });
+}
+
+function nextRow(){
+ if(rows.length===0)return;
+ currentIndex++;
+ if(currentIndex>=rows.length)currentIndex=rows.length-1;
+ updatePreview();
+}
+
+function prevRow(){
+ if(rows.length===0)return;
+ currentIndex--;
+ if(currentIndex<0)currentIndex=0;
+ updatePreview();
+}
 }
 </script>
 </body>
 </html>
-
-
-
