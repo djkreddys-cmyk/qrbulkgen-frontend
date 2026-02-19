@@ -174,23 +174,37 @@ async function loadPreview(){
  rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
  updatePreview();
 }
-
 function buildData(r){
- if(currentType==='phone')return 'tel:'+ (r.value||'');
- if(currentType==='email')return 'mailto:'+ (r.value||'');
- if(currentType==='whatsapp')return 'https://wa.me/'+(r.phone||'')+'?text='+(encodeURIComponent(r.msg||''));
- if(currentType==='wifi')return 'WIFI:T:WPA;S:'+(r.ssid||'')+';P:'+(r.password||'')+';;';
- if(currentType==='upi')return 'upi://pay?pa='+(r.upi||'')+'&am='+(r.amount||'');
- if(currentType==='location')return 'https://www.openstreetmap.org/search?query='+(encodeURIComponent(r.address||''));
+ if(currentType==='text') return r.value||'';
+ if(currentType==='url') return r.value||'';
+
+ if(currentType==='phone') return 'tel:'+(r.value||'');
+ if(currentType==='email') return 'mailto:'+(r.value||'');
+
+ if(currentType==='whatsapp')
+  return 'https://wa.me/'+(r.phone||'')+'?text='+encodeURIComponent(r.msg||'');
+
+ if(currentType==='wifi')
+  return 'WIFI:T:WPA;S:'+(r.ssid||'')+';P:'+(r.password||'')+';;';
+
+ if(currentType==='upi')
+  return 'upi://pay?pa='+(r.upi||'')+'&am='+(r.amount||'');
+
+ if(currentType==='location')
+  return 'https://www.openstreetmap.org/search?query='+encodeURIComponent(r.address||'');
+
  if(currentType==='vcard')
- return 'BEGIN:VCARD\\nVERSION:3.0\\nFN:'+(r.name||'')+'\\nORG:'+(r.org||'')+'\\nTEL:'+(r.tel||'')+'\\nEND:VCARD';
+  return 'BEGIN:VCARD\\nVERSION:3.0\\nFN:'+(r.name||'')+'\\nORG:'+(r.org||'')+'\\nTEL:'+(r.tel||'')+'\\nEND:VCARD';
 
-if(currentType==='product')
- return 'Product:'+(r.product||'')+'\\nCode:'+(r.code||'');
+ if(currentType==='menu') return r.url||'';
 
-if(currentType==='ticket')
- return 'Event:'+(r.event||'')+'\\nSeat:'+(r.seat||'')+'\\nDate:'+(r.date||'');
+ if(currentType==='product')
+  return 'Product:'+(r.product||'')+'\\nCode:'+(r.code||'');
 
+ if(currentType==='ticket')
+  return 'Event:'+(r.event||'')+'\\nSeat:'+(r.seat||'')+'\\nDate:'+(r.date||'');
+
+ return '';
 }
 
 function updatePreview(){
@@ -216,19 +230,6 @@ async function generateZip(){
  const content=await zip.generateAsync({type:'blob'});
  saveAs(content,'QR_CODES.zip');
 }
-
-function saveDashboard(){
- if(!qr){alert('Load preview first');return;}
- qr.getRawData('png').then(function(blob){
-  const r=new FileReader();
-  r.onload=function(){
-   let saved=JSON.parse(localStorage.getItem('savedQRs')||'[]');
-   saved.push({name:'BulkPreview',date:new Date().toLocaleString(),data:r.result});
-   localStorage.setItem('savedQRs',JSON.stringify(saved));
-   alert('Saved to dashboard');
-  };
-  r.readAsDataURL(blob);
- });
 function saveDashboard(){
  if(!qr){alert('Load preview first');return;}
  qr.getRawData('png').then(function(blob){
@@ -256,8 +257,8 @@ function prevRow(){
  if(currentIndex<0)currentIndex=0;
  updatePreview();
 }
-}
 </script>
 </body>
 </html>
+
 
