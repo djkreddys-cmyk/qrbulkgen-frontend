@@ -106,18 +106,20 @@ const tabs=document.getElementById("tabs");
 const left=document.getElementById("leftArrow");
 const right=document.getElementById("rightArrow");
 
-const maxScroll=Math.max(0,tabs.scrollWidth - wrapper.clientWidth);
+const viewWidth = wrapper.clientWidth;
+const maxScroll = Math.max(0, tabs.scrollWidth - viewWidth);
 
-tabPosition+=dir*200;
+/* move one full screen instead of 200px */
+tabPosition += dir * (viewWidth * 0.8);
 
-if(tabPosition<0) tabPosition=0;
-if(tabPosition>maxScroll) tabPosition=maxScroll;
+if(tabPosition < 0) tabPosition = 0;
+if(tabPosition > maxScroll) tabPosition = maxScroll;
 
-tabs.style.transform=`translateX(-${tabPosition}px)`;
+tabs.style.transform = `translateX(-${tabPosition}px)`;
 
-/* hide arrows */
-left.style.visibility = tabPosition<=0 ? "hidden":"visible";
-right.style.visibility = tabPosition>=maxScroll-2 ? "hidden":"visible";
+/* arrow visibility */
+left.style.visibility = tabPosition <= 0 ? "hidden" : "visible";
+right.style.visibility = tabPosition >= maxScroll - 5 ? "hidden" : "visible";
 }
 
 /* ---------- TAB SWITCH ---------- */
@@ -392,6 +394,7 @@ class="w-full border rounded p-2 mb-4">
 
 </body>
 </html>
+
 
 
 
