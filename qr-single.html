@@ -319,28 +319,33 @@ btn.innerText="Save";
 reader.readAsDataURL(blob);
 });
 }
-/* ---------- PAGE INITIAL LOAD ---------- */
-window.addEventListener("DOMContentLoaded", () => {
 
-  tabPosition = 0;   // reset slider start
+function initSlider(){
+  const wrapper=document.getElementById("tabsWrapper");
+  const tabs=document.getElementById("tabs");
+
+  tabPosition=0;
+  tabs.style.transform="translateX(0px)";
+
+  const maxScroll=Math.max(0,tabs.scrollWidth-wrapper.clientWidth);
+
+  document.getElementById("leftArrow").style.visibility="hidden";
+  document.getElementById("rightArrow").style.visibility=
+      maxScroll>5 ? "visible":"hidden";
+}
+/* ---------- PAGE INITIAL LOAD ---------- */
+window.addEventListener("load", () => {
 
   renderTabs();
   currentType = Object.keys(QR_TYPES)[0];
   renderForm();
 
-  // wait for layout to calculate widths
-  requestAnimationFrame(()=>{
-    requestAnimationFrame(()=>{
-      slideTabs(0);
-    });
-  });
+  setTimeout(()=>{
+    initSlider();
+  },150);
 
 });
 
-// ADD THIS NEW BLOCK RIGHT HERE
-window.addEventListener("load",()=>{
-  setTimeout(()=>slideTabs(0),200);
-});
 </script>
 <!-- NAVBAR AUTH CONTROLLER (VERY IMPORTANT) -->
 <script src="js/auth.js"></script>
@@ -381,6 +386,7 @@ class="w-full border rounded p-2 mb-4">
 
 </body>
 </html>
+
 
 
 
