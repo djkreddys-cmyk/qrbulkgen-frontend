@@ -1,68 +1,114 @@
-// ===============================
-// UNIVERSAL QR DATA BUILDER
-// ===============================
-function buildQRData(type, r){
+const QR_TYPES = {
 
- if(type==='text') return r.value || '';
- if(type==='url') return r.value || '';
+text:{
+ label:"Text",
+ fields:[{id:"value",label:"Enter text"}],
+ build:(d)=>d.value
+},
 
- if(type==='phone') return 'tel:'+(r.value||'');
- if(type==='email') return 'mailto:'+(r.value||'');
+url:{
+ label:"Website",
+ fields:[{id:"value",label:"https://example.com"}],
+ build:(d)=>d.value
+},
 
- if(type==='whatsapp')
-  return 'https://wa.me/'+(r.phone||'')+'?text='+encodeURIComponent(r.msg||'');
+whatsapp:{
+ label:"WhatsApp",
+ fields:[
+  {id:"phone",label:"Phone"},
+  {id:"msg",label:"Message"}
+ ],
+ build:(d)=>`https://wa.me/${d.phone}?text=${encodeURIComponent(d.msg||"")}`
+},
 
- if(type==='wifi')
-  return 'WIFI:T:WPA;S:'+(r.ssid||'')+';P:'+(r.password||'')+';;';
+wifi:{
+ label:"WiFi",
+ fields:[
+  {id:"ssid",label:"Network Name"},
+  {id:"password",label:"Password"}
+ ],
+ build:(d)=>`WIFI:T:WPA;S:${d.ssid};P:${d.password};;`
+},
 
- if(type==='upi')
-  return 'upi://pay?pa='+(r.upi||'')+'&am='+(r.amount||'');
+upi:{
+ label:"UPI",
+ fields:[
+  {id:"upi",label:"UPI ID"},
+  {id:"amount",label:"Amount"}
+ ],
+ build:(d)=>`upi://pay?pa=${d.upi}&am=${d.amount||""}`
+},
 
- if(type==='location')
-  return 'https://www.openstreetmap.org/search?query='+encodeURIComponent(r.address||'');
+email:{
+ label:"Email",
+ fields:[
+  {id:"mail",label:"Email"},
+  {id:"subject",label:"Subject"}
+ ],
+ build:(d)=>`mailto:${d.mail}?subject=${encodeURIComponent(d.subject||"")}`
+},
 
- if(type==='vcard')
-  return 'BEGIN:VCARD\\nVERSION:3.0\\nFN:'+(r.name||'')+'\\nORG:'+(r.org||'')+'\\nTEL:'+(r.tel||'')+'\\nEND:VCARD';
+phone:{
+ label:"Phone",
+ fields:[{id:"call",label:"Phone Number"}],
+ build:(d)=>`tel:${d.call}`
+},
 
- if(type==='menu') return r.url||'';
+location:{
+ label:"Location",
+ fields:[{id:"address",label:"Enter address"}],
+ build:(d)=>`https://www.openstreetmap.org/search?query=${encodeURIComponent(d.address)}`
+},
 
- if(type==='product')
-  return 'Product:'+(r.product||'')+'\\nCode:'+(r.code||'');
+vcard:{
+ label:"Business Card",
+ fields:[
+  {id:"name",label:"Name"},
+  {id:"org",label:"Company"},
+  {id:"tel",label:"Phone"}
+ ],
+ build:(d)=>`BEGIN:VCARD\nVERSION:3.0\nFN:${d.name}\nORG:${d.org}\nTEL:${d.tel}\nEND:VCARD`
+},
 
- if(type==='ticket')
-  return 'Event:'+(r.event||'')+'\\nSeat:'+(r.seat||'')+'\\nDate:'+(r.date||'');
+menu:{
+ label:"Restaurant Menu",
+ fields:[{id:"url",label:"Menu URL"}],
+ build:(d)=>d.url
+},
 
- return '';
+product:{
+ label:"Product Label",
+ fields:[
+  {id:"product",label:"Product Name"},
+  {id:"code",label:"SKU Code"}
+ ],
+ build:(d)=>`Product:${d.product}\nCode:${d.code}`
+},
+
+ticket:{
+ label:"Event Ticket",
+ fields:[
+  {id:"event",label:"Event"},
+  {id:"seat",label:"Seat"},
+  {id:"date",label:"Date"}
+ ],
+ build:(d)=>`Event:${d.event}\nSeat:${d.seat}\nDate:${d.date}`
+},
+
+// ⭐ NEW
+google_review:{
+ label:"Google Review",
+ fields:[{id:"link",label:"Paste Google Review Link"}],
+ build:(d)=>d.link
+},
+
+app_download:{
+ label:"App Download",
+ fields:[
+  {id:"android",label:"Android Play Store Link"},
+  {id:"ios",label:"iOS App Store Link"}
+ ],
+ build:(d)=>`Download App\nAndroid:${d.android||""}\niOS:${d.ios||""}`
 }
 
-
-// ===============================
-// UNIVERSAL QR GENERATOR
-// ===============================
-function renderQR(container, text, settings){
-
- if(!text){
-  container.innerHTML="";
-  return null;
- }
-
- container.innerHTML="";
-
- const qr=new QRCodeStyling({
-  width: settings.size || 260,
-  height: settings.size || 260,
-  data: text,
-  image: settings.logo || null,
-  dotsOptions:{
-   color: settings.color || "#000000",
-   type: settings.style || "square"
-  },
-  backgroundOptions:{
-   color: settings.bg || "#ffffff"
-  },
-  imageOptions:{margin:5,crossOrigin:"anonymous"}
- });
-
- qr.append(container);
- return qr;
-}
+};
