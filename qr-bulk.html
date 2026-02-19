@@ -38,20 +38,7 @@
 <div class="max-w-7xl mx-auto flex items-center px-2">
 <button id="leftArrow" onclick="slideTabs(-1)" class="p-2 text-xl">◀</button>
 <div id="tabsWrapper" class="overflow-hidden flex-1">
-<div id="tabs" class="flex gap-4 py-3 transition-all duration-300">
-<button class="qrTab active" onclick="selectType('text',this)">Text</button>
-<button class="qrTab" onclick="selectType('url',this)">Website</button>
-<button class="qrTab" onclick="selectType('whatsapp',this)">WhatsApp</button>
-<button class="qrTab" onclick="selectType('wifi',this)">WiFi</button>
-<button class="qrTab" onclick="selectType('upi',this)">UPI</button>
-<button class="qrTab" onclick="selectType('email',this)">Email</button>
-<button class="qrTab" onclick="selectType('phone',this)">Phone</button>
-<button class="qrTab" onclick="selectType('location',this)">Location</button>
-<button class="qrTab" onclick="selectType('vcard',this)">Business Card</button>
-<button class="qrTab" onclick="selectType('menu',this)">Restaurant Menu</button>
-<button class="qrTab" onclick="selectType('product',this)">Product Label</button>
-<button class="qrTab" onclick="selectType('ticket',this)">Event Ticket</button>
-</div>
+<div id="tabs" class="flex gap-4 py-3 transition-all duration-300"></div>
 </div>
 <button id="rightArrow" onclick="slideTabs(1)" class="p-2 text-xl">▶</button>
 </div>
@@ -123,11 +110,32 @@ class="hidden w-full mb-4 bg-red-50 text-red-700 p-3 rounded-lg text-sm">
 </div>
 
 <script>
-let currentType='text';
-let rows=[];
-let logoURL=null;
-let qr=null;
-let currentIndex=0;
+let currentType = 'text';
+let rows = [];
+let currentIndex = 0;
+let qr = null;
+let logoURL = null;
+
+/* ADD THIS HERE */
+function renderBulkTabs(){
+
+  const container = document.getElementById("tabs");
+  container.innerHTML = "";
+
+  Object.keys(QR_TYPES).forEach((type,i)=>{
+
+    const btn = document.createElement("button");
+
+    btn.className = "qrTab"+(i===0?" active":"");
+    btn.innerText = QR_TYPES[type].label;
+
+    btn.onclick = ()=>selectType(type,btn);
+
+    container.appendChild(btn);
+
+  });
+
+}
 
 function selectType(t,el){
   currentType=t;
@@ -140,7 +148,7 @@ function selectType(t,el){
   document.getElementById('errorBox').classList.add('hidden');
   document.getElementById('excelFile').value='';
 
-  document.getElementById('selectedType').innerText=t.charAt(0).toUpperCase()+t.slice(1);
+  document.getElementById('selectedType').innerText=QR_TYPES[t].label;
   document.querySelectorAll('.qrTab').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
 
@@ -319,10 +327,21 @@ function validateRows(){
    return true;
  }
 }
+window.addEventListener("load",()=>{
+
+  renderBulkTabs();
+
+  currentType=Object.keys(QR_TYPES)[0];
+  document.getElementById('selectedType').innerText=QR_TYPES[currentType].label;
+
+  updateColumnHint();
+
+});
 
 </script>
 </body>
 </html>
+
 
 
 
