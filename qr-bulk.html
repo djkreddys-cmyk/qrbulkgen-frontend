@@ -182,25 +182,69 @@ document.getElementById('logoFile').addEventListener('change',function(e){
 });
 
 function downloadSample(){
- var data=[]; var filename='sample.xlsx';
- if(currentType==='text'){data=[{value:'Hello World',name:'text1'}];filename='sample_text.xlsx';}
- else if(currentType==='url'){data=[{value:'https://google.com',name:'web1'}];filename='sample_website.xlsx';}
- else if(currentType==='phone'){data=[{value:'9876543210',name:'call1'}];filename='sample_phone.xlsx';}
- else if(currentType==='email'){data=[{value:'demo@gmail.com',name:'mail1'}];filename='sample_email.xlsx';}
- else if(currentType==='whatsapp'){data=[{phone:'9876543210',msg:'Welcome',name:'wa1'}];filename='sample_whatsapp.xlsx';}
- else if(currentType==='wifi'){data=[{ssid:'OfficeNet',password:'12345678',name:'wifi1'}];filename='sample_wifi.xlsx';}
- else if(currentType==='upi'){data=[{upi:'shop@upi',amount:'100',name:'upi1'}];filename='sample_upi.xlsx';}
- else if(currentType==='location'){data=[{address:'Vijayawada',name:'loc1'}];filename='sample_location.xlsx';}
- else if(currentType==='vcard'){data=[{name:'Ramesh',org:'ABC Pvt Ltd',tel:'9999999999'}];filename='sample_vcard.xlsx';}
- else if(currentType==='menu'){data=[{url:'https://restaurantmenu.com',name:'menu1'}];filename='sample_menu.xlsx';}
- else if(currentType==='product'){data=[{product:'Rice Bag',code:'SKU123',name:'prod1'}];filename='sample_product.xlsx';}
- else if(currentType==='ticket'){data=[{event:'Music Fest',seat:'A12',date:'12-10-2026',name:'ticket1'}];filename='sample_ticket.xlsx';}
 
- const ws=XLSX.utils.json_to_sheet(data);
- const wb=XLSX.utils.book_new();
- XLSX.utils.book_append_sheet(wb,ws,'QR');
- XLSX.writeFile(wb,filename);
+  if(!window.QR_TYPES || !QR_TYPES[currentType]){
+    alert("QR type not ready");
+    return;
+  }
+
+  const def = QR_TYPES[currentType];
+
+  /* sample values for every possible field */
+  const SAMPLE_VALUES = {
+    value:"Hello World",
+
+    phone:"9876543210",
+    call:"9876543210",
+    tel:"9876543210",
+
+    msg:"Welcome Message",
+
+    ssid:"MyWiFi",
+    password:"12345678",
+
+    upi:"name@upi",
+    amount:"100",
+
+    mail:"demo@email.com",
+    subject:"Test Subject",
+
+    address:"Hyderabad, India",
+
+    name:"John Doe",
+    org:"Demo Company",
+
+    url:"https://example.com",
+    link:"https://g.page/r/test-review",
+
+    product:"Sample Product",
+    code:"SKU123",
+
+    event:"Tech Event",
+    seat:"A12",
+    date:"2025-01-01",
+
+    android:"https://play.google.com/store/apps/details?id=com.demo",
+    ios:"https://apps.apple.com/app/id123456789"
+  };
+
+  /* build sample row dynamically */
+  let sampleRow={};
+
+  def.fields.forEach(f=>{
+    sampleRow[f.id] = SAMPLE_VALUES[f.id] || ("Sample "+f.label);
+  });
+
+  /* create excel */
+  const ws = XLSX.utils.json_to_sheet([sampleRow]);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Sample");
+
+  const fileName = def.label.replace(/\s+/g,"_")+"_Sample.xlsx";
+
+  XLSX.writeFile(wb,fileName);
 }
+
 
 async function loadPreview(){
  const file=document.getElementById('excelFile').files[0];
@@ -403,6 +447,7 @@ window.addEventListener("load",()=>{
 </script>
 </body>
 </html>
+
 
 
 
