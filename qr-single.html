@@ -232,7 +232,15 @@ QR_TYPES[currentType].fields.forEach(f=>{
  data[f.id]=val(f.id);
 });
 
-const qrText = buildQRData(currentType,data);
+let qrText = buildQRData(currentType,data);
+
+/* ---- FIX: sanitize QR data ---- */
+if(qrText===undefined || qrText===null) qrText="";
+qrText = String(qrText).trim();
+
+/* convert real line breaks → QR safe */
+qrText = qrText.replace(/\r?\n/g,"\\n");
+
 const box = document.getElementById("qrcode");
 
 /* CLEAR FIRST */
@@ -396,6 +404,7 @@ class="w-full border rounded p-2 mb-4">
 
 </body>
 </html>
+
 
 
 
