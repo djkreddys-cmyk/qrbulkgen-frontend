@@ -226,26 +226,30 @@ function autoQR(){ generateQR(); }
 function generateQR(){
 
 try{
+
 let data={};
 QR_TYPES[currentType].fields.forEach(f=>{
  data[f.id]=val(f.id);
 });
 
 const qrText = buildQRData(currentType,data);
+const box = document.getElementById("qrcode");
 
- qrCode = renderQR(
- document.getElementById("qrcode"),
- qrText,
- qrSettings
-);
+/* CLEAR FIRST */
+box.innerHTML="";
 
+/* If empty → show hint and STOP */
 if(!qrText){
- document.getElementById("qrcode").innerHTML =
- '<div class="text-gray-400 text-sm">Enter details to generate QR</div>';
+ box.innerHTML='<div class="text-gray-400 text-sm">Enter details to generate QR</div>';
+ qrCode=null;
+ return;
 }
 
+/* Only render when valid */
+qrCode = renderQR(box, qrText, qrSettings);
+
 }catch(e){
-console.log("QR error:",e);
+ console.log("QR error:",e);
 }
 }
 
@@ -268,7 +272,6 @@ generateQR();
 }
 
 
-/* ---------- DOWNLOAD ---------- */
 /* ---------- DOWNLOAD MODAL ---------- */
 function openDownloadModal(){
 if(!qrCode) return alert("Generate QR first");
@@ -393,6 +396,7 @@ class="w-full border rounded p-2 mb-4">
 
 </body>
 </html>
+
 
 
 
