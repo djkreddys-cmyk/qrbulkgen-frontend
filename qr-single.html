@@ -300,8 +300,35 @@ break;
 default:
 d=val('data');
 }
+const qrText = buildQRData(currentType,{
+ value:val('data'),
+ phone:val('phone'),
+ msg:val('msg'),
+ ssid:val('ssid'),
+ password:val('pass'),
+ upi:val('upi'),
+ amount:val('amount'),
+ mail:val('mail'),
+ call:val('call'),
+ address:val('address'),
+ url:val('menuUrl'),
+ product:val('productName'),
+ code:val('productCode'),
+ event:val('eventName'),
+ seat:val('seat'),
+ date:val('date'),
+ name:val('name'),
+ org:val('org'),
+ tel:val('tel')
+});
 
-createQR(d);
+qrCode = renderQR(
+ document.getElementById("qrcode"),
+ qrText,
+ qrSettings
+);
+
+
 
 }catch(e){
 console.log("QR error:",e);
@@ -467,6 +494,7 @@ class="w-full border rounded p-2 mb-4">
 
 </body>
 </html>
+
 
 
 
