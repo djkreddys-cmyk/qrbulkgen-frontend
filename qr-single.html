@@ -110,7 +110,7 @@ const tabs=document.getElementById("tabs");
 const left=document.getElementById("leftArrow");
 const right=document.getElementById("rightArrow");
 
-const maxScroll=tabs.scrollWidth - wrapper.clientWidth;
+const maxScroll=Math.max(0,tabs.scrollWidth - wrapper.clientWidth);
 
 tabPosition+=dir*200;
 
@@ -359,10 +359,21 @@ reader.readAsDataURL(blob);
 }
 /* ---------- PAGE INITIAL LOAD ---------- */
 window.addEventListener("DOMContentLoaded", () => {
-currentType="text";
-renderForm();
-slideTabs(0);
+
+ renderTabs();
+
+ currentType=Object.keys(QR_TYPES)[0];
+ renderForm();
+
+ // wait for DOM paint
+ requestAnimationFrame(()=>{
+   requestAnimationFrame(()=>{
+     slideTabs(0);
+   });
+ });
+
 });
+
 </script>
 <!-- NAVBAR AUTH CONTROLLER (VERY IMPORTANT) -->
 <script src="js/auth.js"></script>
@@ -403,6 +414,7 @@ class="w-full border rounded p-2 mb-4">
 
 </body>
 </html>
+
 
 
 
