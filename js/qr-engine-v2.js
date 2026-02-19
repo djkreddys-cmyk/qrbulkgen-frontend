@@ -124,4 +124,35 @@ window.buildQRData = function(type,data){
     return "";
   }
 };
+/* ---------- QR RENDER ---------- */
+window.renderQR = function(container,text,settings){
+
+  if(typeof QRCodeStyling === "undefined"){
+    console.log("QRCodeStyling library not loaded");
+    return null;
+  }
+
+  const qr = new QRCodeStyling({
+    width: settings?.size || 260,
+    height: settings?.size || 260,
+    type: "canvas",
+    data: text,
+    margin: 2,
+    qrOptions:{errorCorrectionLevel:"H"},
+    dotsOptions:{
+      color: settings?.color || "#000000",
+      type: settings?.style || "square"
+    },
+    backgroundOptions:{
+      color: settings?.bg || "#ffffff"
+    },
+    image: settings?.logo || null,
+    imageOptions:{crossOrigin:"anonymous",margin:4}
+  });
+
+  container.innerHTML="";
+  qr.append(container);
+
+  return qr;
+};
 
