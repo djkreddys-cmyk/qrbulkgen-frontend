@@ -152,8 +152,7 @@ const def=QR_TYPES[currentType];
 let html=`<h2 class="text-xl font-bold mb-4">${def.label} QR</h2>`;
 
 def.fields.forEach(f=>{
- html+=`<input id="${f.id}" placeholder="${f.label}"
- class="w-full border rounded-xl p-3 mb-3" oninput="generateQR()">;
+ html += `<input id="${f.id}" placeholder="${f.label}" class="w-full border rounded-xl p-3 mb-3" oninput="generateQR()">`;
 });
 
 a.innerHTML=html + qrCustomizationUI();
@@ -416,6 +415,7 @@ class="w-full border rounded p-2 mb-4">
 
 </body>
 </html>
+
 
 
 
