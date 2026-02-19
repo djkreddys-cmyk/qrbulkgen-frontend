@@ -182,19 +182,15 @@ function buildData(r){
  if(currentType==='wifi')return 'WIFI:T:WPA;S:'+(r.ssid||'')+';P:'+(r.password||'')+';;';
  if(currentType==='upi')return 'upi://pay?pa='+(r.upi||'')+'&am='+(r.amount||'');
  if(currentType==='location')return 'https://www.openstreetmap.org/search?query='+(encodeURIComponent(r.address||''));
- if(currentType==='vcard')return 'BEGIN:VCARD
-VERSION:3.0
-FN:'+(r.name||'')+'
-ORG:'+(r.org||'')+'
-TEL:'+(r.tel||'')+'
-END:VCARD';
- if(currentType==='menu')return r.url||'';
- if(currentType==='product')return 'Product:'+(r.product||'')+'
-Code:'+(r.code||'');
- if(currentType==='ticket')return 'Event:'+(r.event||'')+'
-Seat:'+(r.seat||'')+'
-Date:'+(r.date||'');
- return r.value||'';
+ if(currentType==='vcard')
+ return 'BEGIN:VCARD\\nVERSION:3.0\\nFN:'+(r.name||'')+'\\nORG:'+(r.org||'')+'\\nTEL:'+(r.tel||'')+'\\nEND:VCARD';
+
+if(currentType==='product')
+ return 'Product:'+(r.product||'')+'\\nCode:'+(r.code||'');
+
+if(currentType==='ticket')
+ return 'Event:'+(r.event||'')+'\\nSeat:'+(r.seat||'')+'\\nDate:'+(r.date||'');
+
 }
 
 function updatePreview(){
@@ -264,3 +260,4 @@ function prevRow(){
 </script>
 </body>
 </html>
+
