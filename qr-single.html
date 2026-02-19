@@ -244,6 +244,13 @@ const box = document.getElementById("qrcode");
 
 /* CLEAR FIRST */
 box.innerHTML="";
+  
+/* destroy old QR instance */
+if(qrCode && typeof qrCode._options !== "undefined"){
+  try{ qrCode._canvas?.remove(); }catch(e){}
+  try{ qrCode._svg?.remove(); }catch(e){}
+  qrCode=null;
+}
 
 /* If empty → show hint and STOP */
 if(!qrText){
@@ -415,6 +422,7 @@ class="w-full border rounded p-2 mb-4">
 
 </body>
 </html>
+
 
 
 
