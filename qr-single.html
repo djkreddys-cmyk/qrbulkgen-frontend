@@ -322,18 +322,21 @@ reader.readAsDataURL(blob);
 /* ---------- PAGE INITIAL LOAD ---------- */
 window.addEventListener("DOMContentLoaded", () => {
 
- renderTabs();
+  tabPosition = 0;   // reset slider start
 
- currentType=Object.keys(QR_TYPES)[0];
- renderForm();
+  renderTabs();
+  currentType = Object.keys(QR_TYPES)[0];
+  renderForm();
 
- // wait for DOM paint
- requestAnimationFrame(()=>{
-   requestAnimationFrame(()=>{
-     slideTabs(0);
-   });
- });
+  // wait for layout to calculate widths
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      slideTabs(0);
+    });
+  });
+
 });
+
 // ADD THIS NEW BLOCK RIGHT HERE
 window.addEventListener("load",()=>{
   setTimeout(()=>slideTabs(0),200);
@@ -378,6 +381,7 @@ class="w-full border rounded p-2 mb-4">
 
 </body>
 </html>
+
 
 
 
