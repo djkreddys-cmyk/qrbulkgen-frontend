@@ -334,7 +334,19 @@ window.addEventListener("load",()=>{
 
       clearInterval(waitForEngine);
 
+window.addEventListener("load",()=>{
+
+  const waitForEngine = setInterval(()=>{
+    if(typeof QR_TYPES !== "undefined"){
+
+      clearInterval(waitForEngine);
+
       renderBulkTabs();
+
+      // reset slider
+      tabPosition = 0;
+      document.getElementById('tabs').style.transform = "translateX(0px)";
+      document.getElementById('leftArrow').style.visibility = "hidden";
 
       currentType = Object.keys(QR_TYPES)[0];
       document.getElementById('selectedType').innerText = QR_TYPES[currentType].label;
@@ -348,6 +360,7 @@ window.addEventListener("load",()=>{
 </script>
 </body>
 </html>
+
 
 
 
