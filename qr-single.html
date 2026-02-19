@@ -111,8 +111,8 @@ if(tabPosition>maxScroll) tabPosition=maxScroll;
 tabs.style.transform=`translateX(-${tabPosition}px)`;
 
 /* hide arrows */
-left.style.visibility = tabPosition===0 ? "hidden":"visible";
-right.style.visibility = tabPosition>=maxScroll ? "hidden":"visible";
+left.style.visibility = tabPosition<=0 ? "hidden":"visible";
+right.style.visibility = tabPosition>=maxScroll-2 ? "hidden":"visible";
 }
 
 /* ---------- TAB SWITCH ---------- */
@@ -334,9 +334,11 @@ window.addEventListener("DOMContentLoaded", () => {
      slideTabs(0);
    });
  });
-
 });
-
+// ADD THIS NEW BLOCK RIGHT HERE
+window.addEventListener("load",()=>{
+  setTimeout(()=>slideTabs(0),200);
+});
 </script>
 <!-- NAVBAR AUTH CONTROLLER (VERY IMPORTANT) -->
 <script src="js/auth.js"></script>
@@ -377,6 +379,7 @@ class="w-full border rounded p-2 mb-4">
 
 </body>
 </html>
+
 
 
 
