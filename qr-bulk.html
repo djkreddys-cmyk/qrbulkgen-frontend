@@ -62,40 +62,28 @@
 <div class="bg-white rounded-2xl shadow p-6">
 <h2 class="text-xl font-semibold mb-4">Selected: <span id="selectedType">Text</span> QR</h2>
 
-<div class="grid grid-cols-2 gap-4 mb-4">
-<div>
-<p class="text-xs text-gray-500 mb-1">Upload Excel Data File</p>
-<input type="file" id="excelFile" accept=".xlsx" class="border p-2 rounded-xl w-full">
-</div>
-<div>
-<button onclick="downloadSample()" class="bg-gray-800 text-white px-4 py-2 rounded-xl w-full">Step 1: Download Sample</button>
-</div>
-</div>
+<!-- STEP 1 -->
+<button onclick="downloadSample()" 
+class="bg-gray-800 text-white px-4 py-2 rounded-xl w-full mb-4">
+Step 1: Download Sample Excel
+</button>
 
-<div class="grid grid-cols-2 gap-4 mb-4">
-<div>
-<p class="text-xs text-gray-500 mb-1">Upload Logo (Optional)</p>
-<input type="file" id="logoFile" accept="image/*" class="border p-2 rounded-xl w-full">
-</div>
-<div class="flex items-end">
-<button onclick="loadPreview()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl w-full">Step 4: Load Data</button>
-</div>
-</div>
+<!-- STEP 2 -->
+<p class="text-xs text-gray-500 mb-1">Step 2: Upload Excel Data File</p>
+<input type="file" id="excelFile" accept=".xlsx" 
+class="border p-2 rounded-xl w-full mb-4">
 
-<hr class="my-4">
-<h3 class="font-semibold mb-3">Customization</h3>
-<div class="grid grid-cols-3 gap-3 items-end">
-<input type="color" id="qrColor" value="#000000" class="h-10" oninput="updatePreview()">
-<input type="color" id="bgColor" value="#ffffff" class="h-10" oninput="updatePreview()">
-<select id="qrStyle" class="border rounded h-10 px-2" onchange="updatePreview()">
-<option value="square">Square</option>
-<option value="dots">Dots</option>
-<option value="rounded">Rounded</option>
-<option value="classy">Classy</option>
-<option value="extra-rounded">Extra Rounded</option>
-</select>
-</div>
-</div>
+<!-- STEP 3 -->
+<p class="text-xs text-gray-500 mb-1">Step 3: Upload Logo (Optional)</p>
+<input type="file" id="logoFile" accept="image/*" 
+class="border p-2 rounded-xl w-full mb-4">
+
+<!-- STEP 4 -->
+<button onclick="loadPreview()" 
+class="bg-indigo-600 text-white px-4 py-2 rounded-xl w-full mb-4">
+Step 4: Load Data
+</button>
+
 
 <!-- RIGHT BOX -->
 <div class="bg-white rounded-2xl shadow p-6 flex flex-col items-center">
@@ -170,24 +158,34 @@ async function loadPreview(){
 }
 
 function buildData(r){
- if(currentType==='phone')return 'tel:'+ (r.value||'');
- if(currentType==='email')return 'mailto:'+ (r.value||'');
- if(currentType==='whatsapp')return 'https://wa.me/'+(r.phone||'')+'?text='+(encodeURIComponent(r.msg||''));
- if(currentType==='wifi')return 'WIFI:T:WPA;S:'+(r.ssid||'')+';P:'+(r.password||'')+';;';
- if(currentType==='upi')return 'upi://pay?pa='+(r.upi||'')+'&am='+(r.amount||'');
- if(currentType==='location')return 'https://www.openstreetmap.org/search?query='+(encodeURIComponent(r.address||''));
- if(currentType==='vcard')return 'BEGIN:VCARD
-VERSION:3.0
-FN:'+(r.name||'')+'
-ORG:'+(r.org||'')+'
-TEL:'+(r.tel||'')+'
-END:VCARD';
- if(currentType==='menu')return r.url||'';
- if(currentType==='product')return 'Product:'+(r.product||'')+'
-Code:'+(r.code||'');
- if(currentType==='ticket')return 'Event:'+(r.event||'')+'
-Seat:'+(r.seat||'')+'
-Date:'+(r.date||'');
+
+ if(currentType==='phone') return 'tel:'+(r.value||'');
+
+ if(currentType==='email') return 'mailto:'+(r.value||'');
+
+ if(currentType==='whatsapp')
+  return 'https://wa.me/'+(r.phone||'')+'?text='+encodeURIComponent(r.msg||'');
+
+ if(currentType==='wifi')
+  return 'WIFI:T:WPA;S:'+(r.ssid||'')+';P:'+(r.password||'')+';;';
+
+ if(currentType==='upi')
+  return 'upi://pay?pa='+(r.upi||'')+'&am='+(r.amount||'');
+
+ if(currentType==='location')
+  return 'https://www.openstreetmap.org/search?query='+encodeURIComponent(r.address||'');
+
+ if(currentType==='vcard')
+  return 'BEGIN:VCARD\\nVERSION:3.0\\nFN:'+(r.name||'')+'\\nORG:'+(r.org||'')+'\\nTEL:'+(r.tel||'')+'\\nEND:VCARD';
+
+ if(currentType==='menu') return r.url||'';
+
+ if(currentType==='product')
+  return 'Product:'+(r.product||'')+'\\nCode:'+(r.code||'');
+
+ if(currentType==='ticket')
+  return 'Event:'+(r.event||'')+'\\nSeat:'+(r.seat||'')+'\\nDate:'+(r.date||'');
+
  return r.value||'';
 }
 
@@ -228,3 +226,4 @@ function saveDashboard(){
 </script>
 </body>
 </html>
+
