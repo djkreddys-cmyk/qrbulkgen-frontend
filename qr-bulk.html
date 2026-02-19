@@ -130,11 +130,20 @@ let currentIndex=0;
 
 function selectType(t,el){
   currentType=t;
+
+  // reset previous upload
+  rows=[];
+  currentIndex=0;
+  document.getElementById('preview').innerHTML='';
+  document.getElementById('rowIndicator').innerText='Row 0 / 0';
+  document.getElementById('errorBox').classList.add('hidden');
+  document.getElementById('excelFile').value='';
+
   document.getElementById('selectedType').innerText=t.charAt(0).toUpperCase()+t.slice(1);
   document.querySelectorAll('.qrTab').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
+
   updateColumnHint();
-  updatePreview();;
 }
 
 let tabPosition=0;
@@ -221,7 +230,11 @@ function buildData(r){
 }
 
 function updatePreview(){
- if(rows.length===0)return;
+ if(rows.length===0){
+ document.getElementById('preview').innerHTML=
+ '<div class="text-gray-400 text-sm">Load Excel data to preview QR</div>';
+ return;
+}
  if(currentIndex<0)currentIndex=0;
  if(currentIndex>=rows.length)currentIndex=rows.length-1;
  var r=rows[currentIndex];
@@ -306,7 +319,8 @@ function validateRows(){
 
  rows.forEach((r,i)=>{
    required.forEach(col=>{
-     if(!r[col]) errors.push(`Row ${i+1} missing "${col}"`);
+     if(!r[col] || String(r[col]).trim()==='')
+     errors.push(`Row ${i+1} missing "${col}"`);
    });
  });
 
@@ -325,6 +339,7 @@ function validateRows(){
 </script>
 </body>
 </html>
+
 
 
 
