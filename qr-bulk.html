@@ -228,7 +228,10 @@ function updatePreview(){
  const r=rows[currentIndex];
 
  // build QR text safely
- const text = buildQRData(currentType, r);
+ let text = buildQRData(currentType, r);
+if(text===undefined || text===null) text="";
+text = String(text).trim();
+text = text.replace(/\r?\n/g,"\\n");
 
  const box=document.getElementById('preview');
  box.innerHTML="";
@@ -400,6 +403,7 @@ window.addEventListener("load",()=>{
 </script>
 </body>
 </html>
+
 
 
 
