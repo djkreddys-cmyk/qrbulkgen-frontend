@@ -61,6 +61,10 @@
 <!-- LEFT BOX -->
 <div class="bg-white rounded-2xl shadow p-6">
 <h2 class="text-xl font-semibold mb-4">Selected: <span id="selectedType">Text</span> QR</h2>
+<div id="columnHint"
+class="text-xs bg-blue-50 text-blue-700 p-3 rounded-lg mb-4">
+Required columns: value, name
+</div>
 <!-- STEP 1 -->
 <button onclick="downloadSample()"
 class="bg-gray-800 text-white px-4 py-2 rounded-xl w-full mb-4">
@@ -102,6 +106,9 @@ Step 4: Load Data
 <div class="bg-white rounded-2xl shadow p-6 flex flex-col items-center">
 <h2 class="text-xl font-semibold mb-4">Live Preview</h2>
 <div id="preview" class="p-6 bg-white rounded-xl"></div>
+<div id="errorBox"
+class="hidden w-full mb-4 bg-red-50 text-red-700 p-3 rounded-lg text-sm">
+</div>
 <div class="flex gap-3 mt-4">
 <button onclick="prevRow()" class="border px-4 py-2 rounded-lg">◀ Previous</button>
 <span id="rowIndicator" class="text-sm text-gray-500 self-center">Row 0 / 0</span>
@@ -126,7 +133,8 @@ function selectType(t,el){
   document.getElementById('selectedType').innerText=t.charAt(0).toUpperCase()+t.slice(1);
   document.querySelectorAll('.qrTab').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
-  updatePreview();
+  updateColumnHint();
+  updatePreview();;
 }
 
 let tabPosition=0;
@@ -173,7 +181,11 @@ async function loadPreview(){
  const buf=await file.arrayBuffer();
  const wb=XLSX.read(buf);
  rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+
+if(validateRows()){
+ currentIndex=0;
  updatePreview();
+}
 }
 function buildData(r){
  if(currentType==='text') return r.value||'';
@@ -220,6 +232,10 @@ function updatePreview(){
 }
 
 async function generateZip(){
+  if(!validateRows()){
+ alert("Fix Excel errors before downloading ZIP");
+ return;
+}
  if(rows.length===0){alert('Load excel first');return;}
  const zip=new JSZip();
  for(let i=0;i<rows.length;i++){
@@ -258,9 +274,58 @@ function prevRow(){
  if(currentIndex<0)currentIndex=0;
  updatePreview();
 }
+function updateColumnHint(){
+
+ let hint="value, name";
+
+ if(currentType==='whatsapp') hint="phone, msg, name";
+ else if(currentType==='wifi') hint="ssid, password, name";
+ else if(currentType==='upi') hint="upi, amount, name";
+ else if(currentType==='location') hint="address, name";
+ else if(currentType==='vcard') hint="name, org, tel";
+ else if(currentType==='menu') hint="url, name";
+ else if(currentType==='product') hint="product, code, name";
+ else if(currentType==='ticket') hint="event, seat, date, name";
+
+ document.getElementById("columnHint").innerText="Required columns: "+hint;
+}
+function validateRows(){
+
+ let required=["value"];
+
+ if(currentType==='whatsapp') required=["phone","msg"];
+ else if(currentType==='wifi') required=["ssid","password"];
+ else if(currentType==='upi') required=["upi"];
+ else if(currentType==='location') required=["address"];
+ else if(currentType==='vcard') required=["name","tel"];
+ else if(currentType==='menu') required=["url"];
+ else if(currentType==='product') required=["product","code"];
+ else if(currentType==='ticket') required=["event","seat","date"];
+
+ let errors=[];
+
+ rows.forEach((r,i)=>{
+   required.forEach(col=>{
+     if(!r[col]) errors.push(`Row ${i+1} missing "${col}"`);
+   });
+ });
+
+ const box=document.getElementById("errorBox");
+
+ if(errors.length){
+   box.classList.remove("hidden");
+   box.innerHTML=errors.join("<br>");
+   return false;
+ }else{
+   box.classList.add("hidden");
+   return true;
+ }
+}
+
 </script>
 </body>
 </html>
+
 
 
 
