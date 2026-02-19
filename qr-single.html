@@ -45,9 +45,7 @@ QRBulkGen
 <button id="leftArrow" onclick="slideTabs(-1)" class="p-2 text-xl">◀</button>
 
 <div id="tabsWrapper" class="overflow-hidden flex-1">
-<div id="tabs" class="flex gap-4 py-3 transition-all duration-300">
-<div id="tabs" class="flex gap-4 py-3 transition-all duration-300"></div>
-</div>
+  <div id="tabs" class="flex gap-4 py-3 transition-all duration-300"></div>
 </div>
 
 <button id="rightArrow" onclick="slideTabs(1)" class="p-2 text-xl">▶</button>
@@ -82,6 +80,7 @@ Save
 let currentType="text";
 let qrCode=null;
 let qrSettings={color:"#000000",bg:"#ffffff",style:"square",logo:null};
+let tabPosition = 0;
 
 function renderTabs(){
 const container=document.getElementById("tabs");
@@ -138,11 +137,6 @@ document.getElementById("qrcode").innerHTML="";
 setTimeout(generateQR,100);
 }
 
-/* ---------- INPUT ---------- */
-function input(id,placeholder){
-return `<input id="${id}" placeholder="${placeholder}" class="w-full border rounded-xl p-3 mb-3" oninput="autoQR()">`;
-}
-
 /* ---------- FORM ---------- */
 function renderForm(){
 const a=document.getElementById("formArea");
@@ -158,8 +152,6 @@ def.fields.forEach(f=>{
 a.innerHTML=html + qrCustomizationUI();
 }
 
-a.innerHTML=forms[currentType] + qrCustomizationUI();
-}
 function qrCustomizationUI(){
 return `
 <div class="border-t mt-4 pt-4">
@@ -385,6 +377,7 @@ class="w-full border rounded p-2 mb-4">
 
 </body>
 </html>
+
 
 
 
