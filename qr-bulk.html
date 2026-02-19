@@ -83,6 +83,39 @@ class="border p-2 rounded-xl w-full mb-4">
 class="bg-indigo-600 text-white px-4 py-2 rounded-xl w-full mb-4">
 Step 4: Load Data
 </button>
+
+<hr class="my-4">
+
+<h3 class="font-semibold mb-3">Customization</h3>
+
+<div class="grid grid-cols-3 gap-3 items-end">
+
+<div>
+<label class="text-xs">QR Color</label>
+<input type="color" id="qrColor" value="#000000"
+class="w-full h-10" oninput="updatePreview()">
+</div>
+
+<div>
+<label class="text-xs">Background</label>
+<input type="color" id="bgColor" value="#ffffff"
+class="w-full h-10" oninput="updatePreview()">
+</div>
+
+<div>
+<label class="text-xs">Style</label>
+<select id="qrStyle"
+class="w-full border rounded-lg h-10 px-2"
+onchange="updatePreview()">
+<option value="square">Square</option>
+<option value="dots">Dots</option>
+<option value="rounded">Rounded</option>
+<option value="classy">Classy</option>
+<option value="extra-rounded">Extra Rounded</option>
+</select>
+</div>
+
+</div>
 </div>
 
 <!-- RIGHT BOX -->
@@ -226,5 +259,6 @@ function saveDashboard(){
 </script>
 </body>
 </html>
+
 
 
