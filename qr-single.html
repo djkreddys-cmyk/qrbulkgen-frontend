@@ -353,15 +353,27 @@ function initSlider(){
       maxScroll>5 ? "visible":"hidden";
 }
 /* ---------- PAGE INITIAL LOAD ---------- */
-window.addEventListener("load", () => {
+window.addEventListener("load",()=>{
 
-  renderTabs();
-  currentType = Object.keys(QR_TYPES)[0];
-  renderForm();
+ const waitEngine=setInterval(()=>{
 
-  setTimeout(()=>{
-    initSlider();
-  },150);
+   if(window.QR_TYPES && window.buildQRData){
+
+     clearInterval(waitEngine);
+
+     renderTabs();
+
+     currentType=Object.keys(QR_TYPES)[0];
+     renderForm();
+
+     setTimeout(()=>{
+       slideTabs(0);
+     },120);
+
+   }
+
+ },50);
+
 });
 
 </script>
@@ -404,6 +416,7 @@ class="w-full border rounded p-2 mb-4">
 
 </body>
 </html>
+
 
 
 
