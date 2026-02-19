@@ -101,27 +101,25 @@ Object.keys(QR_TYPES).forEach((type,i)=>{
 }
 /* ---------- SLIDER ---------- */
 function slideTabs(dir){
-const wrapper=document.getElementById("tabsWrapper");
-const tabs=document.getElementById("tabs");
-const left=document.getElementById("leftArrow");
-const right=document.getElementById("rightArrow");
 
-const viewWidth = wrapper.clientWidth;
-const maxScroll = Math.max(0, tabs.scrollWidth - viewWidth);
+  const wrapper = document.getElementById("tabsWrapper");
+  const tabs = document.getElementById("tabs");
+  const left = document.getElementById("leftArrow");
+  const right = document.getElementById("rightArrow");
 
-/* move one full screen instead of 200px */
-tabPosition += dir * (viewWidth * 0.8);
+  const viewWidth = wrapper.clientWidth;
+  const maxScroll = Math.max(0, tabs.scrollWidth - viewWidth);
 
-if(tabPosition < 0) tabPosition = 0;
-if(tabPosition > maxScroll) tabPosition = maxScroll;
+  tabPosition += dir * (viewWidth * 0.8);
 
-tabs.style.transform = `translateX(-${tabPosition}px)`;
+  if(tabPosition < 0) tabPosition = 0;
+  if(tabPosition > maxScroll) tabPosition = maxScroll;
 
-/* arrow visibility */
-const maxScroll = wrapper.scrollWidth - wrapper.clientWidth;
+  tabs.style.transform = `translateX(-${tabPosition}px)`;
 
-  left.style.visibility = wrapper.scrollLeft <= 5 ? "hidden" : "visible";
-  right.style.visibility = wrapper.scrollLeft >= maxScroll - 5 ? "hidden" : "visible";
+  // arrow visibility
+  left.style.visibility = tabPosition <= 0 ? "hidden":"visible";
+  right.style.visibility = tabPosition >= maxScroll-5 ? "hidden":"visible";
 }
 
 /* ---------- TAB SWITCH ---------- */
@@ -353,8 +351,6 @@ window.addEventListener("load", () => {
   setTimeout(()=>{
     initSlider();
   },150);
-document.getElementById("tabsWrapper").addEventListener("scroll", updateArrows);
-updateArrows();
 });
 
 </script>
@@ -397,6 +393,7 @@ class="w-full border rounded p-2 mb-4">
 
 </body>
 </html>
+
 
 
 
