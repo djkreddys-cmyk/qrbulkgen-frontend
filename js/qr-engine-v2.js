@@ -8,8 +8,8 @@ text:{
 
 url:{
  label:"Website",
- fields:[{id:"value",label:"https://example.com"}],
- build:(d)=>d.value
+ fields:[{id:"url",label:"Website URL"}],
+ build:(d)=>d.url
 },
 
 whatsapp:{
