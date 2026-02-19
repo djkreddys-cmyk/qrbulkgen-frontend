@@ -157,20 +157,22 @@ function selectType(t,el){
 
 let tabPosition=0;
 function slideTabs(d){
- const w=document.getElementById('tabsWrapper');
- const t=document.getElementById('tabs');
+  const wrapper = document.getElementById('tabsWrapper');
+  const tabs = document.getElementById('tabs');
 
- const max=t.scrollWidth-w.clientWidth;
+  // recalc every click (important)
+  const maxScroll = Math.max(0, tabs.scrollWidth - wrapper.clientWidth);
 
- tabPosition+=d*(w.clientWidth*0.8);
- if(tabPosition<0)tabPosition=0;
- if(tabPosition>max)tabPosition=max;
+  tabPosition += d * (wrapper.clientWidth * 0.8);
 
- t.style.transform='translateX(-'+tabPosition+'px)';
+  // clamp properly
+  if(tabPosition < 0) tabPosition = 0;
+  if(tabPosition > maxScroll) tabPosition = maxScroll;
 
- updateArrows();
+  tabs.style.transform = `translateX(-${tabPosition}px)`;
+
+  updateArrows(maxScroll);
 }
-
 
 document.getElementById('logoFile').addEventListener('change',function(e){
  const f=e.target.files[0];
@@ -333,16 +335,22 @@ function validateRows(){
    return true;
  }
 }
-function updateArrows(){
+function updateArrows(maxScroll = null){
+
   const wrapper = document.getElementById('tabsWrapper');
   const tabs = document.getElementById('tabs');
   const left = document.getElementById('leftArrow');
   const right = document.getElementById('rightArrow');
 
-  const maxScroll = wrapper.scrollWidth - wrapper.clientWidth;
+  // if not provided, compute
+  if(maxScroll === null)
+    maxScroll = Math.max(0, tabs.scrollWidth - wrapper.clientWidth);
 
-  left.style.visibility = tabPosition <= 5 ? "hidden":"visible";
-  right.style.visibility = tabPosition >= maxScroll-5 ? "hidden":"visible";
+  // tolerance avoids flicker
+  const edge = 10;
+
+  left.style.visibility  = tabPosition <= edge ? "hidden":"visible";
+  right.style.visibility = tabPosition >= maxScroll-edge ? "hidden":"visible";
 }
 
 window.addEventListener("load",()=>{
@@ -353,7 +361,7 @@ window.addEventListener("load",()=>{
       clearInterval(waitForEngine);
 
       renderBulkTabs();
-
+      setTimeout(updateArrows,150);
       // reset slider
       tabPosition = 0;
       document.getElementById('tabs').style.transform = "translateX(0px)";
@@ -374,5 +382,6 @@ window.addEventListener("load",()=>{
 </script>
 </body>
 </html>
+
 
 
