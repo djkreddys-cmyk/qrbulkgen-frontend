@@ -46,20 +46,7 @@ QRBulkGen
 
 <div id="tabsWrapper" class="overflow-hidden flex-1">
 <div id="tabs" class="flex gap-4 py-3 transition-all duration-300">
-
-<button class="qrTab active" onclick="selectType('text',this)">Text</button>
-<button class="qrTab" onclick="selectType('url',this)">Website</button>
-<button class="qrTab" onclick="selectType('whatsapp',this)">WhatsApp</button>
-<button class="qrTab" onclick="selectType('wifi',this)">WiFi</button>
-<button class="qrTab" onclick="selectType('upi',this)">UPI</button>
-<button class="qrTab" onclick="selectType('email',this)">Email</button>
-<button class="qrTab" onclick="selectType('phone',this)">Phone</button>
-<button class="qrTab" onclick="selectType('location',this)">Location</button>
-<button class="qrTab" onclick="selectType('vcard',this)">Business Card</button>
-<button class="qrTab" onclick="selectType('menu',this)">Restaurant Menu</button>
-<button class="qrTab" onclick="selectType('product',this)">Product Label</button>
-<button class="qrTab" onclick="selectType('ticket',this)">Event Ticket</button>
-
+<div id="tabs" class="flex gap-4 py-3 transition-all duration-300"></div>
 </div>
 </div>
 
@@ -94,15 +81,20 @@ Save
 <script>
 let currentType="text";
 let qrCode=null;
-let tabPosition=0;
-/* remember customization */
-let qrSettings={
-color:"#000000",
-bg:"#ffffff",
-style:"square",
-logo:null
-};
+let qrSettings={color:"#000000",bg:"#ffffff",style:"square",logo:null};
 
+function renderTabs(){
+const container=document.getElementById("tabs");
+container.innerHTML="";
+
+Object.keys(QR_TYPES).forEach((type,i)=>{
+ const btn=document.createElement("button");
+ btn.className="qrTab"+(i===0?" active":"");
+ btn.innerText=QR_TYPES[type].label;
+ btn.onclick=()=>selectType(type,btn);
+ container.appendChild(btn);
+});
+}
 /* ---------- SLIDER ---------- */
 function slideTabs(dir){
 const wrapper=document.getElementById("tabsWrapper");
@@ -154,21 +146,17 @@ return `<input id="${id}" placeholder="${placeholder}" class="w-full border roun
 /* ---------- FORM ---------- */
 function renderForm(){
 const a=document.getElementById("formArea");
+const def=QR_TYPES[currentType];
 
-const forms={
-text:`<h2 class="text-xl font-bold mb-4">Text QR</h2>${input('data','Enter text')}`,
-url:`<h2 class="text-xl font-bold mb-4">Website</h2>${input('data','https://example.com')}`,
-whatsapp:`<h2 class="text-xl font-bold mb-4">WhatsApp</h2>${input('phone','Phone')}${input('msg','Message')}`,
-wifi:`<h2 class="text-xl font-bold mb-4">WiFi</h2>${input('ssid','Network Name')}${input('pass','Password')}`,
-upi:`<h2 class="text-xl font-bold mb-4">UPI</h2>${input('upi','UPI ID')}${input('amount','Amount')}`,
-email:`<h2 class="text-xl font-bold mb-4">Email</h2>${input('mail','Email')}${input('subject','Subject')}`,
-phone:`<h2 class="text-xl font-bold mb-4">Phone</h2>${input('call','Phone Number')}`,
-location:`<h2 class="text-xl font-bold mb-4">Location</h2>${input('address','Enter shop / office / landmark')}`,
-menu:`<h2 class="text-xl font-bold mb-4">Restaurant Menu</h2>${input('menuUrl','Menu URL')}`,
-product:`<h2 class="text-xl font-bold mb-4">Product Label</h2>${input('productName','Product Name')}${input('productCode','SKU Code')}`,
-ticket:`<h2 class="text-xl font-bold mb-4">Event Ticket</h2>${input('eventName','Event')}${input('seat','Seat')}${input('date','Date')}`,
-vcard:`<h2 class="text-xl font-bold mb-4">Business Card</h2>${input('name','Name')}${input('org','Company')}${input('tel','Phone')}`
-};
+let html=`<h2 class="text-xl font-bold mb-4">${def.label} QR</h2>`;
+
+def.fields.forEach(f=>{
+ html+=`<input id="${f.id}" placeholder="${f.label}"
+ class="w-full border rounded-xl p-3 mb-3" oninput="autoQR()">`;
+});
+
+a.innerHTML=html + qrCustomizationUI();
+}
 
 a.innerHTML=forms[currentType] + qrCustomizationUI();
 }
@@ -239,31 +227,14 @@ function autoQR(){ generateQR(); }
 function generateQR(){
 
 try{
-
-const qrText = buildQRData(currentType,{
- value:val('data'),
- phone:val('phone'),
- msg:val('msg'),
- ssid:val('ssid'),
- password:val('pass'),
- upi:val('upi'),
- amount:val('amount'),
- mail:val('mail'),
- subject:val('subject'),
- call:val('call'),
- address:val('address'),
- url:val('menuUrl'),
- product:val('productName'),
- code:val('productCode'),
- event:val('eventName'),
- seat:val('seat'),
- date:val('date'),
- name:val('name'),
- org:val('org'),
- tel:val('tel')
+let data={};
+QR_TYPES[currentType].fields.forEach(f=>{
+ data[f.id]=val(f.id);
 });
 
-qrCode = renderQR(
+const qrText = buildQRData(currentType,data);
+
+ qrCode = renderQR(
  document.getElementById("qrcode"),
  qrText,
  qrSettings
@@ -414,6 +385,7 @@ class="w-full border rounded p-2 mb-4">
 
 </body>
 </html>
+
 
 
 
