@@ -253,11 +253,17 @@ if(qrCode && typeof qrCode._options !== "undefined"){
 }
 
 /* If empty → show hint and STOP */
-if(!qrText){
+/* check if user actually entered data */
+const hasInput = QR_TYPES[currentType].fields.some(f=>{
+  return data[f.id] && String(data[f.id]).trim()!=="";
+});
+
+if(!hasInput){
  box.innerHTML='<div class="text-gray-400 text-sm">Enter details to generate QR</div>';
  qrCode=null;
  return;
 }
+
 
 /* Only render when valid */
 qrCode = renderQR(box, qrText, qrSettings);
@@ -422,6 +428,7 @@ class="w-full border rounded p-2 mb-4">
 
 </body>
 </html>
+
 
 
 
