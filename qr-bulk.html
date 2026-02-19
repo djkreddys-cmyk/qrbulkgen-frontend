@@ -380,6 +380,18 @@ function validateRows(){
     });
   });
 
+  const box=document.getElementById("errorBox");
+
+  if(errors.length){
+    box.classList.remove("hidden");
+    box.innerHTML=errors.join("<br>");
+    return false;
+  }else{
+    box.classList.add("hidden");
+    return true;
+  }
+}
+
 function updateArrows(maxScroll = null){
 
   const wrapper = document.getElementById('tabsWrapper');
@@ -431,6 +443,7 @@ window.addEventListener("load",()=>{
 </script>
 </body>
 </html>
+
 
 
 
