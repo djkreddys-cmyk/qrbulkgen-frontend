@@ -61,26 +61,29 @@
 <!-- LEFT BOX -->
 <div class="bg-white rounded-2xl shadow p-6">
 <h2 class="text-xl font-semibold mb-4">Selected: <span id="selectedType">Text</span> QR</h2>
+<!-- STEP 1 -->
+<button onclick="downloadSample()"
+class="bg-gray-800 text-white px-4 py-2 rounded-xl w-full mb-4">
+Step 1: Download Sample Excel
+</button>
 
-<div class="grid grid-cols-2 gap-4 mb-4">
-<div>
-<p class="text-xs text-gray-500 mb-1">Upload Excel Data File</p>
-<input type="file" id="excelFile" accept=".xlsx" class="border p-2 rounded-xl w-full">
-</div>
-<div>
-<button onclick="downloadSample()" class="bg-gray-800 text-white px-4 py-2 rounded-xl w-full">Step 1: Download Sample</button>
-</div>
+<!-- STEP 2 -->
+<label class="text-xs text-gray-500">Step 2: Upload Excel Data File</label>
+<input type="file" id="excelFile" accept=".xlsx"
+class="border p-2 rounded-xl w-full mb-4">
+
+<!-- STEP 3 -->
+<label class="text-xs text-gray-500">Step 3: Upload Logo (Optional)</label>
+<input type="file" id="logoFile" accept="image/*"
+class="border p-2 rounded-xl w-full mb-4">
+
+<!-- STEP 4 -->
+<button onclick="loadPreview()"
+class="bg-indigo-600 text-white px-4 py-2 rounded-xl w-full mb-4">
+Step 4: Load Data
+</button>
 </div>
 
-<div class="grid grid-cols-2 gap-4 mb-4">
-<div>
-<p class="text-xs text-gray-500 mb-1">Upload Logo (Optional)</p>
-<input type="file" id="logoFile" accept="image/*" class="border p-2 rounded-xl w-full">
-</div>
-<div class="flex items-end">
-<button onclick="loadPreview()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl w-full">Step 4: Load Data</button>
-</div>
-</div>
 
 <hr class="my-4">
 <h3 class="font-semibold mb-3">Customization</h3>
@@ -260,5 +263,6 @@ function prevRow(){
 </script>
 </body>
 </html>
+
 
 
